@@ -29,7 +29,7 @@ class PathRow extends StatelessWidget {
     var expProviderFalse =
         Provider.of<ExplorerProvider>(context, listen: false);
     List<String> folders =
-        (customPath ?? expProvider.currentActiveDir.path).split('/');
+        (customPath ?? expProvider.currentActiveDir.path).split('\\');
     var analyzerProvider =
         Provider.of<AnalyzerProvider>(context, listen: false);
 

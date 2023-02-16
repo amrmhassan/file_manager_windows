@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:dart_vlc/dart_vlc.dart';
 import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/widget_keys.dart';
 import 'package:windows_app/helpers/hive/hive_initiator.dart';
@@ -100,6 +101,7 @@ void main() async {
     firstTimeRunApp = await SharedPrefHelper.firstTimeRunApp();
     await setThemeVariables();
     await initWindowSize();
+    DartVLC.initialize();
   } catch (e) {
     printOnDebug('Error with first time app in main() or theme variables');
   }

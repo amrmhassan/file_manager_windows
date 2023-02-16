@@ -17,7 +17,7 @@ Future<void> initWindowSize() async {
     appWindow.size = initialSize;
     appWindow.minSize = minSize;
     appWindow.maxSize = maxSize;
-    appWindow.position = Offset.zero;
+    appWindow.position = Offset(100, 100);
 
     appWindow.show();
   });

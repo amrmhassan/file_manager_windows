@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:windows_app/constants/styles.dart';
+import 'package:windows_app/global/modals/show_modal_funcs.dart';
 import 'package:windows_app/global/widgets/button_wrapper.dart';
 import 'package:windows_app/models/share_space_item_model.dart';
 import 'package:windows_app/models/storage_item_model.dart';
@@ -16,6 +17,7 @@ import 'package:flutter_animator/flutter_animator.dart';
 import 'package:path/path.dart' as path_operations;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:windows_app/utils/providers_calls_utils.dart';
 
 class StorageItem extends StatefulWidget {
   final StorageItemModel? storageItemModel;
@@ -119,6 +121,13 @@ class _StorageItemState extends State<StorageItem> {
         ),
         AnimationWrapper(
           child: ButtonWrapper(
+            onSecondaryTap: () async {
+              if (widget.storageItemModel != null) {
+                foProviderFalse.toggleFromSelectedItems(
+                    widget.storageItemModel!, expPF(context));
+                await showEntityOptionsModal(context);
+              }
+            },
             key: globalKey,
             onTap: widget.allowClick
                 ? () async {

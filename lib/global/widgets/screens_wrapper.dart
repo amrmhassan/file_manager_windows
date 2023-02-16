@@ -2,23 +2,20 @@
 
 import 'dart:io';
 
-import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/sizes.dart';
 import 'package:windows_app/global/custom_app_drawer/custom_app_drawer.dart';
 import 'package:windows_app/global/widgets/advanced_video_player/advanced_video_player.dart';
 import 'package:windows_app/global/widgets/advanced_video_player/widgets/custom_icon_button.dart';
-import 'package:windows_app/global/widgets/button_wrapper.dart';
 import 'package:windows_app/global/widgets/h_space.dart';
 import 'package:windows_app/global/widgets/media_controllers.dart';
 import 'package:windows_app/global/widgets/quick_send_open_button.dart';
 import 'package:windows_app/global/widgets/show_controllers_button.dart';
 import 'package:windows_app/global/widgets/video_player_viewer/widgets/video_player_show_button.dart';
+import 'package:windows_app/global/widgets/windows_app_bar.dart';
 import 'package:windows_app/screens/home_screen/home_screen.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
 import 'package:flutter/material.dart';
-
-import 'package:windows_app/screens/home_screen/widgets/app_bar_icon_button.dart';
 
 class ScreensWrapper extends StatefulWidget {
   final Widget child;
@@ -45,6 +42,7 @@ class ScreensWrapper extends StatefulWidget {
 
 class _ScreensWrapperState extends State<ScreensWrapper> {
   GlobalKey<ScaffoldState> scfKey = GlobalKey();
+  GlobalKey buttonKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -59,68 +57,7 @@ class _ScreensWrapperState extends State<ScreensWrapper> {
       //! i make gesture detector to be inkwell to accept clicks even if the area is blank
       body: Column(
         children: [
-          if (Platform.isWindows)
-            Row(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: [
-                AppBarIconButton(
-                  onTap: () {
-                    scfKey.currentState?.openDrawer();
-                  },
-                  iconName: 'list',
-                ),
-                Expanded(
-                  child: MouseRegion(
-                    cursor: SystemMouseCursors.disappearing,
-                    child: GestureDetector(
-                      onPanUpdate: (details) {
-                        appWindow.startDragging();
-                      },
-                      child: Container(
-                        height: largeIconSize / 1.3,
-                        decoration: BoxDecoration(
-                          color: kBackgroundColor,
-                          borderRadius: BorderRadius.circular(1000),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                ButtonWrapper(
-                  borderRadius: 0,
-                  alignment: Alignment.center,
-                  width: largeIconSize * 2,
-                  height: largeIconSize / 1.3,
-                  onTap: () {
-                    appWindow.minimize();
-                  },
-                  child: Icon(
-                    Icons.minimize,
-                    color: Colors.white,
-                  ),
-                ),
-                ButtonWrapper(
-                  width: largeIconSize * 2,
-                  height: largeIconSize / 1.3,
-                  decoration: BoxDecoration(
-                    color: Colors.red,
-                    borderRadius: BorderRadius.only(
-                      bottomLeft: Radius.circular(
-                        largeBorderRadius,
-                      ),
-                    ),
-                  ),
-                  onTap: () {
-                    appWindow.close();
-                  },
-                  child: Icon(
-                    Icons.close,
-                    color: Colors.white,
-                    size: smallIconSize,
-                  ),
-                ),
-              ],
-            ),
+          WindowsAppBar(buttonKey: buttonKey, scfKey: scfKey),
           Expanded(
             child: InkWell(
               splashColor: Colors.transparent,

@@ -49,6 +49,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.1.13"
+  audio_video_progress_bar:
+    dependency: transitive
+    description:
+      name: audio_video_progress_bar
+      sha256: "7be62917604e19e3873e12c8025bbc6dbee5876e1fa4cd7772ea1d0eb0e88d99"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.11.0"
   bitsdojo_window:
     dependency: "direct main"
     description:
@@ -273,6 +281,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.4"
+  dart_vlc:
+    dependency: "direct main"
+    description:
+      name: dart_vlc
+      sha256: "63846cd3df690096029e997c6551b0e2b224049ff3f9ada8b1ea40db1eded5f2"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.0"
+  dart_vlc_ffi:
+    dependency: transitive
+    description:
+      name: dart_vlc_ffi
+      sha256: ba9633e990fce5e45b9ad58d1c81b3fa266559805bedebd0f1c889487472eab3
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.8"
   dbus:
     dependency: transitive
     description:
@@ -422,6 +446,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.1"
+  flutter_native_view:
+    dependency: transitive
+    description:
+      name: flutter_native_view
+      sha256: bc43839a8423fb2f5a4bd88b59b0418930f518af090ee796360cbdc813245cd6
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.2"
   flutter_plugin_android_lifecycle:
     dependency: transitive
     description:
@@ -936,6 +968,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.27.7"
+  screen_retriever:
+    dependency: transitive
+    description:
+      name: screen_retriever
+      sha256: "4931f226ca158123ccd765325e9fbf360bfed0af9b460a10f960f9bb13d58323"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.6"
   share_plus:
     dependency: "direct main"
     description:
@@ -1373,6 +1413,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.6.1"
+  window_manager:
+    dependency: transitive
+    description:
+      name: window_manager
+      sha256: d812d3189d23465d2e94baa2505a4462b46dde4939012ff370711c6897d747ae
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.2.9"
   xdg_directories:
     dependency: transitive
     description:
