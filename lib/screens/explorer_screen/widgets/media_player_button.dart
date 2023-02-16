@@ -1,8 +1,5 @@
 // ignore_for_file: prefer_const_constructors
 
-import 'dart:io';
-
-import 'package:dart_vlc/dart_vlc.dart';
 import 'package:windows_app/analyzing_code/globals/files_folders_operations.dart';
 import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/files_types_icons.dart';

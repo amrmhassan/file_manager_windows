@@ -84,7 +84,7 @@ class _VideoPlayerSliderState extends State<VideoPlayerSlider> {
               onChanged: (value) {
                 mpProviderFalse.seekVideo(value);
               },
-              subRanges: mpProvider.bufferedTransformer,
+              // subRanges: mpProvider.bufferedTransformer,
             ),
           );
   }

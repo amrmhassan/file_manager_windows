@@ -6,8 +6,6 @@ import 'dart:isolate';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
-import 'package:windows_app/constants/widget_keys.dart';
-import 'package:windows_app/global/custom_app_drawer/custom_app_drawer.dart';
 import 'package:windows_app/providers/share_provider.dart';
 import 'package:windows_app/providers/util/analyzer_provider.dart';
 import 'package:windows_app/providers/util/explorer_provider.dart';

@@ -1,7 +1,6 @@
 import 'package:dart_vlc/dart_vlc.dart';
 import 'package:windows_app/providers/media_player_provider.dart';
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
 
 class ActualVideoPlayer extends StatelessWidget {
   const ActualVideoPlayer({

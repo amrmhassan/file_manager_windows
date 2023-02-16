@@ -2,11 +2,8 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dart_vlc/dart_vlc.dart';
-import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/server_constants.dart';
-import 'package:windows_app/global/widgets/custom_slider/sub_range_model.dart';
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
 import 'package:volume_controller/volume_controller.dart' as volume_controllers;
 
 class MediaPlayerProvider extends ChangeNotifier {
@@ -139,7 +136,7 @@ class MediaPlayerProvider extends ChangeNotifier {
   Duration videoPosition = Duration.zero;
   bool videoHidden = false;
   bool networkVideo = false;
-  final List<DurationRange> _bufferedParts = [];
+  // final List<DurationRange> _bufferedParts = [];
   bool isBuffering = false;
   double videoSpeed = 1;
 
@@ -150,17 +147,17 @@ class MediaPlayerProvider extends ChangeNotifier {
   }
 
   //? to return the ready buffered parts to be viewed into the video player slider
-  List<SubRangeModel> get bufferedTransformer => _bufferedParts
-      .map((e) => SubRangeModel(
-            start: Duration(milliseconds: e.start.inMilliseconds)
-                .inMilliseconds
-                .toDouble(),
-            end: Duration(milliseconds: e.end.inMilliseconds)
-                .inMilliseconds
-                .toDouble(),
-            color: videoSliderBufferedColor,
-          ))
-      .toList();
+  // List<SubRangeModel> get bufferedTransformer => _bufferedParts
+  //     .map((e) => SubRangeModel(
+  //           start: Duration(milliseconds: e.start.inMilliseconds)
+  //               .inMilliseconds
+  //               .toDouble(),
+  //           end: Duration(milliseconds: e.end.inMilliseconds)
+  //               .inMilliseconds
+  //               .toDouble(),
+  //           color: videoSliderBufferedColor,
+  //         ))
+  //     .toList();
 
   //? set volume touched
   void setVolumeTouched(bool t) {
@@ -254,7 +251,7 @@ class MediaPlayerProvider extends ChangeNotifier {
     videoPosition = Duration.zero;
     videoHidden = false;
     bottomVideoControllersHidden = false;
-    _bufferedParts.clear();
+    // _bufferedParts.clear();
     notifyListeners();
   }
 
