@@ -56,104 +56,104 @@ class _RecentScreenState extends State<RecentScreen> {
                 color: kInactiveColor.withOpacity(.2),
               ),
               VSpace(),
-              //# windows
-              if (!Platform.isWindows)
-                PaddingWrapper(
-                  child: Container(
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      // color: kCardBackgroundColor,
-                      borderRadius: BorderRadius.circular(mediumBorderRadius),
-                    ),
-                    child: Column(
-                      children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            RecentItemType(
-                              iconName: 'image',
-                              title: 'Images',
-                              onTap: () {
-                                openRecentScreen(RecentType.image);
-                              },
-                              color: kImagesColor,
-                            ),
-                            RecentItemType(
-                              iconName: 'play-button',
-                              title: 'Videos',
-                              onTap: () {
-                                openRecentScreen(RecentType.video);
-                              },
-                              color: kVideoColor,
-                            ),
-                            RecentItemType(
-                              iconName: 'google-docs',
-                              onTap: () {
-                                openRecentScreen(RecentType.doc);
-                              },
-                              title: 'Docs',
-                              color: kDocsColor,
-                            ),
-                            RecentItemType(
-                              iconName: 'musical-note',
-                              onTap: () {
-                                openRecentScreen(RecentType.music);
-                              },
-                              title: 'Music',
-                              color: kAudioColor,
-                            ),
-                          ],
-                        ),
-                        VSpace(factor: .5),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            RecentItemType(
-                              iconName: 'android',
-                              title: 'APKs',
-                              onTap: () {
-                                openRecentScreen(RecentType.apk);
-                              },
-                              color: kAPKsColor,
-                            ),
-                            RecentItemType(
-                              iconName: 'download',
-                              title: 'Downloads',
-                              onTap: () {
-                                openRecentScreen(RecentType.download);
-                              },
-                              color: kDocsColor,
-                            ),
-                            RecentItemType(
-                              iconName: 'archive',
-                              onTap: () {
-                                openRecentScreen(RecentType.archives);
-                              },
-                              title: 'Archives',
-                              color: kAPKsColor,
-                            ),
-                            RecentItemType(
-                              iconName: 'whatsapp',
-                              onTap: () {
-                                Navigator.pushNamed(
-                                    context, WhatsAppScreen.routeName);
-                              },
-                              title: 'Social',
-                              color: kWhatsAppColor,
-                            ),
-                          ],
-                        ),
-                        VSpace(),
-                      ],
-                    ),
-                  ),
-                ),
+              // //# windows
+              // if (!Platform.isWindows)
+              //   PaddingWrapper(
+              //     child: Container(
+              //       width: double.infinity,
+              //       decoration: BoxDecoration(
+              //         // color: kCardBackgroundColor,
+              //         borderRadius: BorderRadius.circular(mediumBorderRadius),
+              //       ),
+              //       child: Column(
+              //         children: [
+              //           Row(
+              //             mainAxisAlignment: MainAxisAlignment.center,
+              //             children: [
+              //               RecentItemType(
+              //                 iconName: 'image',
+              //                 title: 'Images',
+              //                 onTap: () {
+              //                   openRecentScreen(RecentType.image);
+              //                 },
+              //                 color: kImagesColor,
+              //               ),
+              //               RecentItemType(
+              //                 iconName: 'play-button',
+              //                 title: 'Videos',
+              //                 onTap: () {
+              //                   openRecentScreen(RecentType.video);
+              //                 },
+              //                 color: kVideoColor,
+              //               ),
+              //               RecentItemType(
+              //                 iconName: 'google-docs',
+              //                 onTap: () {
+              //                   openRecentScreen(RecentType.doc);
+              //                 },
+              //                 title: 'Docs',
+              //                 color: kDocsColor,
+              //               ),
+              //               RecentItemType(
+              //                 iconName: 'musical-note',
+              //                 onTap: () {
+              //                   openRecentScreen(RecentType.music);
+              //                 },
+              //                 title: 'Music',
+              //                 color: kAudioColor,
+              //               ),
+              //             ],
+              //           ),
+              //           VSpace(factor: .5),
+              //           Row(
+              //             mainAxisAlignment: MainAxisAlignment.center,
+              //             children: [
+              //               RecentItemType(
+              //                 iconName: 'android',
+              //                 title: 'APKs',
+              //                 onTap: () {
+              //                   openRecentScreen(RecentType.apk);
+              //                 },
+              //                 color: kAPKsColor,
+              //               ),
+              //               RecentItemType(
+              //                 iconName: 'download',
+              //                 title: 'Downloads',
+              //                 onTap: () {
+              //                   openRecentScreen(RecentType.download);
+              //                 },
+              //                 color: kDocsColor,
+              //               ),
+              //               RecentItemType(
+              //                 iconName: 'archive',
+              //                 onTap: () {
+              //                   openRecentScreen(RecentType.archives);
+              //                 },
+              //                 title: 'Archives',
+              //                 color: kAPKsColor,
+              //               ),
+              //               RecentItemType(
+              //                 iconName: 'whatsapp',
+              //                 onTap: () {
+              //                   Navigator.pushNamed(
+              //                       context, WhatsAppScreen.routeName);
+              //                 },
+              //                 title: 'Social',
+              //                 color: kWhatsAppColor,
+              //               ),
+              //             ],
+              //           ),
+              //           VSpace(),
+              //         ],
+              //       ),
+              //     ),
+              //   ),
               AnalyzerOptionsItem(
                 logoName: 'management',
                 onTap: () {
                   Navigator.pushNamed(context, ShareScreen.routeName);
                 },
-                title: 'Share',
+                title: 'Connect Phone',
                 color: Colors.white,
               ),
               VSpace(),

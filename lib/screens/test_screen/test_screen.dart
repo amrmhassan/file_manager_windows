@@ -32,16 +32,7 @@ class _TestScreenState extends State<TestScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
-                onPressed: () {
-                  String filePath =
-                      'D:/Media/سعيد الكملي/لامية ابن الوردي - إلقاء أسامة الواعظ.mp3';
-                  String url =
-                      'http://192.168.1.39:49359/streamAudio/${Uri.encodeComponent(filePath)}';
-                  print(url);
-                  player.open(
-                    Media.network(url),
-                  );
-                },
+                onPressed: () {},
                 child: Text('Play'),
               ),
               HSpace(),

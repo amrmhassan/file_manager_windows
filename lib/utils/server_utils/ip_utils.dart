@@ -8,7 +8,7 @@ Future<String?> getMyIpAddress([bool wifi = true]) async {
   try {
     //! use type: InternetAddressType.IPv4, leave 192 thing because other devices like emulators uses ipv4 with 0.0.0.0 networks
     var interfaces = await NetworkInterface.list();
-    String wifiString = Platform.isWindows ? 'wi-fi' : 'wlan0';
+    String wifiString = 'wi-fi';
     var wifiInterface = interfaces.firstWhere(
       (element) =>
           element.name.toLowerCase().contains(wifi ? wifiString : 'wlan1'),
