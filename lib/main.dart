@@ -111,8 +111,19 @@ void main() async {
 
 bool testing = false;
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  @override
+  void initState() {
+    Player(id: 1000).stop();
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {

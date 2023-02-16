@@ -1,15 +1,17 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:dart_vlc/dart_vlc.dart';
 import 'package:windows_app/constants/colors.dart';
+import 'package:windows_app/constants/db_constants.dart';
 import 'package:windows_app/constants/server_constants.dart';
 import 'package:windows_app/global/widgets/custom_slider/sub_range_model.dart';
 import 'package:flutter/material.dart';
-import 'package:just_audio/just_audio.dart';
 import 'package:video_player/video_player.dart';
 import 'package:volume_controller/volume_controller.dart' as volume_controllers;
 
 class MediaPlayerProvider extends ChangeNotifier {
-  final AudioPlayer _audioPlayer = AudioPlayer();
+  final Player _audioPlayer = Player(id: 1000);
   Duration? fullSongDuration;
   Duration? currentDuration;
 
@@ -46,7 +48,7 @@ class MediaPlayerProvider extends ChangeNotifier {
 
   //? pause playing
   Future<void> pausePlaying() async {
-    await _audioPlayer.pause();
+    _audioPlayer.pause();
 
     audioPlaying = false;
     notifyListeners();
@@ -63,22 +65,21 @@ class MediaPlayerProvider extends ChangeNotifier {
         durationStreamSub?.cancel();
       }
       if (network) {
-        fullSongDuration = await _audioPlayer.setUrl(
-          path,
-          headers: network
-              ? {
-                  filePathHeaderKey: Uri.encodeComponent(fileRemotePath!),
-                }
-              : null,
+        _audioPlayer.open(
+          Media.network(path, extras: {
+            filePathHeaderKey: Uri.encodeComponent(fileRemotePath!),
+          }),
         );
       } else {
-        fullSongDuration = await _audioPlayer.setFilePath(path);
+        _audioPlayer.open(Media.file(File(path)), autoStart: true);
       }
+
       audioPlaying = true;
       notifyListeners();
 
       durationStreamSub = _audioPlayer.positionStream.listen((event) {
-        currentDuration = event;
+        fullSongDuration ??= event.duration;
+        currentDuration = event.position;
         if (currentDuration?.inSeconds == fullSongDuration?.inSeconds) {
           audioPlaying = false;
           fullSongDuration = null;
@@ -87,7 +88,7 @@ class MediaPlayerProvider extends ChangeNotifier {
         }
         notifyListeners();
       });
-      await _audioPlayer.play();
+      _audioPlayer.play();
     } catch (e) {
       audioPlaying = false;
       fullSongDuration = null;
