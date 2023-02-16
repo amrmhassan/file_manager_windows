@@ -1,5 +1,6 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:windows_app/constants/sizes.dart';
 import 'package:windows_app/global/widgets/advanced_video_player/widgets/video_fast_seeker.dart';
 import 'package:windows_app/helpers/responsive.dart';
 import 'package:flutter/material.dart';
@@ -24,7 +25,7 @@ class BaseOverLay extends StatelessWidget {
               child: Opacity(
                 opacity: 0,
                 child: Container(
-                  height: Responsive.getCleanHeight(context),
+                  height: Responsive.getCleanHeight(context) - largeIconSize,
                   width: Responsive.getWidth(context),
                   color: Colors.red,
                 ),

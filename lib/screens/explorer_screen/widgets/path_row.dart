@@ -48,7 +48,7 @@ class PathRow extends StatelessWidget {
                     onTap: () {
                       if (entry.key != folders.length - 1) {
                         String newPath =
-                            folders.sublist(0, entry.key + 1).join('/');
+                            folders.sublist(0, entry.key + 1).join('\\');
                         if (onClickingSubPath != null) {
                           onClickingSubPath!(newPath);
                         } else {

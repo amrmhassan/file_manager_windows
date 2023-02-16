@@ -139,6 +139,8 @@ class MediaPlayerProvider extends ChangeNotifier {
   // final List<DurationRange> _bufferedParts = [];
   bool isBuffering = false;
   double videoSpeed = 1;
+  StreamSubscription? videoPositionStream;
+  StreamSubscription? videoStateStream;
 
   void setVideoSpeed(double s) {
     videoSpeed = s;
@@ -183,6 +185,9 @@ class MediaPlayerProvider extends ChangeNotifier {
     String? fileRemotePath,
   ]) {
     closeVideo();
+    videoStateStream?.cancel();
+    videoPositionStream?.cancel();
+
     videoPlayerController = Player(id: 2000);
     if (network) {
       videoPlayerController?.open(Media.network(path, extras: {
@@ -192,9 +197,11 @@ class MediaPlayerProvider extends ChangeNotifier {
       videoPlayerController?.open(Media.file(File(path)));
     }
     networkVideo = network;
-    videoPlayerController?.playbackStream.listen(
+    videoStateStream = videoPlayerController?.playbackStream.listen(
       (event) {
         if (event.isCompleted) {
+          videoStateStream?.cancel();
+          videoPositionStream?.cancel();
           closeVideo();
         }
       },
@@ -202,7 +209,8 @@ class MediaPlayerProvider extends ChangeNotifier {
 
     notifyListeners();
     videoPlayerController?.positionStream.listen((event) {
-      if (videoDuration == null) {
+      if (videoDuration == null ||
+          videoDuration?.inSeconds != event.duration?.inSeconds) {
         videoDuration = event.duration;
         notifyListeners();
       }

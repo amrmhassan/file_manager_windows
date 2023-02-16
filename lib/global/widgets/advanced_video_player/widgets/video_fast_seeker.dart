@@ -39,6 +39,7 @@ class _VideoFastSeekerState extends State<VideoFastSeeker> {
 
     Future.delayed(Duration(milliseconds: 600)).then((value) {
       amount -= 10;
+      if (!mounted) return;
       setState(() {
         if (amount == 0) {
           actualAmount = 0;
