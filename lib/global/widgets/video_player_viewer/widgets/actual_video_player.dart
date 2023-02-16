@@ -29,10 +29,12 @@ class ActualVideoPlayer extends StatelessWidget {
                     ),
                   ),
                 )
-              : AspectRatio(
-                  aspectRatio: mpProvider.videoAspectRatio ?? 1,
-                  child: Video(
-                    player: mpProvider.videoPlayerController!,
+              : Expanded(
+                  child: AspectRatio(
+                    aspectRatio: mpProvider.videoAspectRatio ?? 1,
+                    child: Video(
+                      player: mpProvider.videoPlayerController!,
+                    ),
                   ),
                 ),
         ],

@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
 
+import 'package:dart_vlc/dart_vlc.dart';
 import 'package:windows_app/constants/colors.dart';
+import 'package:windows_app/global/widgets/h_space.dart';
 import 'package:windows_app/global/widgets/screens_wrapper.dart';
 import 'package:flutter/material.dart';
 
@@ -13,11 +15,46 @@ class TestScreen extends StatefulWidget {
 }
 
 class _TestScreenState extends State<TestScreen> {
+  Player player = Player(id: 100);
   @override
   Widget build(BuildContext context) {
     return ScreensWrapper(
       backgroundColor: kBackgroundColor,
-      child: Container(),
+      child: Column(
+        children: [
+          Expanded(
+            child: Video(
+              player: player,
+              showControls: true,
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              ElevatedButton(
+                onPressed: () {
+                  String filePath =
+                      'D:/Media/سعيد الكملي/لامية ابن الوردي - إلقاء أسامة الواعظ.mp3';
+                  String url =
+                      'http://192.168.1.39:49359/streamAudio/${Uri.encodeComponent(filePath)}';
+                  print(url);
+                  player.open(
+                    Media.network(url),
+                  );
+                },
+                child: Text('Play'),
+              ),
+              HSpace(),
+              ElevatedButton(
+                onPressed: () {
+                  player.stop();
+                },
+                child: Text('Stop'),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }

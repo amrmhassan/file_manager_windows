@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:dart_vlc/dart_vlc.dart';
+import 'package:windows_app/constants/models_constants.dart';
 import 'package:windows_app/constants/server_constants.dart';
 import 'package:flutter/material.dart';
 import 'package:volume_controller/volume_controller.dart' as volume_controllers;
@@ -66,10 +67,9 @@ class MediaPlayerProvider extends ChangeNotifier {
         await playbackStreamSub?.cancel();
       }
       if (network) {
+        String url = '$path/${Uri.encodeComponent(fileRemotePath!)}';
         _audioPlayer.open(
-          Media.network(path, extras: {
-            filePathHeaderKey: Uri.encodeComponent(fileRemotePath!),
-          }),
+          Media.network(url),
         );
       } else {
         _audioPlayer.open(Media.file(File(path)), autoStart: true);
@@ -190,9 +190,8 @@ class MediaPlayerProvider extends ChangeNotifier {
 
     videoPlayerController = Player(id: 2000);
     if (network) {
-      videoPlayerController?.open(Media.network(path, extras: {
-        filePathHeaderKey: Uri.encodeComponent(fileRemotePath!),
-      }));
+      String url = '$path/${Uri.encodeComponent(fileRemotePath!)}';
+      videoPlayerController?.open(Media.network(url));
     } else {
       videoPlayerController?.open(Media.file(File(path)));
     }

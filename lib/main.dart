@@ -92,6 +92,10 @@ import 'package:provider/provider.dart';
 //! add hide icon on video player
 //########################3
 
+//! https://pub.dev/packages/window_manager/install
+
+// use the previous package to set full window for video player
+
 bool firstTimeRunApp = false;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -101,7 +105,7 @@ void main() async {
     firstTimeRunApp = await SharedPrefHelper.firstTimeRunApp();
     await setThemeVariables();
     await initWindowSize();
-    DartVLC.initialize();
+    await DartVLC.initialize();
   } catch (e) {
     printOnDebug('Error with first time app in main() or theme variables');
   }
@@ -119,12 +123,12 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  @override
-  void initState() {
-    Player(id: 1000).stop();
-    Player(id: 2000).stop();
-    super.initState();
-  }
+  // @override
+  // void initState() {
+  //   Player(id: 1000).stop();
+  //   Player(id: 2000).stop();
+  //   super.initState();
+  // }
 
   @override
   Widget build(BuildContext context) {
