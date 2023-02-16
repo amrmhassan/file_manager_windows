@@ -9,16 +9,12 @@ import 'package:windows_app/global/modals/double_buttons_modal.dart';
 import 'package:windows_app/global/modals/details_modal/details_modal.dart';
 import 'package:windows_app/global/modals/entity_options_modal.dart';
 import 'package:windows_app/global/modals/sort_by_modal.dart';
-import 'package:windows_app/global/widgets/modal_wrapper/modal_wrapper.dart';
-import 'package:windows_app/providers/server_provider.dart';
 import 'package:windows_app/providers/util/explorer_provider.dart';
 import 'package:windows_app/providers/files_operations_provider.dart';
-import 'package:windows_app/utils/general_utils.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:path/path.dart' as path_operations;
-import 'package:qr_flutter/qr_flutter.dart';
 
 //?
 Future<bool> showAskForShareSpaceModal(

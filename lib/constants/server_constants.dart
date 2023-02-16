@@ -18,6 +18,9 @@ const String clientAddedEndPoint = '/clientAdded';
 const String clientLeftEndPoint = '/clientLeft';
 const String getPeerImagePathEndPoint = '/getPeerImagePath';
 
+// server checking
+const String serverCheckEndPoint = '/serverCheck';
+
 //? headers keys
 // const String pathHeaderKey = 'pathHeaderKey';
 // const String entityTypeHeaderKey = 'entityTypeHeaderKey';

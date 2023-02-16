@@ -3,9 +3,7 @@
 import 'dart:io';
 
 import 'package:windows_app/constants/colors.dart';
-import 'package:windows_app/constants/sizes.dart';
 import 'package:windows_app/global/widgets/h_line.dart';
-import 'package:windows_app/global/widgets/padding_wrapper.dart';
 import 'package:windows_app/global/widgets/shimmer_wrapper.dart';
 import 'package:windows_app/global/widgets/v_space.dart';
 import 'package:windows_app/providers/util/analyzer_provider.dart';
@@ -14,11 +12,9 @@ import 'package:windows_app/screens/analyzer_screen/widgets/analyzer_options_ite
 import 'package:windows_app/screens/items_viewer_screen/items_viewer_screen.dart';
 import 'package:windows_app/screens/listy_screen/listy_screen.dart';
 import 'package:windows_app/screens/recent_items_viewer_screen/recent_items_viewer_screen.dart';
-import 'package:windows_app/screens/recent_screen/widget/recent_item_type.dart';
 import 'package:windows_app/screens/recent_screen/widget/storage_segments.dart';
 import 'package:windows_app/screens/share_screen/share_screen.dart';
 import 'package:windows_app/screens/storage_cleaner_screen/storage_cleaner_screen.dart';
-import 'package:windows_app/screens/whats_app_screen/whats_app_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

@@ -35,7 +35,14 @@ Future<Iterable<String>?> getPossibleIpAddress([bool wifi = true]) async {
     var interfaces =
         await NetworkInterface.list(type: InternetAddressType.IPv4);
 
-    List<String> wifiString = ['wi-fi', 'local', 'wifi', 'area', 'ether'];
+    List<String> wifiString = [
+      'wi-fi',
+      'local',
+      'wifi',
+      'area',
+      'ether',
+      'wlan',
+    ];
     var wifiInterface = interfaces
         .where((element) => wifiString.any((interfacePossibility) =>
             element.name.toLowerCase().contains(interfacePossibility)))
