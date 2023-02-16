@@ -173,35 +173,35 @@ void sortByModal(BuildContext context) {
   );
 }
 
-Future showQrCodeModal(BuildContext context) async {
-  var serverProvider = Provider.of<ServerProvider>(context, listen: false);
+// Future showQrCodeModal(BuildContext context) async {
+//   var serverProvider = Provider.of<ServerProvider>(context, listen: false);
 
-  String connLink = serverProvider.myConnLink!;
+//   String connLink = serverProvider.myConnLink!;
 
-  await showModalBottomSheet(
-    backgroundColor: Colors.transparent,
-    context: context,
-    builder: (ctx) => ModalWrapper(
-      color: kBackgroundColor,
-      showTopLine: false,
-      child: GestureDetector(
-        onTap: () {
-          Navigator.pop(context);
-          copyToClipboard(context, connLink);
-        },
-        child: SizedBox(
-          child: Column(
-            children: [
-              QrImage(
-                backgroundColor: Colors.white,
-                data: connLink,
-                size: 150,
-              ),
-              Text(connLink),
-            ],
-          ),
-        ),
-      ),
-    ),
-  );
-}
+//   await showModalBottomSheet(
+//     backgroundColor: Colors.transparent,
+//     context: context,
+//     builder: (ctx) => ModalWrapper(
+//       color: kBackgroundColor,
+//       showTopLine: false,
+//       child: GestureDetector(
+//         onTap: () {
+//           Navigator.pop(context);
+//           copyToClipboard(context, connLink);
+//         },
+//         child: SizedBox(
+//           child: Column(
+//             children: [
+//               QrImage(
+//                 backgroundColor: Colors.white,
+//                 data: connLink,
+//                 size: 150,
+//               ),
+//               Text(connLink),
+//             ],
+//           ),
+//         ),
+//       ),
+//     ),
+//   );
+// }

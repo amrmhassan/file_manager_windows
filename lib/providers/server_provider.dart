@@ -217,7 +217,9 @@ class ServerProvider extends ChangeNotifier {
       myPort = httpServer!.port;
       myType = memberType;
       myIp = myWifiIp;
-      myConnLink = 'http://$myWifiIp:$myPort';
+      var myPossibleIPs = (await getPossibleIpAddress())!;
+
+      myConnLink = connLinkQrFromIterable(myPossibleIPs, myPort);
 
       PeerModel meHost = PeerModel(
         deviceID: shareProvider.myDeviceId,
