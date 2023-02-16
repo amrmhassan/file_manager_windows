@@ -1,0 +1,149 @@
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously
+
+import 'dart:io';
+
+import 'package:windows_app/constants/colors.dart';
+import 'package:windows_app/constants/global_constants.dart';
+import 'package:windows_app/constants/sizes.dart';
+import 'package:windows_app/global/custom_app_drawer/widgets/app_drawer_item.dart';
+import 'package:windows_app/global/custom_app_drawer/widgets/storage_analyzer_button.dart';
+import 'package:windows_app/global/widgets/v_space.dart';
+import 'package:windows_app/helpers/hive/hive_collections.dart';
+import 'package:windows_app/helpers/hive/hive_helper.dart';
+
+import 'package:windows_app/helpers/responsive.dart';
+import 'package:windows_app/helpers/shared_pref_helper.dart';
+import 'package:windows_app/providers/util/explorer_provider.dart';
+import 'package:windows_app/providers/files_operations_provider.dart';
+import 'package:windows_app/screens/about_us_screen/about_us_screen.dart';
+import 'package:windows_app/screens/scan_qr_code_screen/scan_qr_code_screen.dart';
+import 'package:windows_app/screens/settings_screen/settings_screen.dart';
+import 'package:windows_app/utils/general_utils.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:provider/provider.dart';
+
+class CustomAppDrawer extends StatelessWidget {
+  const CustomAppDrawer({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      color: kBackgroundColor,
+      child: Container(
+        color: kBackgroundColor,
+        width: Responsive.getWidthPercentage(context, .75),
+        height: double.infinity,
+        child: Column(
+          children: [
+            VSpace(factor: 4),
+            Image.asset(
+              'assets/icons/logo.png',
+              width: largeIconSize * 3,
+            ),
+            VSpace(factor: 2),
+            // LightThemeCheckBox(),
+
+            AppDrawerItem(
+              iconPath: 'qr-code',
+              title: 'QR Scanner',
+              onTap: () async {
+                Navigator.pop(context);
+                Navigator.pushNamed(
+                  context,
+                  ScanQRCodeScreen.routeName,
+                  arguments: true,
+                );
+              },
+              onlyDebug: true,
+            ),
+            StorageAnalyzerButton(),
+            AppDrawerItem(
+              iconPath: 'settings',
+              title: 'Settings',
+              onTap: () async {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, SettingsScreen.routeName);
+              },
+              onlyDebug: true,
+            ),
+            AppDrawerItem(
+              iconPath: 'info',
+              title: 'About us',
+              onTap: () async {
+                Navigator.pop(context);
+                Navigator.pushNamed(context, AboutUsScreen.routeName);
+              },
+              onlyDebug: true,
+            ),
+            if (allowDebuggingDrawerElements && kDebugMode)
+              Column(
+                children: [
+                  AppDrawerItem(
+                    title: 'Clear Temp DB & Keys',
+                    onTap: () async {
+                      Navigator.pop(context);
+                      await tempCollection.deleteCollection();
+                      await SharedPrefHelper.removeAllSavedKeys();
+                      showSnackBar(context: context, message: 'Deleted');
+                    },
+                    onlyDebug: true,
+                  ),
+                  AppDrawerItem(
+                    title: 'Clear Persist DB',
+                    onTap: () async {
+                      await persistentCollection.deleteCollection();
+                      showSnackBar(context: context, message: 'Deleted');
+                      Navigator.pop(context);
+                    },
+                    onlyDebug: true,
+                  ),
+                  AppDrawerItem(
+                    title: 'Clear Devices db',
+                    onTap: () async {
+                      (await HiveBox.allowedDevices).deleteFromDisk();
+                      (await HiveBox.blockedDevices).deleteFromDisk();
+                      showSnackBar(context: context, message: 'Deleted');
+                      Navigator.pop(context);
+                    },
+                    onlyDebug: true,
+                  ),
+                  AppDrawerItem(
+                    title: 'App Data Explorer',
+                    onTap: () async {
+                      Directory tempDir = await getTemporaryDirectory();
+                      tempDir = tempDir.parent;
+                      //
+                      var expProvider =
+                          Provider.of<ExplorerProvider>(context, listen: false);
+                      expProvider.setActiveDir(
+                        path: tempDir.path,
+                        filesOperationsProvider:
+                            Provider.of<FilesOperationsProvider>(
+                          context,
+                          listen: false,
+                        ),
+                      );
+                      Navigator.pop(context);
+                    },
+                    onlyDebug: true,
+                  ),
+                ],
+              ),
+            // AppDrawerItem(
+            //   title: 'Settings',
+            //   onTap: () async {
+            //     showSnackBar(context: context, message: 'Soon');
+            //     Navigator.pop(context);
+            //   },
+            //   onlyDebug: true,
+            // ),
+          ],
+        ),
+      ),
+    );
+  }
+}

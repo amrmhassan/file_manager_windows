@@ -1,0 +1,172 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'package:windows_app/constants/styles.dart';
+import 'package:windows_app/global/widgets/button_wrapper.dart';
+import 'package:windows_app/models/share_space_item_model.dart';
+import 'package:windows_app/models/storage_item_model.dart';
+import 'package:windows_app/models/types.dart';
+import 'package:windows_app/providers/util/explorer_provider.dart';
+import 'package:windows_app/providers/files_operations_provider.dart';
+import 'package:windows_app/screens/explorer_screen/widgets/animation_wrapper.dart';
+import 'package:windows_app/screens/explorer_screen/widgets/child_file_item.dart';
+import 'package:windows_app/screens/explorer_screen/widgets/child_item_directory.dart';
+import 'package:windows_app/utils/files_operations_utils/files_utils.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_animator/flutter_animator.dart';
+import 'package:path/path.dart' as path_operations;
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+class StorageItem extends StatefulWidget {
+  final StorageItemModel? storageItemModel;
+  final Function(String path) onDirTapped;
+  final bool sizesExplorer;
+  final int parentSize;
+  final bool allowSelect;
+  final bool allowShowingFavIcon;
+  final bool allowClick;
+  final ShareSpaceItemModel? shareSpaceItemModel;
+  final Function(String path)? onFileTapped;
+  final bool network;
+  final String? viewedFilePath;
+
+  const StorageItem({
+    super.key,
+    this.storageItemModel,
+    required this.onDirTapped,
+    required this.sizesExplorer,
+    required this.parentSize,
+    this.allowClick = true,
+    this.allowSelect = true,
+    this.allowShowingFavIcon = false,
+    this.shareSpaceItemModel,
+    this.onFileTapped,
+    this.network = false,
+    this.viewedFilePath,
+  });
+
+  @override
+  State<StorageItem> createState() => _StorageItemState();
+}
+
+class _StorageItemState extends State<StorageItem> {
+  GlobalKey globalKey = GlobalKey();
+  bool hint = false;
+  double? height;
+
+  bool isSelected(BuildContext context) {
+    var foProvider =
+        Provider.of<FilesOperationsProvider>(context, listen: false);
+    return foProvider.isSelected(path);
+  }
+
+  String get path =>
+      widget.storageItemModel?.path ?? widget.shareSpaceItemModel!.path;
+  EntityType get entityType =>
+      widget.storageItemModel?.entityType ??
+      widget.shareSpaceItemModel!.entityType;
+
+  void handleViewedFileHint() {
+    if (widget.viewedFilePath == null) return;
+    if (widget.viewedFilePath == null ||
+        widget.viewedFilePath != widget.storageItemModel?.path) return;
+    SchedulerBinding.instance.addPostFrameCallback((timeStamp) {
+      if (mounted) {
+        setState(() {
+          height = globalKey.currentContext?.size?.height;
+        });
+      }
+    });
+    hint = true;
+  }
+
+  @override
+  void initState() {
+    if (widget.storageItemModel == null && widget.shareSpaceItemModel == null) {
+      throw Exception(
+          'You must provide storageItemModel or shareSpaceItemModel');
+    }
+    super.initState();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    handleViewedFileHint();
+
+    var foProviderFalse =
+        Provider.of<FilesOperationsProvider>(context, listen: false);
+    var foProvider = Provider.of<FilesOperationsProvider>(context);
+
+    return Stack(
+      children: [
+        if (hint)
+          FadeOut(
+            preferences: AnimationPreferences(duration: Duration(seconds: 5)),
+            child: Container(
+              width: double.infinity,
+              height: height,
+              color: Colors.white.withOpacity(.2),
+            ),
+          ),
+        //? i added this null widget just to update this UI when the selected items changes(don't remove it)
+        SizedBox(
+          width: 0,
+          height: 0,
+          child: Text(
+            foProvider.selectedItems.length.toString(),
+            style: h4TextStyleInactive,
+          ),
+        ),
+        AnimationWrapper(
+          child: ButtonWrapper(
+            key: globalKey,
+            onTap: widget.allowClick
+                ? () async {
+                    if (entityType == EntityType.folder) {
+                      //* here open the folder
+                      widget.onDirTapped(path);
+                    } else {
+                      if (widget.onFileTapped == null) {
+                        openFile(path, context);
+                      } else {
+                        widget.onFileTapped!(path);
+                      }
+                    }
+                  }
+                : null,
+            onLongPress: widget.allowSelect
+                ? () {
+                    var expProvider =
+                        Provider.of<ExplorerProvider>(context, listen: false);
+
+                    foProviderFalse.toggleFromSelectedItems(
+                        widget.storageItemModel!, expProvider);
+                  }
+                : null,
+            borderRadius: 0,
+            child: entityType == EntityType.folder
+                ? ChildDirectoryItem(
+                    fileName: path_operations.basename(path),
+                    storageItemModel: widget.storageItemModel,
+                    parentSize: widget.parentSize,
+                    sizesExplorer: widget.sizesExplorer,
+                    isSelected: isSelected(context),
+                    allowShowingFavIcon: widget.allowShowingFavIcon,
+                    allowSelect: widget.allowSelect,
+                    shareSpaceItemModel: widget.shareSpaceItemModel,
+                  )
+                : ChildFileItem(
+                    storageItemModel: widget.storageItemModel,
+                    parentSize: widget.parentSize,
+                    sizesExplorer: widget.sizesExplorer,
+                    isSelected: isSelected(context),
+                    allowSelect: widget.allowSelect,
+                    shareSpaceItemModel: widget.shareSpaceItemModel,
+                    network: widget.network,
+                  ),
+          ),
+        ),
+      ],
+    );
+  }
+}

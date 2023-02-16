@@ -1,0 +1,234 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
+
+import 'package:windows_app/constants/colors.dart';
+import 'package:windows_app/constants/server_constants.dart';
+import 'package:windows_app/constants/sizes.dart';
+import 'package:windows_app/constants/styles.dart';
+import 'package:windows_app/global/widgets/button_wrapper.dart';
+import 'package:windows_app/global/widgets/custom_app_bar/custom_app_bar.dart';
+import 'package:windows_app/global/widgets/modal_wrapper/modal_wrapper.dart';
+import 'package:windows_app/global/widgets/padding_wrapper.dart';
+import 'package:windows_app/global/widgets/screens_wrapper.dart';
+import 'package:windows_app/global/widgets/v_space.dart';
+import 'package:windows_app/providers/server_provider.dart';
+import 'package:windows_app/utils/general_utils.dart';
+import 'package:windows_app/utils/providers_calls_utils.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:qr_flutter/qr_flutter.dart';
+
+class QrCodeViewerScreen extends StatelessWidget {
+  static const String routeName = '/QrCodeViewerScreen';
+  const QrCodeViewerScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    var serverProvider = Provider.of<ServerProvider>(context);
+    String? quickSendLink =
+        ModalRoute.of(context)?.settings.arguments as String?;
+
+    return ScreensWrapper(
+      backgroundColor: kBackgroundColor,
+      child: Column(
+        children: [
+          CustomAppBar(
+            title: Text(
+              'No Data Needed',
+              style: h2TextStyle.copyWith(
+                color: kActiveTextColor,
+              ),
+            ),
+            rightIcon: Row(
+              children: [
+                ButtonWrapper(
+                  padding: EdgeInsets.all(largePadding),
+                  borderRadius: 0,
+                  onTap: () {
+                    // showModalBottomSheet(
+                    //   backgroundColor: Colors.transparent,
+                    //   context: context,
+                    //   builder: (context) => ModalWrapper(
+                    //     color: kCardBackgroundColor,
+                    //     showTopLine: false,
+                    //     child: Text(
+                    //       'Connections guides will be here',
+                    //     ),
+                    //   ),
+                    // );
+                    Navigator.pop(context);
+                  },
+                  // Image.asset(
+                  //   'assets/icons/info.png',
+                  //   width: mediumIconSize,
+                  //   color: Colors.white,
+                  // )
+                  child: Icon(
+                    Icons.arrow_forward,
+                    color: kMainIconColor,
+                    size: mediumIconSize,
+                  ),
+                ),
+                SizedBox(width: kHPad / 2),
+              ],
+            ),
+            leftIcon: Row(
+              children: [
+                SizedBox(width: kHPad / 2),
+                ButtonWrapper(
+                  padding: EdgeInsets.all(largePadding),
+                  borderRadius: 0,
+                  onTap: () {
+                    showModalBottomSheet(
+                      backgroundColor: Colors.transparent,
+                      context: context,
+                      builder: (context) => ModalWrapper(
+                        color: kCardBackgroundColor,
+                        showTopLine: false,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              '1- Host Device Can connect over wifi or hotspot',
+                            ),
+                            Text(
+                              '2- Joining Devices must connect over wifi',
+                            ),
+                            Text(
+                              '3- Open hotspot from one device, it will be host',
+                            ),
+                            Text(
+                              '4- Connect others to the hotspot then scan QR',
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                  child: Image.asset(
+                    'assets/icons/info.png',
+                    width: mediumIconSize,
+                    color: Colors.white,
+                  ),
+                ),
+              ],
+            ),
+          ),
+          Expanded(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text('You can go back after scanning'),
+                VSpace(),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.pop(context);
+                    copyToClipboard(context, serverProvider.myConnLink!);
+                  },
+                  child: Container(
+                    padding: EdgeInsets.symmetric(horizontal: kHPad),
+                    child: Column(
+                      children: [
+                        Container(
+                          constraints: BoxConstraints(
+                            maxWidth: 250,
+                            maxHeight: 250,
+                            minHeight: 100,
+                            minWidth: 100,
+                          ),
+                          child: QrImage(
+                            backgroundColor: Colors.white,
+                            data: quickSendLink ??
+                                '${serverProvider.myConnLink!}$dummyEndPoint',
+                          ),
+                        ),
+                        SelectableText(
+                          quickSendLink ?? serverProvider.myConnLink!,
+                          style: h3InactiveTextStyle,
+                        ),
+                        VSpace(),
+                        if (quickSendLink != null)
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              ButtonWrapper(
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: kHPad,
+                                  vertical: kVPad / 2,
+                                ),
+                                onTap: () async {
+                                  await quickSPF(context).closeSend();
+                                  Navigator.pop(context);
+                                },
+                                backgroundColor: kDangerColor,
+                                child: Text(
+                                  'Close Send',
+                                  style: h4TextStyle,
+                                ),
+                              ),
+                            ],
+                          ),
+                      ],
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ),
+          PaddingWrapper(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(width: double.infinity),
+                Text('Guides:'),
+                PaddingWrapper(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        serverProvider.hostWithWifi
+                            ? '1- Connect with others on the same wifi'
+                            : '1- Open your hotspot',
+                        style: h4TextStyleInactive,
+                      ),
+                      if (!serverProvider.hostWithWifi)
+                        Text(
+                          '2- Let other device connect to your HotSpot',
+                          style: h4TextStyleInactive,
+                        ),
+                      Text(
+                        '${serverProvider.hostWithWifi ? '2' : '3'}- Others click join then scan QR',
+                        style: h4TextStyleInactive,
+                      ),
+                      VSpace(),
+                    ],
+                  ),
+                ),
+                // Text('Web Share:'),
+                // PaddingWrapper(
+                //   child: Column(
+                //     crossAxisAlignment: CrossAxisAlignment.start,
+                //     children: [
+                //       Text(
+                //         '1- Copy the above link or scan the Qr Code',
+                //         style: h4TextStyleInactive,
+                //       ),
+                //       Text(
+                //         '2- Paste it into the other device browser',
+                //         style: h4TextStyleInactive,
+                //       ),
+                //       Text(
+                //         '3- Let the magic happen',
+                //         style: h4TextStyleInactive,
+                //       ),
+                //       VSpace(),
+                //     ],
+                //   ),
+                // ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

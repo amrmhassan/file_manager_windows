@@ -1,0 +1,54 @@
+// ignore_for_file: prefer_const_constructors
+
+import 'package:windows_app/constants/sizes.dart';
+import 'package:windows_app/constants/styles.dart';
+import 'package:windows_app/global/widgets/button_wrapper.dart';
+import 'package:flutter/material.dart';
+
+class RecentItemType extends StatelessWidget {
+  final String iconName;
+  final VoidCallback onTap;
+  final String title;
+  final Color color;
+
+  const RecentItemType({
+    Key? key,
+    required this.iconName,
+    required this.onTap,
+    required this.title,
+    required this.color,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ButtonWrapper(
+      alignment: Alignment.center,
+      width: 80,
+
+      // height: 80,
+      borderRadius: 0,
+      onTap: onTap,
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            padding: EdgeInsets.all(largePadding * 1.3),
+            decoration: BoxDecoration(
+              color: color,
+              borderRadius: BorderRadius.circular(500),
+            ),
+            child: Image.asset(
+              'assets/icons/recent/$iconName.png',
+              width: largeIconSize / 1.5,
+              color: Colors.white,
+            ),
+          ),
+          Text(
+            title,
+            style: h4TextStyleInactive,
+          ),
+        ],
+      ),
+    );
+  }
+}
