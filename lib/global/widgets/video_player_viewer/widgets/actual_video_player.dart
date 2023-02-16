@@ -1,3 +1,4 @@
+import 'package:dart_vlc/dart_vlc.dart';
 import 'package:windows_app/providers/media_player_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
@@ -24,15 +25,15 @@ class ActualVideoPlayer extends StatelessWidget {
               ? Expanded(
                   child: AspectRatio(
                     aspectRatio: mpProvider.videoAspectRatio ?? 1,
-                    child: VideoPlayer(
-                      mpProvider.videoPlayerController!,
+                    child: Video(
+                      player: mpProvider.videoPlayerController!,
                     ),
                   ),
                 )
               : AspectRatio(
                   aspectRatio: mpProvider.videoAspectRatio ?? 1,
-                  child: VideoPlayer(
-                    mpProvider.videoPlayerController!,
+                  child: Video(
+                    player: mpProvider.videoPlayerController!,
                   ),
                 ),
         ],

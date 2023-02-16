@@ -3,7 +3,6 @@ import 'dart:io';
 
 import 'package:dart_vlc/dart_vlc.dart';
 import 'package:windows_app/constants/colors.dart';
-import 'package:windows_app/constants/db_constants.dart';
 import 'package:windows_app/constants/server_constants.dart';
 import 'package:windows_app/global/widgets/custom_slider/sub_range_model.dart';
 import 'package:flutter/material.dart';
@@ -16,12 +15,14 @@ class MediaPlayerProvider extends ChangeNotifier {
   Duration? currentDuration;
 
   bool playerHidden = false;
+
   void togglePlayerHidden() {
     playerHidden = !playerHidden;
     notifyListeners();
   }
 
   StreamSubscription? durationStreamSub;
+  StreamSubscription? playbackStreamSub;
 
   //? check playing
   bool audioPlaying = false;
@@ -62,7 +63,10 @@ class MediaPlayerProvider extends ChangeNotifier {
   ]) async {
     try {
       if (durationStreamSub != null) {
-        durationStreamSub?.cancel();
+        await durationStreamSub?.cancel();
+      }
+      if (playbackStreamSub != null) {
+        await playbackStreamSub?.cancel();
       }
       if (network) {
         _audioPlayer.open(
@@ -77,18 +81,27 @@ class MediaPlayerProvider extends ChangeNotifier {
       audioPlaying = true;
       notifyListeners();
 
-      durationStreamSub = _audioPlayer.positionStream.listen((event) {
-        fullSongDuration ??= event.duration;
-        currentDuration = event.position;
-        if (currentDuration?.inSeconds == fullSongDuration?.inSeconds) {
+      playbackStreamSub = _audioPlayer.playbackStream.listen((event) {
+        if (_audioPlayer.playback.isCompleted) {
           audioPlaying = false;
           fullSongDuration = null;
           playingAudioFilePath = null;
           currentDuration = null;
+          playerHidden = false;
+          notifyListeners();
+          playbackStreamSub?.cancel();
+          durationStreamSub?.cancel();
         }
+      });
+      durationStreamSub = _audioPlayer.positionStream.listen((event) {
+        if (fullSongDuration == null ||
+            fullSongDuration?.inSeconds != event.duration?.inSeconds) {
+          fullSongDuration = event.duration;
+        }
+        currentDuration = event.position;
+
         notifyListeners();
       });
-      _audioPlayer.play();
     } catch (e) {
       audioPlaying = false;
       fullSongDuration = null;
@@ -114,7 +127,8 @@ class MediaPlayerProvider extends ChangeNotifier {
   }
 
   //# video controllers
-  VideoPlayerController? videoPlayerController;
+  // VideoPlayerController? videoPlayerController;
+  Player? videoPlayerController;
   double? videoHeight;
   double? videoWidth;
   double? videoAspectRatio;
@@ -125,14 +139,14 @@ class MediaPlayerProvider extends ChangeNotifier {
   Duration videoPosition = Duration.zero;
   bool videoHidden = false;
   bool networkVideo = false;
-  List<DurationRange> _bufferedParts = [];
+  final List<DurationRange> _bufferedParts = [];
   bool isBuffering = false;
   double videoSpeed = 1;
 
   void setVideoSpeed(double s) {
     videoSpeed = s;
     notifyListeners();
-    videoPlayerController?.setPlaybackSpeed(s);
+    videoPlayerController?.setRate(s);
   }
 
   //? to return the ready buffered parts to be viewed into the video player slider
@@ -172,37 +186,57 @@ class MediaPlayerProvider extends ChangeNotifier {
     String? fileRemotePath,
   ]) {
     closeVideo();
-    videoPlayerController = VideoPlayerController.network(path,
-        httpHeaders: network
-            ? {
-                filePathHeaderKey: Uri.encodeComponent(fileRemotePath!),
-              }
-            : {},
-        videoPlayerOptions: VideoPlayerOptions(
-          allowBackgroundPlayback: true,
-        ))
-      ..initialize().then((value) {
-        videoHeight = videoPlayerController?.value.size.height;
-        videoWidth = videoPlayerController?.value.size.width;
-        videoAspectRatio = videoPlayerController?.value.aspectRatio;
-        videoDuration = videoPlayerController?.value.duration;
-        networkVideo = network;
-
-        notifyListeners();
-      })
-      ..play()
-      ..addListener(() async {
-        videoPosition = videoPlayerController?.value.position ?? Duration.zero;
-        _bufferedParts = videoPlayerController?.value.buffered ?? [];
-        isBuffering = videoPlayerController?.value.isBuffering ?? false;
-
-        notifyListeners();
-        if (isVideoPlaying &&
-            !(videoPlayerController?.value.isPlaying ?? false)) {
-          //* this means it stopped playing cause it's duration finished
+    videoPlayerController = Player(id: 2000);
+    if (network) {
+      videoPlayerController?.open(Media.network(path, extras: {
+        filePathHeaderKey: Uri.encodeComponent(fileRemotePath!),
+      }));
+    } else {
+      videoPlayerController?.open(Media.file(File(path)));
+    }
+    networkVideo = network;
+    videoPlayerController?.playbackStream.listen(
+      (event) {
+        if (event.isCompleted) {
           closeVideo();
         }
-      });
+      },
+    );
+
+    notifyListeners();
+    videoPlayerController?.positionStream.listen((event) {
+      if (videoDuration == null) {
+        videoDuration = event.duration;
+        notifyListeners();
+      }
+      videoPosition = event.position ?? Duration.zero;
+      // _bufferedParts = videoPlayerController.
+
+      notifyListeners();
+    });
+
+    // ..initialize().then((value) {
+    //   videoHeight = videoPlayerController?.value.size.height;
+    //   videoWidth = videoPlayerController?.value.size.width;
+    //   videoAspectRatio = videoPlayerController?.value.aspectRatio;
+    //   videoDuration = videoPlayerController?.value.duration;
+    //   networkVideo = network;
+
+    //   notifyListeners();
+    // })
+    // ..play()
+    // ..addListener(() async {
+    //   videoPosition = videoPlayerController?.value.position ?? Duration.zero;
+    //   _bufferedParts = videoPlayerController?.value.buffered ?? [];
+    //   isBuffering = videoPlayerController?.value.isBuffering ?? false;
+
+    //   notifyListeners();
+    //   if (isVideoPlaying &&
+    //       !(videoPlayerController?.value.isPlaying ?? false)) {
+    //     //* this means it stopped playing cause it's duration finished
+    //     closeVideo();
+    //   }
+    // });
     isVideoPlaying = true;
     videoHidden = false;
 
@@ -211,7 +245,7 @@ class MediaPlayerProvider extends ChangeNotifier {
 
   //? close video
   void closeVideo() {
-    videoPlayerController?.removeListener(() {});
+    videoPlayerController?.stop();
     videoPlayerController?.dispose();
     videoPlayerController = null;
     isVideoPlaying = false;
@@ -237,21 +271,21 @@ class MediaPlayerProvider extends ChangeNotifier {
   }
 
   //? add to current position
-  void addToPosition(double p) async {
-    Duration? currentPosition = await videoPlayerController?.position;
-    if (currentPosition == null) return;
-    videoPosition = Duration(
-      microseconds: currentPosition.inMicroseconds,
-      milliseconds: (p * 1000).toInt(),
-    );
-    notifyListeners();
-    await videoPlayerController?.seekTo(videoPosition);
-  }
+  // void addToPosition(double p) async {
+  //   Duration? currentPosition = await videoPlayerController?.position;
+  //   if (currentPosition == null) return;
+  //   videoPosition = Duration(
+  //     microseconds: currentPosition.inMicroseconds,
+  //     milliseconds: (p * 1000).toInt(),
+  //   );
+  //   notifyListeners();
+  //   await videoPlayerController?.seekTo(videoPosition);
+  // }
 
   Future<void> seekVideo(double p) async {
     videoPosition = Duration(milliseconds: p.toInt());
     notifyListeners();
-    await videoPlayerController?.seekTo(videoPosition);
+    videoPlayerController?.seek(videoPosition);
   }
 
   //? toggle hide video
@@ -298,9 +332,9 @@ class MediaPlayerProvider extends ChangeNotifier {
   bool videoMuted = false;
   Future toggleMuteVideo() async {
     if (videoMuted) {
-      await videoPlayerController?.setVolume(1);
+      videoPlayerController?.setVolume(1);
     } else {
-      await videoPlayerController?.setVolume(0);
+      videoPlayerController?.setVolume(0);
     }
 
     videoMuted = !videoMuted;
@@ -309,14 +343,14 @@ class MediaPlayerProvider extends ChangeNotifier {
 
   //# video fast seeking
   Future videoBackWard10() async {
-    videoPlayerController?.seekTo(
+    videoPlayerController?.seek(
         Duration(milliseconds: videoPosition.inMilliseconds - 10 * 1000));
     Duration newDuration =
         Duration(milliseconds: videoPosition.inMilliseconds - 10000);
     if (newDuration.inSeconds < 0) {
-      videoPlayerController?.seekTo(Duration.zero);
+      videoPlayerController?.seek(Duration.zero);
     } else {
-      videoPlayerController?.seekTo(newDuration);
+      videoPlayerController?.seek(newDuration);
     }
   }
 
@@ -325,9 +359,9 @@ class MediaPlayerProvider extends ChangeNotifier {
       milliseconds: videoPosition.inMilliseconds + 10000,
     );
     if (newDuration.inSeconds > videoDuration!.inSeconds) {
-      videoPlayerController?.seekTo(videoDuration!);
+      videoPlayerController?.seek(videoDuration!);
     } else {
-      videoPlayerController?.seekTo(newDuration);
+      videoPlayerController?.seek(newDuration);
     }
   }
 }

@@ -4,6 +4,8 @@ import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/sizes.dart';
 import 'package:windows_app/constants/styles.dart';
 import 'package:windows_app/global/widgets/button_wrapper.dart';
+import 'package:windows_app/global/widgets/custom_slider/custom_circle.dart';
+import 'package:windows_app/global/widgets/custom_slider/custom_slider.dart';
 import 'package:windows_app/global/widgets/h_space.dart';
 import 'package:windows_app/providers/media_player_provider.dart';
 import 'package:windows_app/utils/general_utils.dart';
@@ -54,7 +56,9 @@ class _NormalMediaPlayerState extends State<NormalMediaPlayer> {
                 ),
                 Expanded(
                   child: Slider(
-                    thumbColor: kAudioColor,
+                    // thumbs: [
+                    //   CustomCircle(color: kAudioColor, radius: 8),
+                    // ],
                     activeColor: kAudioColor,
                     inactiveColor: kAudioColor.withOpacity(.4),
                     onChanged: (double value) {

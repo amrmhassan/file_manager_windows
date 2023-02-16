@@ -56,7 +56,6 @@ dependencies:
   draggable_scrollbar: ^0.1.0
   connectivity_plus: ^3.0.2
   mime: ^1.0.4
-  just_audio: ^0.9.31
   web_socket_channel: ^2.3.0
   logger: ^1.1.0
   lottie: ^2.2.0
