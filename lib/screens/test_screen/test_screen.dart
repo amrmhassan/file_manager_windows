@@ -2,9 +2,9 @@
 
 import 'package:dart_vlc/dart_vlc.dart';
 import 'package:windows_app/constants/colors.dart';
-import 'package:windows_app/global/widgets/h_space.dart';
 import 'package:windows_app/global/widgets/screens_wrapper.dart';
 import 'package:flutter/material.dart';
+import 'package:windows_app/utils/providers_calls_utils.dart';
 
 class TestScreen extends StatefulWidget {
   static const String routeName = '/testing-screen';
@@ -18,33 +18,19 @@ class _TestScreenState extends State<TestScreen> {
   Player player = Player(id: 100);
   @override
   Widget build(BuildContext context) {
+    var connectPhoneProvider = connectPP(context);
     return ScreensWrapper(
       backgroundColor: kBackgroundColor,
-      child: Column(
-        children: [
-          Expanded(
-            child: Video(
-              player: player,
-              showControls: true,
-            ),
-          ),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              ElevatedButton(
-                onPressed: () {},
-                child: Text('Play'),
-              ),
-              HSpace(),
-              ElevatedButton(
-                onPressed: () {
-                  player.stop();
-                },
-                child: Text('Stop'),
-              ),
-            ],
-          ),
-        ],
+      child: Center(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+                're data is ${connectPhoneProvider.remoteIP}:${connectPhoneProvider.remotePort}'),
+            Text(
+                'my data is ${connectPhoneProvider.myIp}:${connectPhoneProvider.myPort}'),
+          ],
+        ),
       ),
     );
   }

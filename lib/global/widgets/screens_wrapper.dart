@@ -22,8 +22,6 @@ class ScreensWrapper extends StatefulWidget {
   final Widget? floatingActionButton;
   final FloatingActionButtonLocation? floatingActionButtonLocation;
   final Color? backgroundColor;
-  // final Widget? drawer;
-  // final GlobalKey<ScaffoldState>? scfKey;
 
   //? drop your scaffold props here
   const ScreensWrapper({
@@ -32,8 +30,6 @@ class ScreensWrapper extends StatefulWidget {
     this.floatingActionButton,
     this.backgroundColor,
     this.floatingActionButtonLocation,
-    // this.drawer,
-    // this.scfKey,
   }) : super(key: key);
 
   @override
@@ -49,12 +45,11 @@ class _ScreensWrapperState extends State<ScreensWrapper> {
     var mpProvider = mpP(context);
     return Scaffold(
       key: scfKey,
-      drawer: CustomAppDrawer(),
       backgroundColor: widget.backgroundColor,
       floatingActionButtonLocation: widget.floatingActionButtonLocation,
       floatingActionButton: widget.floatingActionButton,
       resizeToAvoidBottomInset: false,
-      //! i make gesture detector to be inkwell to accept clicks even if the area is blank
+      drawer: CustomAppDrawer(),
       body: Column(
         children: [
           WindowsAppBar(buttonKey: buttonKey, scfKey: scfKey),

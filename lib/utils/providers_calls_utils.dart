@@ -1,3 +1,4 @@
+import 'package:windows_app/providers/connect_phone_provider.dart';
 import 'package:windows_app/providers/download_provider.dart';
 import 'package:windows_app/providers/files_operations_provider.dart';
 import 'package:windows_app/providers/media_player_provider.dart';
@@ -90,4 +91,13 @@ AnalyzerProvider analyzerPF(BuildContext context) {
 
 AnalyzerProvider analyzerP(BuildContext context) {
   return Provider.of<AnalyzerProvider>(context);
+}
+
+//? connect phone provider
+ConnectPhoneProvider connectPPF(BuildContext context) {
+  return Provider.of<ConnectPhoneProvider>(context, listen: false);
+}
+
+ConnectPhoneProvider connectPP(BuildContext context) {
+  return Provider.of<ConnectPhoneProvider>(context);
 }

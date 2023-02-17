@@ -1,14 +1,19 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:windows_app/constants/models_constants.dart';
 import 'package:windows_app/constants/server_constants.dart';
+import 'package:windows_app/constants/widget_keys.dart';
 import 'package:windows_app/models/peer_model.dart';
 import 'package:windows_app/models/share_space_item_model.dart';
 import 'package:windows_app/models/types.dart';
+import 'package:windows_app/providers/connect_phone_provider.dart';
 import 'package:windows_app/providers/server_provider.dart';
 import 'package:windows_app/providers/share_provider.dart';
 import 'package:windows_app/providers/shared_items_explorer_provider.dart';
+import 'package:windows_app/screens/home_screen/home_screen.dart';
+import 'package:windows_app/screens/test_screen/test_screen.dart';
 import 'package:windows_app/utils/errors_collection/custom_exception.dart';
 import 'package:windows_app/utils/server_utils/encoding_utils.dart';
 import 'package:windows_app/utils/server_utils/server_feedback_utils.dart';
@@ -393,21 +398,25 @@ Future<void> getUserImageHandler(
     ..close();
 }
 
-void serverCheckHandler(HttpRequest request, HttpResponse response) async {
+//# connect to phone handlers
+void serverCheckHandler(
+  HttpRequest request,
+  HttpResponse response,
+  ConnectPhoneProvider connectPPF,
+) async {
   String remoteIp = request.connectionInfo!.remoteAddress.address;
   String myIp = (request.headers.value('host')!).split(':').first;
-  String remoteServerPort = utf8.decode(await request.single);
-
+  int remoteServerPort = int.parse(utf8.decode(await request.single));
+  connectPPF.connected(myIp, remoteIp, remoteServerPort);
 // i know my port, but i don't know which of my ips will work
 // so client will provide my ip for me,
 // and i will get his port from his
 // and i will provide him with his working ip
-
-  print('myIp: $myIp');
-  print('remoteIp: $remoteIp');
-  print('remoteServerPort: $remoteServerPort');
+  Navigator.popUntil(navigatorKey.currentContext!,
+      (route) => route.settings.name == HomeScreen.routeName);
+  Navigator.pushNamed(navigatorKey.currentContext!, TestScreen.routeName);
 
   response
-    ..write('I am here waiting for you, My Dear')
+    ..write(remoteIp)
     ..close();
 }

@@ -135,11 +135,6 @@ CustomRouterSystem addServerRouters(
         response,
         shareProvider,
       ),
-    )
-    ..addHandler(
-      serverCheckEndPoint,
-      HttpMethod.POST,
-      serverCheckHandler,
     );
   return customRouterSystem;
 }

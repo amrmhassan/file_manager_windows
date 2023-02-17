@@ -5,7 +5,6 @@ import 'package:windows_app/constants/sizes.dart';
 import 'package:windows_app/constants/styles.dart';
 import 'package:windows_app/global/widgets/button_wrapper.dart';
 import 'package:windows_app/global/widgets/custom_app_bar/custom_app_bar.dart';
-import 'package:windows_app/global/widgets/modal_wrapper/modal_wrapper.dart';
 import 'package:windows_app/global/widgets/padding_wrapper.dart';
 import 'package:windows_app/global/widgets/screens_wrapper.dart';
 import 'package:windows_app/global/widgets/v_space.dart';
@@ -23,8 +22,16 @@ class QrCodeViewerScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     var serverProvider = Provider.of<ServerProvider>(context);
-    String? quickSendLink =
-        ModalRoute.of(context)?.settings.arguments as String?;
+    var connPhoneProvider = connectPP(context);
+    String? quickSendLink;
+    bool? laptop;
+
+    var receivedData = ModalRoute.of(context)?.settings.arguments;
+    if (receivedData is String) {
+      quickSendLink = receivedData;
+    } else if (receivedData is bool) {
+      laptop = receivedData;
+    }
 
     return ScreensWrapper(
       backgroundColor: kBackgroundColor,
@@ -43,24 +50,8 @@ class QrCodeViewerScreen extends StatelessWidget {
                   padding: EdgeInsets.all(largePadding),
                   borderRadius: 0,
                   onTap: () {
-                    // showModalBottomSheet(
-                    //   backgroundColor: Colors.transparent,
-                    //   context: context,
-                    //   builder: (context) => ModalWrapper(
-                    //     color: kCardBackgroundColor,
-                    //     showTopLine: false,
-                    //     child: Text(
-                    //       'Connections guides will be here',
-                    //     ),
-                    //   ),
-                    // );
                     Navigator.pop(context);
                   },
-                  // Image.asset(
-                  //   'assets/icons/info.png',
-                  //   width: mediumIconSize,
-                  //   color: Colors.white,
-                  // )
                   child: Icon(
                     Icons.arrow_forward,
                     color: kMainIconColor,
@@ -68,47 +59,6 @@ class QrCodeViewerScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(width: kHPad / 2),
-              ],
-            ),
-            leftIcon: Row(
-              children: [
-                SizedBox(width: kHPad / 2),
-                ButtonWrapper(
-                  padding: EdgeInsets.all(largePadding),
-                  borderRadius: 0,
-                  onTap: () {
-                    showModalBottomSheet(
-                      backgroundColor: Colors.transparent,
-                      context: context,
-                      builder: (context) => ModalWrapper(
-                        color: kCardBackgroundColor,
-                        showTopLine: false,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              '1- Host Device Can connect over wifi or hotspot',
-                            ),
-                            Text(
-                              '2- Joining Devices must connect over wifi',
-                            ),
-                            Text(
-                              '3- Open hotspot from one device, it will be host',
-                            ),
-                            Text(
-                              '4- Connect others to the hotspot then scan QR',
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-                  },
-                  child: Image.asset(
-                    'assets/icons/info.png',
-                    width: mediumIconSize,
-                    color: Colors.white,
-                  ),
-                ),
               ],
             ),
           ),
@@ -136,7 +86,9 @@ class QrCodeViewerScreen extends StatelessWidget {
                           ),
                           child: QrImage(
                             backgroundColor: Colors.white,
-                            data: quickSendLink ?? serverProvider.myConnLink!,
+                            data: laptop == true
+                                ? connPhoneProvider.myConnLink!
+                                : (quickSendLink ?? serverProvider.myConnLink!),
                           ),
                         ),
                         // SelectableText(
@@ -144,7 +96,7 @@ class QrCodeViewerScreen extends StatelessWidget {
                         //   style: h3InactiveTextStyle,
                         // ),
                         VSpace(),
-                        if (quickSendLink != null)
+                        if (quickSendLink != null && laptop != true)
                           Row(
                             mainAxisAlignment: MainAxisAlignment.center,
                             children: [
@@ -183,45 +135,25 @@ class QrCodeViewerScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        serverProvider.hostWithWifi
-                            ? '1- Connect with others on the same wifi'
-                            : '1- Open your hotspot',
+                        '1- Connect your devices over the same wifi',
                         style: h4TextStyleInactive,
                       ),
-                      if (!serverProvider.hostWithWifi)
-                        Text(
-                          '2- Let other device connect to your HotSpot',
-                          style: h4TextStyleInactive,
-                        ),
                       Text(
-                        '${serverProvider.hostWithWifi ? '2' : '3'}- Others click join then scan QR',
+                        '2- Or through either devices hotspot',
+                        style: h4TextStyleInactive,
+                      ),
+                      Text(
+                        '3- Scan wih phone from AFM app (Connect Laptop)',
+                        style: h4TextStyleInactive,
+                      ),
+                      Text(
+                        '4- Enjoy',
                         style: h4TextStyleInactive,
                       ),
                       VSpace(),
                     ],
                   ),
                 ),
-                // Text('Web Share:'),
-                // PaddingWrapper(
-                //   child: Column(
-                //     crossAxisAlignment: CrossAxisAlignment.start,
-                //     children: [
-                //       Text(
-                //         '1- Copy the above link or scan the Qr Code',
-                //         style: h4TextStyleInactive,
-                //       ),
-                //       Text(
-                //         '2- Paste it into the other device browser',
-                //         style: h4TextStyleInactive,
-                //       ),
-                //       Text(
-                //         '3- Let the magic happen',
-                //         style: h4TextStyleInactive,
-                //       ),
-                //       VSpace(),
-                //     ],
-                //   ),
-                // ),
               ],
             ),
           ),

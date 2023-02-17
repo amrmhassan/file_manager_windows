@@ -5,6 +5,7 @@ import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/widget_keys.dart';
 import 'package:windows_app/helpers/hive/hive_initiator.dart';
 import 'package:windows_app/helpers/shared_pref_helper.dart';
+import 'package:windows_app/providers/connect_phone_provider.dart';
 import 'package:windows_app/providers/download_provider.dart';
 import 'package:windows_app/providers/quick_send_provider.dart';
 import 'package:windows_app/providers/server_provider.dart';
@@ -149,6 +150,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (ctx) => ShareItemsExplorerProvider()),
         ChangeNotifierProvider(create: (ctx) => DownloadProvider()),
         ChangeNotifierProvider(create: (ctx) => QuickSendProvider()),
+        ChangeNotifierProvider(create: (ctx) => ConnectPhoneProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,
