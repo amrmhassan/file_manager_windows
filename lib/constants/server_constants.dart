@@ -34,6 +34,8 @@ const String reqIntentPathHeaderKey = 'reqIntentPathHeaderKey';
 const String deviceIDHeaderKey = 'deviceIDHeaderKey';
 const String userNameHeaderKey = 'userNameHeaderKey';
 const String serverRefuseReasonHeaderKey = 'serverRefuseReasonHeaderKey';
+const String myConnLinkHeaderKey = 'myConnLinkHeaderKey';
+
 
 // const String peerImageHeaderKey = 'peerImageHeaderKey';
 // const String responseClosedReasonHeaderKey = 'responseClosedReason';

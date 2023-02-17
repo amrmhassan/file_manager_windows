@@ -392,3 +392,22 @@ Future<void> getUserImageHandler(
     ..add(bytes)
     ..close();
 }
+
+void serverCheckHandler(HttpRequest request, HttpResponse response) async {
+  String remoteIp = request.connectionInfo!.remoteAddress.address;
+  String myIp = (request.headers.value('host')!).split(':').first;
+  String remoteServerPort = utf8.decode(await request.single);
+
+// i know my port, but i don't know which of my ips will work
+// so client will provide my ip for me,
+// and i will get his port from his
+// and i will provide him with his working ip
+
+  print('myIp: $myIp');
+  print('remoteIp: $remoteIp');
+  print('remoteServerPort: $remoteServerPort');
+
+  response
+    ..write('I am here waiting for you, My Dear')
+    ..close();
+}
