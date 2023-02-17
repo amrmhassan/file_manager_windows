@@ -10,7 +10,6 @@ import 'package:windows_app/utils/server_utils/connect_to_phone_utils/connect_to
 import 'package:windows_app/utils/server_utils/ip_utils.dart';
 import 'package:windows_app/utils/websocket_utils/custom_server_socket.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:web_socket_channel/web_socket_channel.dart';
 
 //? when adding a new client the client can be added by any of the other clients and the adding client will send a broadcast to all other devices in the network about the new client
 //? for example, adding a new client will be at /addclient and when the client is added in one of the connected devices that device will send a message to every other device in the network with /clientAdded with the new list of the clients in the network
@@ -24,10 +23,14 @@ class ConnectPhoneProvider extends ChangeNotifier {
   String? remoteIP;
   int? remotePort;
   HttpServer? httpServer;
-  late WebSocketSink myClientWsSink;
-  late CustomServerSocket customServerSocket;
+  late ConnectPhoneServerSocket customServerSocket;
 
-  late HttpServer wsServer;
+  HttpServer? wsServer;
+
+  void setMyWSConnLink(String s) {
+    myWSConnLink = s;
+    notifyListeners();
+  }
 
   void connected(String myIp, String remoteIP, int remotePort) {
     _setMyIp(myIp);
@@ -48,20 +51,15 @@ class ConnectPhoneProvider extends ChangeNotifier {
     myIp = ip;
   }
 
-  void setMyWsChannel(WebSocketSink s) {
-    myClientWsSink = s;
-    notifyListeners();
-  }
-
-  void setMyServerSocket(CustomServerSocket s) {
+  void setMyServerSocket(ConnectPhoneServerSocket s) {
     customServerSocket = s;
     notifyListeners();
   }
 
   Future<void> closeWsServer() async {
-    logger.i('Closing ws Server');
-    await customServerSocket.sendCloseMsg();
-    await wsServer.close();
+    if (wsServer == null) return;
+    logger.i('Closing phone ws Server');
+    await wsServer?.close();
   }
 
   Future<void> openServer() async {
@@ -100,6 +98,7 @@ class ConnectPhoneProvider extends ChangeNotifier {
     myPort = 0;
     remotePort = null;
     remoteIP = null;
+    await closeWsServer();
     notifyListeners();
   }
 

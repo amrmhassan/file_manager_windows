@@ -3,9 +3,13 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:flutter/material.dart';
 import 'package:windows_app/constants/global_constants.dart';
+import 'package:windows_app/constants/widget_keys.dart';
+import 'package:windows_app/providers/connect_phone_provider.dart';
 import 'package:windows_app/providers/server_provider.dart';
 import 'package:windows_app/providers/share_provider.dart';
+import 'package:windows_app/screens/test_screen/test_screen.dart';
 import 'package:windows_app/utils/client_utils.dart' as client_utils;
 import 'package:uuid/uuid.dart';
 
@@ -95,5 +99,47 @@ class CustomServerSocket {
 
   void _sendToClient(String msg, String path, WebSocket socket) {
     socket.add('$path[||]$msg');
+  }
+}
+
+//! this is for connection to a phone socket server
+class ConnectPhoneServerSocket {
+  final String myIp;
+  late Stream<WebSocket> websocketServer;
+  List<SocketConnModel> sockets = [];
+  ConnectPhoneServerSocket(
+    this.myIp,
+    ConnectPhoneProvider connectPhoneProvider,
+  ) {
+    _transform(connectPhoneProvider);
+  }
+  Completer<HttpServer> connLinkCompleter = Completer<HttpServer>();
+
+  Future<HttpServer> getWsConnLink() async {
+    return connLinkCompleter.future;
+  }
+
+  Future<void> _transform(ConnectPhoneProvider connectPhoneProvider) async {
+    var server = await HttpServer.bind(InternetAddress.anyIPv4, 0);
+    websocketServer = server.transform(WebSocketTransformer());
+
+    connLinkCompleter.complete(server);
+    logger.w('phone ws server listening at ${server.port}');
+
+    await for (var socket in websocketServer) {
+      logger.i('New socket connected');
+
+      socket.listen(
+        (event) {
+          // here the server(host) will receive joining requests
+        },
+        onDone: () {
+          logger.w('phone disconnected');
+
+          connectPhoneProvider.closeServer();
+          if (navigatorKey.currentContext == null) return;
+        },
+      );
+    }
   }
 }

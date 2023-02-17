@@ -57,8 +57,10 @@ class _RecentScreenState extends State<RecentScreen> {
               AnalyzerOptionsItem(
                 logoName: 'management',
                 onTap: () async {
-                  if (connectPPF(context).httpServer == null) {
-                    await connectPPF(context).openServer();
+                  if (connectPPF(context).remoteIP == null) {
+                    if (connectPPF(context).httpServer == null) {
+                      await connectPPF(context).openServer();
+                    }
                     Navigator.pushNamed(
                       context,
                       QrCodeViewerScreen.routeName,

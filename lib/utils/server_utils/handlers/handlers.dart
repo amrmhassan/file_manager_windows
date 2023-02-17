@@ -15,10 +15,13 @@ import 'package:windows_app/providers/shared_items_explorer_provider.dart';
 import 'package:windows_app/screens/home_screen/home_screen.dart';
 import 'package:windows_app/screens/test_screen/test_screen.dart';
 import 'package:windows_app/utils/errors_collection/custom_exception.dart';
+import 'package:windows_app/utils/providers_calls_utils.dart';
+import 'package:windows_app/utils/server_utils/connection_utils.dart';
 import 'package:windows_app/utils/server_utils/encoding_utils.dart';
 import 'package:windows_app/utils/server_utils/server_feedback_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mime/mime.dart';
+import 'package:windows_app/utils/websocket_utils/custom_server_socket.dart';
 
 void addClientHandler(
   HttpRequest request,
@@ -408,15 +411,26 @@ void serverCheckHandler(
   String myIp = (request.headers.value('host')!).split(':').first;
   int remoteServerPort = int.parse(utf8.decode(await request.single));
   connectPPF.connected(myIp, remoteIp, remoteServerPort);
+
+  //!
+  var customServerSocket = ConnectPhoneServerSocket(myIp, connectPPF);
+  var wsServer = await customServerSocket.getWsConnLink();
+  var myWSConnLink = getConnLink(myIp, wsServer.port, true);
+
+  connectPPF.setMyServerSocket(customServerSocket);
+  connectPPF.setMyWSConnLink(myWSConnLink);
+  //!
 // i know my port, but i don't know which of my ips will work
 // so client will provide my ip for me,
 // and i will get his port from his
 // and i will provide him with his working ip
-  Navigator.popUntil(navigatorKey.currentContext!,
-      (route) => route.settings.name == HomeScreen.routeName);
-  Navigator.pushNamed(navigatorKey.currentContext!, TestScreen.routeName);
 
   response
     ..write(remoteIp)
     ..close();
+
+  if (navigatorKey.currentContext == null) return;
+  Navigator.popUntil(navigatorKey.currentContext!,
+      (route) => route.settings.name == HomeScreen.routeName);
+  Navigator.pushNamed(navigatorKey.currentContext!, TestScreen.routeName);
 }

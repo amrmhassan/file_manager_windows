@@ -19,10 +19,19 @@ CustomRouterSystem addConnectToPhoneServerRouters(
   CustomRouterSystem customRouterSystem = CustomRouterSystem();
 
   //? adding handlers
-  customRouterSystem.addHandler(
-    serverCheckEndPoint,
-    HttpMethod.POST,
-    (request, response) => serverCheckHandler(request, response, connectPPF),
-  );
+  customRouterSystem
+    ..addHandler(
+      serverCheckEndPoint,
+      HttpMethod.POST,
+      (request, response) => serverCheckHandler(request, response, connectPPF),
+    )
+    ..addHandler(
+      phoneWsServerConnLinkEndPoint,
+      HttpMethod.GET,
+      (request, response) {
+        String wsConnLink = connectPPF.myWSConnLink;
+        response.write(wsConnLink);
+      },
+    );
   return customRouterSystem;
 }
