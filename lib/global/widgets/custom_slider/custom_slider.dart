@@ -99,7 +99,7 @@ class _CustomSliderState extends State<CustomSlider>
       double.parse((((dx * range) / size) + widget.min).toStringAsFixed(4));
 
   // this will do the opposite=> to transform the value from the perspective of the user into ours
-  double valueEncode(double v) => (v * width) / range;
+  double valueEncode(double v) => (v * width) / (range);
 
   // when the slider is moved
   void handleValueChanged(Offset localPosition) {
@@ -127,6 +127,8 @@ class _CustomSliderState extends State<CustomSlider>
 
   @override
   Widget build(BuildContext context) {
+    var test = widget;
+    print(widget);
     return FractionallySizedBox(
       widthFactor: widget.widthFactor,
       child: GestureDetector(

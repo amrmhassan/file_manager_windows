@@ -11,6 +11,8 @@ import 'package:windows_app/providers/server_provider.dart';
 import 'package:windows_app/providers/shared_items_explorer_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:windows_app/utils/providers_calls_utils.dart';
+import 'package:windows_app/utils/server_utils/connection_utils.dart';
 
 class MediaPlayerButton extends StatefulWidget {
   final String mediaPath;
@@ -53,26 +55,15 @@ class _MediaPlayerButtonState extends State<MediaPlayerButton> {
                 // here i am playing and i want to pause
                 await mpProviderFalse.pausePlaying();
               } else {
-                var sharedExpProvider = Provider.of<ShareItemsExplorerProvider>(
-                  context,
-                  listen: false,
-                );
                 String? connLink;
-                if (sharedExpProvider.viewedUserSessionId != null &&
-                    widget.network) {
-                  var serverProvider =
-                      Provider.of<ServerProvider>(context, listen: false);
-                  connLink = serverProvider
-                      .peerModelWithSessionID(
-                          sharedExpProvider.viewedUserSessionId!)
-                      .connLink;
+                if (widget.network) {
+                  connLink = getConnLink(connectPPF(context).remoteIP!,
+                      connectPPF(context).remotePort!, streamAudioEndPoint);
                 }
 
                 // here i want to start over
                 await mpProviderFalse.setPlayingFile(
-                  widget.network
-                      ? '$connLink$streamAudioEndPoint'
-                      : widget.mediaPath,
+                  widget.network ? '$connLink' : widget.mediaPath,
                   widget.network,
                   widget.mediaPath,
                 );
@@ -95,24 +86,14 @@ class _MediaPlayerButtonState extends State<MediaPlayerButton> {
             ? ButtonWrapper(
                 onTap: () async {
                   if (widget.network) {
-                    var sharedExpProvider =
-                        Provider.of<ShareItemsExplorerProvider>(
-                      context,
-                      listen: false,
-                    );
                     String? connLink;
-                    if (sharedExpProvider.viewedUserSessionId != null &&
-                        widget.network) {
-                      var serverProvider =
-                          Provider.of<ServerProvider>(context, listen: false);
-                      connLink = serverProvider
-                          .peerModelWithSessionID(
-                              sharedExpProvider.viewedUserSessionId!)
-                          .connLink;
+                    if (widget.network) {
+                      connLink = getConnLink(connectPPF(context).remoteIP!,
+                          connectPPF(context).remotePort!, streamVideoEndPoint);
                     }
 
                     mpProviderFalse.playVideo(
-                      '$connLink$streamAudioEndPoint',
+                      '$connLink',
                       widget.network,
                       widget.mediaPath,
                     );

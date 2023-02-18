@@ -28,8 +28,9 @@ class PathRow extends StatelessWidget {
     var expProvider = Provider.of<ExplorerProvider>(context);
     var expProviderFalse =
         Provider.of<ExplorerProvider>(context, listen: false);
-    List<String> folders =
-        (customPath ?? expProvider.currentActiveDir.path).split('\\');
+    List<String> folders = (customPath ?? expProvider.currentActiveDir.path)
+        .split(RegExp(r"[\\/]+"));
+
     var analyzerProvider =
         Provider.of<AnalyzerProvider>(context, listen: false);
 
@@ -48,7 +49,7 @@ class PathRow extends StatelessWidget {
                     onTap: () {
                       if (entry.key != folders.length - 1) {
                         String newPath =
-                            folders.sublist(0, entry.key + 1).join('\\');
+                            folders.sublist(0, entry.key + 1).join('/');
                         if (onClickingSubPath != null) {
                           onClickingSubPath!(newPath);
                         } else {

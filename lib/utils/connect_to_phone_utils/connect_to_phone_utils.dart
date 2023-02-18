@@ -39,7 +39,8 @@ Future<void> getPhoneFolderContent({
       ),
     );
     var data = res.data as List;
-    String folderPathRetrieved = res.headers.value(parentFolderPathHeaderKey)!;
+    String folderPathRetrieved =
+        Uri.decodeComponent(res.headers.value(parentFolderPathHeaderKey)!);
     var items = data.map((e) => ShareSpaceItemModel.fromJSON(e)).toList();
     shareItemsExplorerProvider.updatePath(folderPathRetrieved, items);
 

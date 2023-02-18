@@ -40,6 +40,7 @@ class ShareSpaceVScreen extends StatefulWidget {
 class _ShareSpaceVScreenState extends State<ShareSpaceVScreen> {
   PeerModel? remotePeerModel;
   bool me = false;
+  bool phone = false;
 
 //? to load shared items
   Future loadSharedItems([String? path]) async {
@@ -72,28 +73,30 @@ class _ShareSpaceVScreenState extends State<ShareSpaceVScreen> {
   @override
   void initState() {
     Future.delayed(Duration.zero).then((value) {
-    var argument =   ModalRoute.of(context)!.settings.arguments;
-    // bool means that it is from files explorer from windows device
-    if(argument is bool){
-  connect_phone_utils.getPhoneFolderContent(
-        folderPath: '/',
-        shareItemsExplorerProvider: shareExpPF(context),
-        connectPhoneProvider: connectPPF(context),
-      );
-    }else{
+      var argument = ModalRoute.of(context)!.settings.arguments;
+      // bool means that it is from files explorer from windows device
+      if (argument is bool) {
         setState(() {
-        remotePeerModel =
-            ModalRoute.of(context)!.settings.arguments as PeerModel;
-      });
-      if (remotePeerModel?.deviceID == sharePF(context).myDeviceId) {
-        setState(() {
-          me = true;
+          phone = true;
         });
+        connect_phone_utils.getPhoneFolderContent(
+          folderPath: '/',
+          shareItemsExplorerProvider: shareExpPF(context),
+          connectPhoneProvider: connectPPF(context),
+        );
       } else {
-        loadSharedItems();
+        setState(() {
+          remotePeerModel =
+              ModalRoute.of(context)!.settings.arguments as PeerModel;
+        });
+        if (remotePeerModel?.deviceID == sharePF(context).myDeviceId) {
+          setState(() {
+            me = true;
+          });
+        } else {
+          loadSharedItems();
+        }
       }
-    }
-    
     });
     super.initState();
   }
@@ -112,11 +115,13 @@ class _ShareSpaceVScreenState extends State<ShareSpaceVScreen> {
         children: [
           CustomAppBar(
             title: Text(
-              shareExpProvider.loadingItems || (remotePeerModel == null)
-                  ? '...'
-                  : me
-                      ? 'Your Share Space'
-                      : '${remotePeerModel!.name} Share Space',
+              phone
+                  ? 'Phone'
+                  : shareExpProvider.loadingItems || (remotePeerModel == null)
+                      ? '...'
+                      : me
+                          ? 'Your Share Space'
+                          : '${remotePeerModel!.name} Share Space',
               style: h2TextStyle.copyWith(
                 color: kActiveTextColor,
               ),
@@ -134,11 +139,10 @@ class _ShareSpaceVScreenState extends State<ShareSpaceVScreen> {
                 Navigator.pushReplacementNamed(
                   context,
                   ShareSpaceVScreen.routeName,
-                  arguments: remotePeerModel,
+                  arguments: remotePeerModel ?? phone,
                 );
               },
-              onClickingSubPath: (path) =>
-                  localGetFolderContent(parentPath! + path),
+              onClickingSubPath: (path) => localGetFolderContent(path),
             ),
           if (!me)
             shareExpProvider.loadingItems
@@ -229,21 +233,30 @@ class _ShareSpaceVScreenState extends State<ShareSpaceVScreen> {
 
   void localGetFolderContent(String path) async {
     try {
-      var shareExpProvider =
-          Provider.of<ShareItemsExplorerProvider>(context, listen: false);
+      if (phone) {
+        await connect_phone_utils.getPhoneFolderContent(
+          folderPath: path,
+          shareItemsExplorerProvider: shareExpPF(context),
+          connectPhoneProvider: connectPPF(context),
+        );
+      } else {
+        var shareExpProvider =
+            Provider.of<ShareItemsExplorerProvider>(context, listen: false);
 
-      var serverProvider = Provider.of<ServerProvider>(context, listen: false);
-      String userSessionID = shareExpProvider.viewedUserSessionId!;
-      var shareProvider = Provider.of<ShareProvider>(context, listen: false);
-      var shareItemsExplorerProvider =
-          Provider.of<ShareItemsExplorerProvider>(context, listen: false);
-      await client_utils.getFolderContent(
-        serverProvider: serverProvider,
-        folderPath: path,
-        shareProvider: shareProvider,
-        userSessionID: userSessionID,
-        shareItemsExplorerProvider: shareItemsExplorerProvider,
-      );
+        var serverProvider =
+            Provider.of<ServerProvider>(context, listen: false);
+        String userSessionID = shareExpProvider.viewedUserSessionId!;
+        var shareProvider = Provider.of<ShareProvider>(context, listen: false);
+        var shareItemsExplorerProvider =
+            Provider.of<ShareItemsExplorerProvider>(context, listen: false);
+        await client_utils.getFolderContent(
+          serverProvider: serverProvider,
+          folderPath: path,
+          shareProvider: shareProvider,
+          userSessionID: userSessionID,
+          shareItemsExplorerProvider: shareItemsExplorerProvider,
+        );
+      }
     } catch (e) {
       showSnackBar(
         context: context,

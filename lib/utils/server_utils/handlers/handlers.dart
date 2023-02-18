@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:windows_app/constants/global_constants.dart';
 import 'package:windows_app/constants/models_constants.dart';
 import 'package:windows_app/constants/server_constants.dart';
 import 'package:windows_app/constants/widget_keys.dart';
@@ -439,8 +440,16 @@ void serverCheckHandler(
     ..close();
 
   if (navigatorKey.currentContext == null) return;
-  Navigator.popUntil(navigatorKey.currentContext!,
-      (route) => route.settings.name == HomeScreen.routeName);
-  Navigator.pushNamed(
-      navigatorKey.currentContext!, ConnectPhoneScreen.routeName);
+  try {
+    Navigator.popUntil(navigatorKey.currentContext!,
+        (route) => route.settings.name == HomeScreen.routeName);
+  } catch (e) {
+    logger.e(e);
+  }
+  try {
+    Navigator.pushNamed(
+        navigatorKey.currentContext!, ConnectPhoneScreen.routeName);
+  } catch (e) {
+    logger.e(e);
+  }
 }

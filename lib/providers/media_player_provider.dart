@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:dart_vlc/dart_vlc.dart';
 import 'package:flutter/material.dart';
 import 'package:volume_controller/volume_controller.dart' as volume_controllers;
+import 'package:windows_app/constants/global_constants.dart';
 
 class MediaPlayerProvider extends ChangeNotifier {
   final Player _audioPlayer = Player(id: 1000);
@@ -57,6 +58,9 @@ class MediaPlayerProvider extends ChangeNotifier {
     bool network = false,
     String? fileRemotePath,
   ]) async {
+    logger.w('network $network');
+    logger.w(path);
+    logger.w(fileRemotePath);
     try {
       if (durationStreamSub != null) {
         await durationStreamSub?.cancel();
