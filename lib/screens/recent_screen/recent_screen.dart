@@ -9,6 +9,7 @@ import 'package:windows_app/global/widgets/v_space.dart';
 import 'package:windows_app/providers/util/analyzer_provider.dart';
 import 'package:windows_app/screens/analyzer_screen/analyzer_screen.dart';
 import 'package:windows_app/screens/analyzer_screen/widgets/analyzer_options_item.dart';
+import 'package:windows_app/screens/connect_phone_screen/connect_phone_screen.dart';
 import 'package:windows_app/screens/items_viewer_screen/items_viewer_screen.dart';
 import 'package:windows_app/screens/listy_screen/listy_screen.dart';
 import 'package:windows_app/screens/qr_code_viewer_screen/qr_code_viewer_screen.dart';
@@ -67,7 +68,7 @@ class _RecentScreenState extends State<RecentScreen> {
                       arguments: true,
                     );
                   } else {
-                    Navigator.pushNamed(context, TestScreen.routeName);
+                    Navigator.pushNamed(context, ConnectPhoneScreen.routeName);
                   }
                 },
                 title: 'Connect Phone',

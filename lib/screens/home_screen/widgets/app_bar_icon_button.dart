@@ -10,6 +10,7 @@ class AppBarIconButton extends StatelessWidget {
   final String iconName;
   final Color? color;
   final double borderRadius;
+  final bool dummy;
 
   const AppBarIconButton({
     Key? key,
@@ -17,21 +18,25 @@ class AppBarIconButton extends StatelessWidget {
     required this.iconName,
     this.color,
     this.borderRadius = 0,
+    this.dummy = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return ButtonWrapper(
-      onTap: onTap,
-      borderRadius: borderRadius,
-      padding: EdgeInsets.symmetric(
-        horizontal: kHPad,
-        vertical: kVPad,
-      ),
-      child: Image.asset(
-        'assets/icons/$iconName.png',
-        width: largeIconSize / 2,
-        color: color ?? kInactiveColor,
+    return Opacity(
+      opacity: dummy ? 0 : 1,
+      child: ButtonWrapper(
+        onTap: dummy ? null : onTap,
+        borderRadius: borderRadius,
+        padding: EdgeInsets.symmetric(
+          horizontal: kHPad,
+          vertical: kVPad,
+        ),
+        child: Image.asset(
+          'assets/icons/$iconName.png',
+          width: largeIconSize / 2,
+          color: color ?? kInactiveColor,
+        ),
       ),
     );
   }

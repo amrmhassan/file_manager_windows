@@ -23,6 +23,7 @@ import 'package:windows_app/providers/thumbnail_provider.dart';
 import 'package:windows_app/providers/settings_provider.dart';
 import 'package:windows_app/screens/about_us_screen/about_us_screen.dart';
 import 'package:windows_app/screens/analyzer_screen/analyzer_screen.dart';
+import 'package:windows_app/screens/connect_phone_screen/connect_phone_screen.dart';
 import 'package:windows_app/screens/download_manager_screen/download_manager_screen.dart';
 import 'package:windows_app/screens/error_viewing_screen/error_viewing_screen.dart';
 import 'package:windows_app/screens/intro_screen/intro_screen.dart';
@@ -199,6 +200,7 @@ class _MyAppState extends State<MyApp> {
           WhiteBlockListScreen.routeName: (context) => WhiteBlockListScreen(),
           IntroScreen.routeName: (context) => IntroScreen(),
           AboutUsScreen.routeName: (context) => AboutUsScreen(),
+          ConnectPhoneScreen.routeName: (context) => ConnectPhoneScreen(),
         },
       ),
     );
