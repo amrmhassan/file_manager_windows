@@ -6,7 +6,7 @@ import 'dart:io';
 import 'package:windows_app/constants/global_constants.dart';
 import 'package:windows_app/utils/custom_router_system/custom_router_system.dart';
 import 'package:windows_app/utils/errors_collection/custom_exception.dart';
-import 'package:windows_app/utils/server_utils/connect_to_phone_utils/connect_to_phone_router.dart';
+import 'package:windows_app/utils/connect_to_phone_utils/connect_to_phone_router.dart';
 import 'package:windows_app/utils/server_utils/ip_utils.dart';
 import 'package:windows_app/utils/websocket_utils/custom_server_socket.dart';
 import 'package:flutter/cupertino.dart';

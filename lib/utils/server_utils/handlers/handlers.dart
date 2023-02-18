@@ -12,10 +12,9 @@ import 'package:windows_app/providers/connect_phone_provider.dart';
 import 'package:windows_app/providers/server_provider.dart';
 import 'package:windows_app/providers/share_provider.dart';
 import 'package:windows_app/providers/shared_items_explorer_provider.dart';
+import 'package:windows_app/screens/connect_phone_screen/connect_phone_screen.dart';
 import 'package:windows_app/screens/home_screen/home_screen.dart';
-import 'package:windows_app/screens/test_screen/test_screen.dart';
 import 'package:windows_app/utils/errors_collection/custom_exception.dart';
-import 'package:windows_app/utils/providers_calls_utils.dart';
 import 'package:windows_app/utils/server_utils/connection_utils.dart';
 import 'package:windows_app/utils/server_utils/encoding_utils.dart';
 import 'package:windows_app/utils/server_utils/server_feedback_utils.dart';
@@ -410,12 +409,22 @@ void serverCheckHandler(
   String remoteIp = request.connectionInfo!.remoteAddress.address;
   String myIp = (request.headers.value('host')!).split(':').first;
   int remoteServerPort = int.parse(utf8.decode(await request.single));
+  // i made this because if laptop is connected to a wifi and the phone is connected to laptop hotspot
+  // when the phone checks for the laptop ip which is on wifi, it responds
+  // so i think in this case the phone has access to wifi ips, and this mean that he can access router page even if the phone is connected to laptop hotspot
+  // so if the remote ip is the same as my ip this means that i getting a request through myself(my phone through wifi that i am connected to, when phone is connected to my hotspot)
+  if (remoteIp == myIp) {
+    response.statusCode = HttpStatus.badRequest;
+    response.write(
+        'You are connected to me through wifi, while you are connected to my hotspot');
+    response.close();
+    return;
+  }
   connectPPF.connected(myIp, remoteIp, remoteServerPort);
-
   //!
   var customServerSocket = ConnectPhoneServerSocket(myIp, connectPPF);
   var wsServer = await customServerSocket.getWsConnLink();
-  var myWSConnLink = getConnLink(myIp, wsServer.port, true);
+  var myWSConnLink = getConnLink(myIp, wsServer.port, null, true);
 
   connectPPF.setMyServerSocket(customServerSocket);
   connectPPF.setMyWSConnLink(myWSConnLink);
@@ -432,5 +441,6 @@ void serverCheckHandler(
   if (navigatorKey.currentContext == null) return;
   Navigator.popUntil(navigatorKey.currentContext!,
       (route) => route.settings.name == HomeScreen.routeName);
-  Navigator.pushNamed(navigatorKey.currentContext!, TestScreen.routeName);
+  Navigator.pushNamed(
+      navigatorKey.currentContext!, ConnectPhoneScreen.routeName);
 }

@@ -1,17 +1,17 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:windows_app/constants/colors.dart';
-import 'package:windows_app/constants/sizes.dart';
 import 'package:windows_app/constants/styles.dart';
-import 'package:windows_app/global/widgets/button_wrapper.dart';
 import 'package:windows_app/global/widgets/custom_app_bar/custom_app_bar.dart';
 import 'package:windows_app/global/widgets/padding_wrapper.dart';
 import 'package:windows_app/global/widgets/screens_wrapper.dart';
 import 'package:windows_app/global/widgets/v_space.dart';
-import 'package:windows_app/models/analyzer_report_info_model.dart';
 import 'package:windows_app/screens/analyzer_screen/widgets/analyzer_options_item.dart';
+import 'package:windows_app/screens/connect_phone_screen/widgets/phone_storage_card.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
+import 'package:windows_app/utils/server_utils/connection_utils.dart';
 
 class ConnectPhoneScreen extends StatelessWidget {
   static const String routeName = '/ConnectPhoneScreen';
@@ -38,6 +38,16 @@ class ConnectPhoneScreen extends StatelessWidget {
               style: h2TextStyle,
             ),
           ),
+          if (kDebugMode && connectPhoneProvider.remoteIP != null)
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                    're   ${getConnLink(connectPhoneProvider.remoteIP!, connectPhoneProvider.remotePort!)}'),
+                Text(
+                    'my ${getConnLink(connectPhoneProvider.myIp!, connectPhoneProvider.myPort)}'),
+              ],
+            ),
           VSpace(),
           Expanded(
             child: PaddingWrapper(
@@ -89,34 +99,6 @@ class ConnectPhoneScreen extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class PhoneStorageCard extends StatelessWidget {
-  const PhoneStorageCard({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ButtonWrapper(
-      backgroundColor: kCardBackgroundColor,
-      padding: EdgeInsets.symmetric(
-        horizontal: kHPad / 2,
-        vertical: kVPad / 2,
-      ),
-      child: Row(children: [
-        Text(
-          'Storage',
-          style: h4TextStyle,
-        ),
-        Spacer(),
-        Text(
-          '45GB free of 128GB',
-          style: h4TextStyleInactive,
-        ),
-      ]),
     );
   }
 }

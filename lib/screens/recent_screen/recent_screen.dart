@@ -18,7 +18,6 @@ import 'package:windows_app/screens/recent_screen/widget/storage_segments.dart';
 import 'package:windows_app/screens/storage_cleaner_screen/storage_cleaner_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:windows_app/screens/test_screen/test_screen.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
 
 class RecentScreen extends StatefulWidget {
