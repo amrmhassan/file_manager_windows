@@ -24,6 +24,8 @@ import 'package:windows_app/utils/providers_calls_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:path/path.dart' as path_operations;
+import 'package:windows_app/utils/connect_to_phone_utils/connect_to_phone_utils.dart'
+    as connect_phone_utils;
 
 class ShareSpaceVScreen extends StatefulWidget {
   static const String routeName = '/ShareSpaceViewerScreen';
@@ -70,7 +72,16 @@ class _ShareSpaceVScreenState extends State<ShareSpaceVScreen> {
   @override
   void initState() {
     Future.delayed(Duration.zero).then((value) {
-      setState(() {
+    var argument =   ModalRoute.of(context)!.settings.arguments;
+    // bool means that it is from files explorer from windows device
+    if(argument is bool){
+  connect_phone_utils.getPhoneFolderContent(
+        folderPath: '/',
+        shareItemsExplorerProvider: shareExpPF(context),
+        connectPhoneProvider: connectPPF(context),
+      );
+    }else{
+        setState(() {
         remotePeerModel =
             ModalRoute.of(context)!.settings.arguments as PeerModel;
       });
@@ -81,6 +92,8 @@ class _ShareSpaceVScreenState extends State<ShareSpaceVScreen> {
       } else {
         loadSharedItems();
       }
+    }
+    
     });
     super.initState();
   }
@@ -199,24 +212,6 @@ class _ShareSpaceVScreenState extends State<ShareSpaceVScreen> {
                                       }
                                     },
                                   ),
-                                  // ModalButtonElement(
-                                  //   showBottomLine: false,
-                                  //   inactiveColor: Colors.transparent,
-                                  //   title: 'Download to...',
-                                  //   onTap: () async {
-                                  //     // Provider.of<ClientProvider>(
-                                  //     //   context,
-                                  //     //   listen: false,
-                                  //     // ).downloadFile(
-                                  //     //   peerModel: peerModel!,
-                                  //     //   savePath: 'sdcard/amh_download',
-                                  //     //   remoteFilePath:
-                                  //     //       shareExpProvider.viewedItems[index].path,
-                                  //     //   sessionID: me(context).sessionID,
-                                  //     //   deviceID: me(context).deviceID,
-                                  //     // );
-                                  //   },
-                                  // ),
                                 ],
                               ),
                             ),

@@ -12,6 +12,7 @@ import 'package:windows_app/screens/analyzer_screen/widgets/analyzer_options_ite
 import 'package:windows_app/screens/connect_phone_screen/widgets/phone_storage_card.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
 import 'package:windows_app/utils/server_utils/connection_utils.dart';
+import 'package:windows_app/screens/share_space_viewer_screen/share_space_viewer_screen.dart';
 
 class ConnectPhoneScreen extends StatelessWidget {
   static const String routeName = '/ConnectPhoneScreen';
@@ -57,7 +58,13 @@ class ConnectPhoneScreen extends StatelessWidget {
                   VSpace(),
                   AnalyzerOptionsItem(
                     enablePadding: false,
-                    onTap: () {},
+                    onTap: () {
+                      Navigator.pushNamed(
+                        context,
+                        ShareSpaceVScreen.routeName,
+                        arguments: true,
+                      );
+                    },
                     title: 'Files Explorer',
                     logoName: 'folder_empty',
                     color: kMainIconColor,
@@ -76,6 +83,21 @@ class ConnectPhoneScreen extends StatelessWidget {
                     onTap: () {},
                     title: 'Copy Clipboard',
                     logoName: 'paste',
+                    color: kMainIconColor,
+                  ),
+                  VSpace(),
+                  AnalyzerOptionsItem(
+                    enablePadding: false,
+                    onTap: () {},
+                    title: 'Send Text',
+                    logoName: 'txt',
+                  ),
+                  VSpace(),
+                  AnalyzerOptionsItem(
+                    enablePadding: false,
+                    onTap: () {},
+                    title: 'Send File',
+                    logoName: 'link',
                     color: kMainIconColor,
                   ),
                   VSpace(),

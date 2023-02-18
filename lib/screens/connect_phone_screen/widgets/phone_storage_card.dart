@@ -2,6 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:windows_app/constants/colors.dart';
+import 'package:windows_app/constants/global_constants.dart';
 import 'package:windows_app/constants/server_constants.dart';
 import 'package:windows_app/constants/sizes.dart';
 import 'package:windows_app/constants/styles.dart';
@@ -33,6 +34,7 @@ class _PhoneStorageCardState extends State<PhoneStorageCard> {
         totalSpace = res[totalSpaceHeaderKey];
       });
     } catch (e) {
+      logger.e(e);
       if (!mounted) return;
       setState(() {
         error = true;
