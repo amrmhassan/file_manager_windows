@@ -10,7 +10,7 @@ import 'package:windows_app/global/widgets/v_space.dart';
 import 'package:flutter/material.dart';
 
 class DoubleButtonsModal extends StatelessWidget {
-  final String title;
+  final String? title;
   final String? subTitle;
   final VoidCallback onOk;
   final VoidCallback? onCancel;
@@ -26,7 +26,7 @@ class DoubleButtonsModal extends StatelessWidget {
   const DoubleButtonsModal({
     Key? key,
     required this.onOk,
-    required this.title,
+    this.title,
     this.onCancel,
     this.subTitle,
     this.okText,
@@ -84,14 +84,15 @@ class DoubleButtonsModal extends StatelessWidget {
       color: kCardBackgroundColor,
       child: Column(
         children: [
-          Row(
-            children: [
-              Text(
-                title,
-                style: h3TextStyle,
-              ),
-            ],
-          ),
+          if (title != null)
+            Row(
+              children: [
+                Text(
+                  title!,
+                  style: h3TextStyle,
+                ),
+              ],
+            ),
           if (subTitle != null)
             Row(
               children: [

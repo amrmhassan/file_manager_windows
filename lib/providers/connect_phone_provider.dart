@@ -3,10 +3,13 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:uuid/uuid.dart';
 import 'package:windows_app/constants/global_constants.dart';
+import 'package:windows_app/models/laptop_message_model.dart';
 import 'package:windows_app/utils/custom_router_system/custom_router_system.dart';
 import 'package:windows_app/utils/errors_collection/custom_exception.dart';
 import 'package:windows_app/utils/connect_to_phone_utils/connect_to_phone_router.dart';
+import 'package:windows_app/utils/server_utils/connection_utils.dart';
 import 'package:windows_app/utils/server_utils/ip_utils.dart';
 import 'package:windows_app/utils/websocket_utils/custom_server_socket.dart';
 import 'package:flutter/cupertino.dart';
@@ -88,6 +91,10 @@ class ConnectPhoneProvider extends ChangeNotifier {
     }
   }
 
+  String getPhoneConnLink(String? endpoint) {
+    return getConnLink(remoteIP!, remotePort!, endpoint);
+  }
+
   //? to close the server
   Future closeServer() async {
     logger.i('Closing normal http server');
@@ -106,5 +113,44 @@ class ConnectPhoneProvider extends ChangeNotifier {
   Future restartServer() async {
     await httpServer?.close();
     await openServer();
+  }
+
+  //# message that will come from the laptop
+  List<LaptopMessageModel> _laptopMessages = [];
+
+  List<LaptopMessageModel> get laptopMessages => [..._laptopMessages.reversed];
+
+  List<LaptopMessageModel> get viewedLaptopMessages =>
+      _laptopMessages.where((element) => element.viewed).toList();
+
+  List<LaptopMessageModel> get notViewedLaptopMessages =>
+      _laptopMessages.where((element) => !element.viewed).toList();
+
+  void addLaptopMessage(String msg) {
+    _laptopMessages.add(LaptopMessageModel(
+      msg: msg,
+      at: DateTime.now(),
+      id: Uuid().v4(),
+    ));
+    notifyListeners();
+  }
+
+  void markAllMessagesAsViewed([bool notify = true]) {
+    _laptopMessages = [
+      ..._laptopMessages.map((e) {
+        e.viewed = true;
+        return e;
+      })
+    ];
+    try {
+      if (notify) notifyListeners();
+    } catch (e) {
+      //
+    }
+  }
+
+  void removeLaptopMessage(String id) {
+    _laptopMessages.removeWhere((element) => element.id == id);
+    notifyListeners();
   }
 }

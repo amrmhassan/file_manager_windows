@@ -5,11 +5,14 @@ import 'package:flutter/material.dart';
 import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/styles.dart';
 import 'package:windows_app/global/modals/double_buttons_modal.dart';
+import 'package:windows_app/global/modals/send_txt_to_phone_modal.dart';
 import 'package:windows_app/global/widgets/custom_app_bar/custom_app_bar.dart';
 import 'package:windows_app/global/widgets/modal_wrapper/modal_wrapper.dart';
 import 'package:windows_app/global/widgets/padding_wrapper.dart';
 import 'package:windows_app/global/widgets/screens_wrapper.dart';
 import 'package:windows_app/global/widgets/v_space.dart';
+import 'package:windows_app/models/peer_model.dart';
+import 'package:windows_app/providers/share_provider.dart';
 import 'package:windows_app/screens/analyzer_screen/widgets/analyzer_options_item.dart';
 import 'package:windows_app/screens/connect_phone_screen/widgets/phone_storage_card.dart';
 import 'package:windows_app/utils/connect_to_phone_utils/connect_to_phone_utils.dart';
@@ -41,6 +44,15 @@ class ConnectPhoneScreen extends StatelessWidget {
             title: Text(
               'Your Phone',
               style: h2TextStyle,
+            ),
+            leftIcon: IconButton(
+              onPressed: () {
+                connectPPF(context).closeServer();
+              },
+              icon: Icon(
+                Icons.close,
+                color: Colors.red,
+              ),
             ),
           ),
           if (kDebugMode && connectPhoneProvider.remoteIP != null)
@@ -76,7 +88,24 @@ class ConnectPhoneScreen extends StatelessWidget {
                   VSpace(),
                   AnalyzerOptionsItem(
                     enablePadding: false,
-                    onTap: () {},
+                    onTap: () {
+                      var phoneConnProvider = connectPPF(context);
+
+                      Navigator.pushNamed(
+                        context,
+                        ShareSpaceVScreen.routeName,
+                        arguments: PeerModel(
+                          deviceID: 'null',
+                          joinedAt: DateTime.now(),
+                          name: 'Phone',
+                          memberType: MemberType.client,
+                          ip: phoneConnProvider.remoteIP!,
+                          port: phoneConnProvider.remotePort!,
+                          sessionID: 'null',
+                          phone: true,
+                        ),
+                      );
+                    },
                     title: 'Share Space',
                     logoName: 'management',
                     color: kMainIconColor,
@@ -124,7 +153,13 @@ class ConnectPhoneScreen extends StatelessWidget {
                   VSpace(),
                   AnalyzerOptionsItem(
                     enablePadding: false,
-                    onTap: () {},
+                    onTap: () {
+                      showModalBottomSheet(
+                        backgroundColor: Colors.transparent,
+                        context: context,
+                        builder: (context) => SendTextToPhoneModal(),
+                      );
+                    },
                     title: 'Send Text',
                     logoName: 'txt',
                   ),

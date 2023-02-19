@@ -25,24 +25,32 @@ Future<void> getPhoneFolderContent({
   required String folderPath,
   required ShareItemsExplorerProvider shareItemsExplorerProvider,
   required ConnectPhoneProvider connectPhoneProvider,
+  bool shareSpace = false,
 }) async {
   try {
     shareItemsExplorerProvider.setLoadingItems(true);
-    String connLink = getConnLink(connectPhoneProvider.remoteIP!,
-        connectPhoneProvider.remotePort!, getPhoneFolderContentEndPoint);
+    String connLink = getConnLink(
+        connectPhoneProvider.remoteIP!,
+        connectPhoneProvider.remotePort!,
+        shareSpace ? getShareSpaceEndPoint : getPhoneFolderContentEndPoint);
+
     var res = await Dio().get(
       connLink,
-      options: Options(
-        headers: {
-          folderPathHeaderKey: Uri.encodeComponent(folderPath),
-        },
-      ),
+      options: shareSpace
+          ? null
+          : Options(
+              headers: {
+                folderPathHeaderKey: Uri.encodeComponent(folderPath),
+              },
+            ),
     );
     var data = res.data as List;
-    String folderPathRetrieved =
-        Uri.decodeComponent(res.headers.value(parentFolderPathHeaderKey)!);
+    String? folderPathRetrieved;
+    folderPathRetrieved =
+        Uri.decodeComponent(res.headers.value(parentFolderPathHeaderKey) ?? '');
     var items = data.map((e) => ShareSpaceItemModel.fromJSON(e)).toList();
-    shareItemsExplorerProvider.updatePath(folderPathRetrieved, items);
+    shareItemsExplorerProvider.updatePath(
+        folderPathRetrieved.isEmpty ? null : folderPathRetrieved, items);
 
     shareItemsExplorerProvider.setLoadingItems(false, false);
   } catch (e, s) {

@@ -97,29 +97,29 @@ class _RecentScreenState extends State<RecentScreen> {
               ),
               VSpace(),
 
-              //# windows
-              if (!Platform.isWindows)
-                AnalyzerOptionsItem(
-                  logoName: 'analyzer',
-                  onTap: () {
-                    Navigator.pushNamed(context, AnalyzerScreen.routeName);
-                  },
-                  title: 'Storage Analyzer',
-                ),
-              //# windows
-              if (!Platform.isWindows) VSpace(),
-              //# windows
-              if (!Platform.isWindows)
-                AnalyzerOptionsItem(
-                  logoName: 'cleaner',
-                  onTap: () {
-                    Navigator.pushNamed(
-                        context, StorageCleanerScreen.routeName);
-                  },
-                  title: 'Storage Cleaner',
-                ),
-              //# windows
-              if (!Platform.isWindows) VSpace(),
+              // //# windows
+              // if (!Platform.isWindows)
+              //   AnalyzerOptionsItem(
+              //     logoName: 'analyzer',
+              //     onTap: () {
+              //       Navigator.pushNamed(context, AnalyzerScreen.routeName);
+              //     },
+              //     title: 'Storage Analyzer',
+              //   ),
+              // //# windows
+              // if (!Platform.isWindows) VSpace(),
+              // //# windows
+              // if (!Platform.isWindows)
+              //   AnalyzerOptionsItem(
+              //     logoName: 'cleaner',
+              //     onTap: () {
+              //       Navigator.pushNamed(
+              //           context, StorageCleanerScreen.routeName);
+              //     },
+              //     title: 'Storage Cleaner',
+              //   ),
+              // //# windows
+              // if (!Platform.isWindows) VSpace(),
               AnalyzerOptionsItem(
                 logoName: 'list1',
                 onTap: () {

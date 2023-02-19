@@ -8,6 +8,7 @@ import 'package:windows_app/global/custom_app_drawer/custom_app_drawer.dart';
 import 'package:windows_app/global/widgets/advanced_video_player/advanced_video_player.dart';
 import 'package:windows_app/global/widgets/advanced_video_player/widgets/custom_icon_button.dart';
 import 'package:windows_app/global/widgets/h_space.dart';
+import 'package:windows_app/global/widgets/laptop_messages_button.dart';
 import 'package:windows_app/global/widgets/media_controllers.dart';
 import 'package:windows_app/global/widgets/quick_send_open_button.dart';
 import 'package:windows_app/global/widgets/show_controllers_button.dart';
@@ -109,7 +110,8 @@ class _ScreensWrapperState extends State<ScreensWrapper> {
                               (!mpProvider.videoHidden))
                             AdvancedVideoPlayer(),
 
-                          QuickSendOpnButton()
+                          QuickSendOpnButton(),
+                          LaptopMessagesButton(),
                         ],
                       ),
                     ),
