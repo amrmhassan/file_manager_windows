@@ -21,6 +21,7 @@ class DoubleButtonsModal extends StatelessWidget {
   final bool autoPop;
   final bool reverseButtonsOrder;
   final Widget? extra;
+  final bool showCancelButton;
 
   const DoubleButtonsModal({
     Key? key,
@@ -35,29 +36,31 @@ class DoubleButtonsModal extends StatelessWidget {
     this.autoPop = true,
     this.reverseButtonsOrder = false,
     this.extra,
+    this.showCancelButton = true,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     var modalButtons = [
-      Expanded(
-        child: ButtonWrapper(
-          onTap: () {
-            if (onCancel != null) onCancel!();
-            if (autoPop) {
-              Navigator.pop(context);
-            }
-          },
-          padding:
-              EdgeInsets.symmetric(horizontal: kHPad / 2, vertical: kVPad / 2),
-          backgroundColor: cancelColor ?? kBackgroundColor,
-          child: Text(
-            cancelText ?? 'Cancel',
-            style: h4TextStyle.copyWith(color: Colors.white),
+      if (showCancelButton)
+        Expanded(
+          child: ButtonWrapper(
+            onTap: () {
+              if (onCancel != null) onCancel!();
+              if (autoPop) {
+                Navigator.pop(context);
+              }
+            },
+            padding: EdgeInsets.symmetric(
+                horizontal: kHPad / 2, vertical: kVPad / 2),
+            backgroundColor: cancelColor ?? kBackgroundColor,
+            child: Text(
+              cancelText ?? 'Cancel',
+              style: h4TextStyle.copyWith(color: Colors.white),
+            ),
           ),
         ),
-      ),
-      HSpace(),
+      if (showCancelButton) HSpace(),
       Expanded(
         child: ButtonWrapper(
           onTap: () async {
@@ -92,9 +95,13 @@ class DoubleButtonsModal extends StatelessWidget {
           if (subTitle != null)
             Row(
               children: [
-                Text(
-                  subTitle.toString(),
-                  style: h4TextStyleInactive,
+                Expanded(
+                  child: Text(
+                    subTitle.toString(),
+                    style: h4TextStyleInactive,
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 4,
+                  ),
                 ),
               ],
             ),

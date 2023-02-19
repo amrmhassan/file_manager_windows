@@ -55,48 +55,8 @@ import 'package:windows_app/utils/windows_utils/window_size.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-//! fix my share space when connected
-//! before publishing
-//2- about developer
-// new features
-//3- deploy
-//? share space mean the main items that are in the main view of peer share space, this doesn't include the children of a shared folder or so
-//! add the ability to download a folder
-//! add video, audio notification
-//! prevent the app from being killed when it is in the background
-//!
-
-// view buffered places in the video player seeker bar
-// make the fast seeker widget for the video to be much bigger for the landscape mode
-// make the video not to be hidden when clicking the eye button next to a video even if the video is playing right now
-// open the task file when clicking over it and open it's folder when clicking the folder icon
-
-// add settings for the sharing
-//!!! when pausing the downloaded file at it's end(i think when it's downloading the final smaller part) the error happen and it doesn't download till the end
-//! add AnimatedSwitcher for the fade in image for the user image
-
-// fix the issue of connecting with wifi or hotspot
-// -- host device can open his hotspot or connect with same wifi network
-// -- but client device must connect over his wifi
-
-// when downloading a file and it exists, tell give the user the option to overwrite it or to cancel downloading
-
-// Today wednesday  Notifications of video, audio, download
-// Fix the problem of killing the app in background
-
-// the new approach towards the wifi or hotspot problem is that the sending device will show
-// all ips in the qr code, for example
-// for better implementation you can just limit the number of interfaces by choosing only who has wlan or wifi or wi-fi,local area(for windows) something like that
-// http://192.168.1.7:45569||http://192.168.137.78:45569||etc...
-// and the receiving device will check for each of these, and the one that creates an error is wrong, and the one that gives response via a certain  is the right one
-
-//########################3
-//! add hide icon on video player
-//########################3
-
-//! https://pub.dev/packages/window_manager/install
-
-// use the previous package to set full window for video player
+// fix when connecting to phone , for the second time without closing the app
+// try disconnecting with multiple ways and try to reconnect and debug the errors
 
 bool firstTimeRunApp = false;
 void main() async {

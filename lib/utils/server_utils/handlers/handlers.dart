@@ -410,6 +410,9 @@ void serverCheckHandler(
   String remoteIp = request.connectionInfo!.remoteAddress.address;
   String myIp = (request.headers.value('host')!).split(':').first;
   int remoteServerPort = int.parse(utf8.decode(await request.single));
+  logger.i(
+      'remote $remoteIp:$remoteServerPort++local $myIp:${connectPPF.myPort}');
+
   // i made this because if laptop is connected to a wifi and the phone is connected to laptop hotspot
   // when the phone checks for the laptop ip which is on wifi, it responds
   // so i think in this case the phone has access to wifi ips, and this mean that he can access router page even if the phone is connected to laptop hotspot
@@ -421,6 +424,7 @@ void serverCheckHandler(
     response.close();
     return;
   }
+
   connectPPF.connected(myIp, remoteIp, remoteServerPort);
   //!
   var customServerSocket = ConnectPhoneServerSocket(myIp, connectPPF);

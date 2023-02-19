@@ -122,7 +122,7 @@ class ConnectPhoneServerSocket {
     websocketServer = server.transform(WebSocketTransformer());
 
     connLinkCompleter.complete(server);
-    logger.w('phone ws server listening at ${server.port}');
+    logger.i('phone ws server listening at ${server.port}');
 
     await for (var socket in websocketServer) {
       logger.i('New socket connected');

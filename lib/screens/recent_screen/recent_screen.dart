@@ -6,6 +6,7 @@ import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/global/widgets/h_line.dart';
 import 'package:windows_app/global/widgets/shimmer_wrapper.dart';
 import 'package:windows_app/global/widgets/v_space.dart';
+import 'package:windows_app/models/types.dart';
 import 'package:windows_app/providers/util/analyzer_provider.dart';
 import 'package:windows_app/screens/analyzer_screen/analyzer_screen.dart';
 import 'package:windows_app/screens/analyzer_screen/widgets/analyzer_options_item.dart';
@@ -18,6 +19,7 @@ import 'package:windows_app/screens/recent_screen/widget/storage_segments.dart';
 import 'package:windows_app/screens/storage_cleaner_screen/storage_cleaner_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:windows_app/utils/general_utils.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
 
 class RecentScreen extends StatefulWidget {
@@ -57,17 +59,24 @@ class _RecentScreenState extends State<RecentScreen> {
               AnalyzerOptionsItem(
                 logoName: 'management',
                 onTap: () async {
-                  if (connectPPF(context).remoteIP == null) {
-                    if (connectPPF(context).httpServer == null) {
+                  try {
+                    if (connectPPF(context).remoteIP == null) {
                       await connectPPF(context).openServer();
+                      Navigator.pushNamed(
+                        context,
+                        QrCodeViewerScreen.routeName,
+                        arguments: true,
+                      );
+                    } else {
+                      Navigator.pushNamed(
+                          context, ConnectPhoneScreen.routeName);
                     }
-                    Navigator.pushNamed(
-                      context,
-                      QrCodeViewerScreen.routeName,
-                      arguments: true,
+                  } catch (e) {
+                    showSnackBar(
+                      context: context,
+                      message: e.toString(),
+                      snackBarType: SnackBarType.error,
                     );
-                  } else {
-                    Navigator.pushNamed(context, ConnectPhoneScreen.routeName);
                   }
                 },
                 title: 'Connect Phone',

@@ -25,7 +25,9 @@ const String getDiskNamesEndPoint = '/getDiskNamesEndPoint';
 
 // connect laptop endpoints
 const String getStorageEndPoint = '/getStorage';
-const String getPhoneFolderContentEndPoint = '/getPhoneFolderContentEndPoints';
+const String getPhoneFolderContentEndPoint = '/getPhoneFolderContentEndPoint';
+const String areYouAliveEndPoint = '/areYouAliveEndPoint';
+const String getClipboardEndPoint = '/getClipboardEndPoint';
 
 //? headers keys
 const String folderPathHeaderKey = 'folderPathHeaderKey';

@@ -54,3 +54,17 @@ Future<void> getPhoneFolderContent({
     );
   }
 }
+
+Future<String?> getPhoneClipboard(
+  ConnectPhoneProvider connectPhoneProvider,
+) async {
+  String connLink = getConnLink(connectPhoneProvider.remoteIP!,
+      connectPhoneProvider.remotePort!, getClipboardEndPoint);
+  var res = await Dio().get(connLink);
+  String clipboard = (res.data);
+  if (clipboard.isEmpty) {
+    return null;
+  } else {
+    return clipboard;
+  }
+}
