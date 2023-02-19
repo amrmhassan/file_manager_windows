@@ -46,7 +46,7 @@ class LaptopMessagesButton extends StatelessWidget {
                     color: kMainIconColor.withOpacity(.2),
                   ),
                   child: Image.asset(
-                    'assets/icons/laptop-color.png',
+                    'assets/icons/mobile-app.png',
                   ),
                 ),
                 Positioned(

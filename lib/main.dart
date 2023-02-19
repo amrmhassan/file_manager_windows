@@ -32,6 +32,7 @@ import 'package:windows_app/screens/ext_files_screen/ext_files_screen.dart';
 import 'package:windows_app/screens/ext_report_screen/ext_report_screen.dart';
 import 'package:windows_app/screens/home_screen/home_screen.dart';
 import 'package:windows_app/screens/isolate_testing_screen/isolate_testing_screen.dart';
+import 'package:windows_app/screens/laptop_messages_screen/laptop_messages_screen.dart';
 import 'package:windows_app/screens/listy_items_viewer_screen/listy_items_viewer_screen.dart';
 import 'package:windows_app/screens/listy_screen/listy_screen.dart';
 import 'package:windows_app/screens/qr_code_viewer_screen/qr_code_viewer_screen.dart';
@@ -54,9 +55,6 @@ import 'package:windows_app/utils/windows_utils/window_size.dart';
 
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-
-// fix when connecting to phone , for the second time without closing the app
-// try disconnecting with multiple ways and try to reconnect and debug the errors
 
 bool firstTimeRunApp = false;
 void main() async {
@@ -161,6 +159,7 @@ class _MyAppState extends State<MyApp> {
           IntroScreen.routeName: (context) => IntroScreen(),
           AboutUsScreen.routeName: (context) => AboutUsScreen(),
           ConnectPhoneScreen.routeName: (context) => ConnectPhoneScreen(),
+          LaptopMessagesScreen.routeName: (context) => LaptopMessagesScreen(),
         },
       ),
     );

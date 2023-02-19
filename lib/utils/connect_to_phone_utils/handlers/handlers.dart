@@ -2,6 +2,7 @@
 
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 
 import 'package:windows_app/constants/global_constants.dart';
 import 'package:windows_app/constants/server_constants.dart';
@@ -152,6 +153,7 @@ Future<void> getClipboardHandler(
   HttpRequest request,
   HttpResponse response,
 ) async {
+  logger.i('Getting laptop clipboard');
   try {
     var data = await Clipboard.getData(Clipboard.kTextPlain);
     response

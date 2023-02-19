@@ -58,9 +58,9 @@ class MediaPlayerProvider extends ChangeNotifier {
     bool network = false,
     String? fileRemotePath,
   ]) async {
-    logger.w('network $network');
-    logger.w(path);
-    logger.w(fileRemotePath);
+    logger.i('network $network');
+    logger.i(path);
+    logger.i(fileRemotePath);
     try {
       if (durationStreamSub != null) {
         await durationStreamSub?.cancel();
