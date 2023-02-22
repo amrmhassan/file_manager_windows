@@ -7,8 +7,6 @@ import 'package:windows_app/constants/server_constants.dart';
 import 'package:windows_app/constants/sizes.dart';
 import 'package:windows_app/global/widgets/button_wrapper.dart';
 import 'package:windows_app/providers/media_player_provider.dart';
-import 'package:windows_app/providers/server_provider.dart';
-import 'package:windows_app/providers/shared_items_explorer_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';

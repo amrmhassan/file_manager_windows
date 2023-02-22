@@ -70,7 +70,7 @@ class ConnectPhoneProvider extends ChangeNotifier {
       await closeServer();
       var myPossibleIPs = (await getPossibleIpAddress())!;
       if (myPossibleIPs.isEmpty) {
-        throw CustomException(e: 'You aren\'t connected to any network');
+        throw CustomException(e: 'You aren\'t connected to any network!');
       }
       //? opening the server port and setting end points
       httpServer = await HttpServer.bind(InternetAddress.anyIPv4, myPort);

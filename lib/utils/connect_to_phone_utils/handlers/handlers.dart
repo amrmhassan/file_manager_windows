@@ -2,7 +2,6 @@
 
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math';
 
 import 'package:windows_app/constants/global_constants.dart';
 import 'package:windows_app/constants/server_constants.dart';
@@ -17,34 +16,34 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
-Future<void> getStorageInfoHandler(
-  HttpRequest request,
-  HttpResponse response,
-) async {
-  BuildContext? context = navigatorKey.currentContext;
-  if (context == null) {
-    response
-      ..statusCode = HttpStatus.internalServerError
-      ..write('An error with context')
-      ..close();
-    return;
-  }
-  try {
-    int totalSpace = await analyzerPF(context).getTotalDiskSpace();
-    int freeSpace = await analyzerPF(context).getFreeDiskSpace();
+// Future<void> getStorageInfoHandler(
+//   HttpRequest request,
+//   HttpResponse response,
+// ) async {
+//   BuildContext? context = navigatorKey.currentContext;
+//   if (context == null) {
+//     response
+//       ..statusCode = HttpStatus.internalServerError
+//       ..write('An error with context')
+//       ..close();
+//     return;
+//   }
+//   try {
+//     int totalSpace = await analyzerPF(context).getTotalDiskSpace();
+//     int freeSpace = await analyzerPF(context).getFreeDiskSpace();
 
-    response
-      ..headers.add(freeSpaceHeaderKey, freeSpace)
-      ..headers.add(totalSpaceHeaderKey, totalSpace)
-      ..write('Space is in headers')
-      ..close();
-  } catch (e) {
-    response
-      ..statusCode = HttpStatus.internalServerError
-      ..write('An error getting free space and total space')
-      ..close();
-  }
-}
+//     response
+//       ..headers.add(freeSpaceHeaderKey, freeSpace)
+//       ..headers.add(totalSpaceHeaderKey, totalSpace)
+//       ..write('Space is in headers')
+//       ..close();
+//   } catch (e) {
+//     response
+//       ..statusCode = HttpStatus.internalServerError
+//       ..write('An error getting free space and total space')
+//       ..close();
+//   }
+// }
 
 Future<void> getDiskNamesHandler(
   HttpRequest request,

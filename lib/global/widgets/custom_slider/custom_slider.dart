@@ -127,8 +127,6 @@ class _CustomSliderState extends State<CustomSlider>
 
   @override
   Widget build(BuildContext context) {
-    var test = widget;
-    print(widget);
     return FractionallySizedBox(
       widthFactor: widget.widthFactor,
       child: GestureDetector(

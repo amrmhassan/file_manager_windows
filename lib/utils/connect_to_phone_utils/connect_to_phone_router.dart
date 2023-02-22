@@ -41,11 +41,11 @@ CustomRouterSystem addConnectToPhoneServerRouters(
         response.write(wsConnLink);
       },
     )
-    ..addHandler(
-      getStorageEndPoint,
-      HttpMethod.GET,
-      laptop_handlers.getStorageInfoHandler,
-    )
+    // ..addHandler(
+    //   getStorageEndPoint,
+    //   HttpMethod.GET,
+    //   laptop_handlers.getStorageInfoHandler,
+    // )
     ..addHandler(
       getDiskNamesEndPoint,
       HttpMethod.GET,
