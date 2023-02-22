@@ -7,6 +7,7 @@ import 'package:windows_app/providers/shared_items_explorer_provider.dart';
 import 'package:windows_app/utils/errors_collection/custom_exception.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
 import 'package:windows_app/utils/server_utils/connection_utils.dart';
+import 'package:windows_app/utils/server_utils/encoding_utils.dart';
 
 Future<Map<String, int>> getPhoneStorageInfo(BuildContext context) async {
   int port = connectPPF(context).remotePort!;
@@ -75,4 +76,22 @@ Future<String?> getPhoneClipboard(
   } else {
     return clipboard;
   }
+}
+
+Future<void> startDownloadFile(
+  String filePath,
+  int fileSize,
+  BuildContext context,
+) async {
+  String connLink =
+      connectPPF(context).getPhoneConnLink(startDownloadFileEndPoint);
+  await Dio().post(
+    connLink,
+    data: filePath,
+    options: Options(
+      headers: {
+        fileSizeHeaderKey: fileSize,
+      },
+    ),
+  );
 }

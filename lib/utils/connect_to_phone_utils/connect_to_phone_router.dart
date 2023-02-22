@@ -6,7 +6,6 @@ import 'package:windows_app/utils/custom_router_system/custom_router_system.dart
 import 'package:windows_app/utils/custom_router_system/helpers/server_requests_utils.dart';
 import 'package:windows_app/utils/server_utils/handlers/handlers.dart'
     as normal_handlers;
-import 'package:windows_app/utils/server_utils/handlers/handlers.dart';
 
 //! i need to add the logic to authenticate users here
 //! i mean in the main router before entering any Handler
@@ -27,7 +26,7 @@ CustomRouterSystem addConnectToPhoneServerRouters(
     ..addHandler(
       serverCheckEndPoint,
       HttpMethod.POST,
-      (request, response) => serverCheckHandler(
+      (request, response) => normal_handlers.serverCheckHandler(
         request,
         response,
         connectPPF,
@@ -80,6 +79,11 @@ CustomRouterSystem addConnectToPhoneServerRouters(
       getShareSpaceEndPoint,
       HttpMethod.GET,
       laptop_handlers.getPhoneShareSpaceHandler,
+    )
+    ..addHandler(
+      downloadFileEndPoint,
+      HttpMethod.GET,
+      normal_handlers.downloadFileHandler,
     );
   return customRouterSystem;
 }
