@@ -73,7 +73,6 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer>
   void initState() {
     super.initState();
     Wakelock.enable();
-    SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
 
     var mediaProvider =
         Provider.of<MediaPlayerProvider>(context, listen: false);
@@ -95,14 +94,16 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer>
     var winProvider = winP(context);
     return winProvider.isFullScreen && !widget.isOverlay
         ? SizedBox()
-        : WillPopScope(
-            onWillPop: () async {
-              Provider.of<MediaPlayerProvider>(context, listen: false)
-                  .toggleHideVideo();
-              setControllersOverlayViewed(true);
-
-              return false;
+        : RawKeyboardListener(
+            focusNode: FocusNode(),
+            onKey: (value) {
+              if (value.character == null) return;
+              print(value.character);
+              if (value.character == ' ') {
+                mpPF(context).toggleVideoPlay();
+              }
             },
+            autofocus: true,
             child: Stack(
               alignment: Alignment.bottomCenter,
               children: [

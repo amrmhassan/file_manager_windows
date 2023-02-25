@@ -24,10 +24,12 @@ class PlayPauseOverLay extends StatefulWidget {
 
 class _PlayPauseOverLayState extends State<PlayPauseOverLay>
     with SingleTickerProviderStateMixin {
+  late bool isVideoPlayingLocal;
   late AnimationController _controller;
   @override
   void initState() {
     super.initState();
+    isVideoPlayingLocal = mpPF(context).isVideoPlaying;
 
     _controller = AnimationController(
       vsync: this,
@@ -58,6 +60,7 @@ class _PlayPauseOverLayState extends State<PlayPauseOverLay>
   Widget build(BuildContext context) {
     var mpProviderFalse =
         Provider.of<MediaPlayerProvider>(context, listen: false);
+
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [

@@ -121,9 +121,7 @@ class _ControllersOverlayState extends State<ControllersOverlay> {
                 ),
             ],
           ),
-          PlayPauseOverLay(
-              // toggleControllerOverLayViewed: widget.toggleControllerOverLayViewed,
-              ),
+          PlayPauseOverLay(),
         ],
       ),
     );
