@@ -2,6 +2,7 @@
 
 import 'package:dart_vlc/dart_vlc.dart';
 import 'package:windows_app/constants/colors.dart';
+import 'package:windows_app/constants/styles.dart';
 import 'package:windows_app/global/widgets/screens_wrapper.dart';
 import 'package:flutter/material.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
@@ -15,7 +16,41 @@ class TestScreen extends StatefulWidget {
 }
 
 class _TestScreenState extends State<TestScreen> {
-  Player player = Player(id: 100);
+  late OverlayEntry _overlayEntry;
+
+  @override
+  void initState() {
+    super.initState();
+    _overlayEntry = OverlayEntry(builder: (context) {
+      return Positioned(
+        top: 0.0,
+        bottom: 0.0,
+        left: 0.0,
+        right: 0.0,
+        child: Scaffold(
+          backgroundColor: kBackgroundColor,
+          body: GestureDetector(
+            onTap: () {
+              _overlayEntry.remove();
+            },
+            child: Container(
+              color: Colors.black,
+              child: Center(
+                child: Text(
+                  'I am an overlay',
+                  style: h4LightTextStyle,
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Overlay.of(context).insert(_overlayEntry);
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     var connectPhoneProvider = connectPP(context);

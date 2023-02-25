@@ -44,6 +44,8 @@ class _ScreensWrapperState extends State<ScreensWrapper> {
   @override
   Widget build(BuildContext context) {
     var mpProvider = mpP(context);
+    var winProvider = winP(context);
+
     return Scaffold(
       key: scfKey,
       backgroundColor: widget.backgroundColor,
@@ -51,95 +53,102 @@ class _ScreensWrapperState extends State<ScreensWrapper> {
       floatingActionButton: widget.floatingActionButton,
       resizeToAvoidBottomInset: false,
       drawer: CustomAppDrawer(),
-      body: Column(
+      body: Stack(
         children: [
-          WindowsAppBar(buttonKey: buttonKey, scfKey: scfKey),
-          Expanded(
-            child: InkWell(
-              splashColor: Colors.transparent,
-              highlightColor: Colors.transparent,
-              focusColor: Colors.transparent,
-              onTap: () {
-                FocusScope.of(context).requestFocus(FocusNode());
-              },
-              child: SafeArea(
-                top: !(mpProvider.videoPlayerController != null &&
-                    (!mpProvider.videoHidden)),
-                child: Column(
-                  children: [
-                    Expanded(
-                      child: Stack(
-                        alignment: Alignment.bottomRight,
-                        children: [
-                          Column(
+          Column(
+            children: [
+              WindowsAppBar(buttonKey: buttonKey, scfKey: scfKey),
+              Expanded(
+                child: InkWell(
+                  splashColor: Colors.transparent,
+                  highlightColor: Colors.transparent,
+                  focusColor: Colors.transparent,
+                  onTap: () {
+                    FocusScope.of(context).requestFocus(FocusNode());
+                  },
+                  child: SafeArea(
+                    top: !(mpProvider.videoPlayerController != null &&
+                        (!mpProvider.videoHidden)),
+                    child: Column(
+                      children: [
+                        Expanded(
+                          child: Stack(
+                            alignment: Alignment.bottomRight,
                             children: [
-                              Expanded(
-                                child: Container(
-                                  padding: EdgeInsets.only(
-                                      bottom: MediaQuery.of(context)
-                                          .viewInsets
-                                          .bottom),
-                                  child: widget.child,
+                              Column(
+                                children: [
+                                  Expanded(
+                                    child: Container(
+                                      padding: EdgeInsets.only(
+                                          bottom: MediaQuery.of(context)
+                                              .viewInsets
+                                              .bottom),
+                                      child: widget.child,
+                                    ),
+                                  ),
+                                  MediaControllers(),
+                                ],
+                              ),
+                              Positioned(
+                                bottom: -1,
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    ShowControllersButton(),
+                                    HSpace(),
+                                  ],
                                 ),
                               ),
-                              MediaControllers(),
+                              Positioned(
+                                left: 0,
+                                bottom: -1,
+                                child: Row(
+                                  children: [
+                                    HSpace(),
+                                    VideoPlayerShowButton(),
+                                  ],
+                                ),
+                              ),
+                              // VideoPlayerViewer(),
+                              if (mpProvider.videoPlayerController != null &&
+                                  (!mpProvider.videoHidden))
+                                AdvancedVideoPlayer(),
+
+                              QuickSendOpnButton(),
+                              LaptopMessagesButton(),
                             ],
                           ),
-                          Positioned(
-                            bottom: -1,
+                        ),
+                        if (Platform.isWindows &&
+                            (ModalRoute.of(context)
+                                        ?.settings
+                                        .name
+                                        ?.toString() ??
+                                    '') !=
+                                HomeScreen.routeName)
+                          Container(
+                            width: double.infinity,
+                            height: largeIconSize * 1.5,
+                            color: kCardBackgroundColor,
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: [
-                                ShowControllersButton(),
-                                HSpace(),
+                                CustomIconButton(
+                                  onTap: () {
+                                    Navigator.pop(context);
+                                  },
+                                  iconData: Icons.arrow_forward_ios,
+                                ),
+                                HSpace(factor: 2),
                               ],
                             ),
                           ),
-                          Positioned(
-                            left: 0,
-                            bottom: -1,
-                            child: Row(
-                              children: [
-                                HSpace(),
-                                VideoPlayerShowButton(),
-                              ],
-                            ),
-                          ),
-                          // VideoPlayerViewer(),
-                          if (mpProvider.videoPlayerController != null &&
-                              (!mpProvider.videoHidden))
-                            AdvancedVideoPlayer(),
-
-                          QuickSendOpnButton(),
-                          LaptopMessagesButton(),
-                        ],
-                      ),
+                      ],
                     ),
-                    if (Platform.isWindows &&
-                        (ModalRoute.of(context)?.settings.name?.toString() ??
-                                '') !=
-                            HomeScreen.routeName)
-                      Container(
-                        width: double.infinity,
-                        height: largeIconSize * 1.5,
-                        color: kCardBackgroundColor,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            CustomIconButton(
-                              onTap: () {
-                                Navigator.pop(context);
-                              },
-                              iconData: Icons.arrow_forward_ios,
-                            ),
-                            HSpace(factor: 2),
-                          ],
-                        ),
-                      ),
-                  ],
+                  ),
                 ),
               ),
-            ),
+            ],
           ),
         ],
       ),

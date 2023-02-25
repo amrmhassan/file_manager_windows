@@ -6,6 +6,9 @@ import 'package:windows_app/utils/windows_utils/disks_capturer.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
+String phoneName = 'Laptop';
+String phoneID = 'laptop_id';
+
 // const String initialPath = '/';
 final List<Directory> initialDirs = Platform.isWindows
     ? validWindowsDisks()

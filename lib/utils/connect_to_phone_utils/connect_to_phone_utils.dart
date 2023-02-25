@@ -7,7 +7,6 @@ import 'package:windows_app/providers/shared_items_explorer_provider.dart';
 import 'package:windows_app/utils/errors_collection/custom_exception.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
 import 'package:windows_app/utils/server_utils/connection_utils.dart';
-import 'package:windows_app/utils/server_utils/encoding_utils.dart';
 
 Future<Map<String, int>> getPhoneStorageInfo(BuildContext context) async {
   int port = connectPPF(context).remotePort!;

@@ -84,6 +84,11 @@ CustomRouterSystem addConnectToPhoneServerRouters(
       downloadFileEndPoint,
       HttpMethod.GET,
       normal_handlers.downloadFileHandler,
+    )
+    ..addHandler(
+      startDownloadFileEndPoint,
+      HttpMethod.POST,
+      laptop_handlers.startDownloadFileHandler,
     );
   return customRouterSystem;
 }

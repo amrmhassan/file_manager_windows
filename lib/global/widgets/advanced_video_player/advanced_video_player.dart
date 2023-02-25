@@ -1,5 +1,7 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
 
+import 'package:window_manager/window_manager.dart';
+import 'package:windows_app/constants/widget_keys.dart';
 import 'package:windows_app/global/widgets/advanced_video_player/widgets/base_over_lay.dart';
 import 'package:windows_app/global/widgets/advanced_video_player/widgets/controllers_overlay.dart';
 import 'package:windows_app/global/widgets/video_player_viewer/widgets/actual_video_player.dart';
@@ -8,10 +10,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:wakelock/wakelock.dart';
+import 'package:windows_app/utils/providers_calls_utils.dart';
 
 class AdvancedVideoPlayer extends StatefulWidget {
+  final bool isOverlay;
+  final OverlayEntry? overlayEntry;
+
   const AdvancedVideoPlayer({
     Key? key,
+    this.isOverlay = false,
+    this.overlayEntry,
   }) : super(key: key);
 
   @override
@@ -20,6 +28,7 @@ class AdvancedVideoPlayer extends StatefulWidget {
 
 class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer>
     with WidgetsBindingObserver {
+  late OverlayEntry overlayEntry;
   bool controllerOverLayViewed = true;
   //? to activate the landscape mode
   Future<void> activateLandScapeMode() async {
@@ -39,11 +48,23 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer>
 
 //? to toggle between them
   void toggleLandScape() async {
-    Orientation currentOrientation = MediaQuery.of(context).orientation;
-    if (currentOrientation == Orientation.landscape) {
-      await activatePortraitMode(false);
+    await winPF(context).toggleFullScreen();
+    if (winPF(context).isFullScreen) {
+      //? here i want to show an overlay for viewing the video
+      overlayEntry = OverlayEntry(
+        builder: (context) => Scaffold(
+          body: AdvancedVideoPlayer(
+            isOverlay: true,
+            overlayEntry: overlayEntry,
+          ),
+        ),
+      );
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        Overlay.of(context).insert(overlayEntry);
+      });
     } else {
-      await activateLandScapeMode();
+      widget.overlayEntry?.remove();
+      //? i here i want to hide the overlay for vieweing the video
     }
   }
 
@@ -78,38 +99,43 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer>
   void dispose() {
     activatePortraitMode(true);
     Wakelock.disable();
+    winPF(navigatorKey.currentContext!).setFullScreen(false, false);
+
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     var mpProvider = Provider.of<MediaPlayerProvider>(context);
+    var winProvider = winP(context);
+    return winProvider.isFullScreen && !widget.isOverlay
+        ? SizedBox()
+        : WillPopScope(
+            onWillPop: () async {
+              Provider.of<MediaPlayerProvider>(context, listen: false)
+                  .toggleHideVideo();
+              await activatePortraitMode(true);
+              setControllersOverlayViewed(true);
 
-    return WillPopScope(
-      onWillPop: () async {
-        Provider.of<MediaPlayerProvider>(context, listen: false)
-            .toggleHideVideo();
-        await activatePortraitMode(true);
-        setControllersOverlayViewed(true);
-
-        return false;
-      },
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          ActualVideoPlayer(
-            mpProvider: mpProvider,
-          ),
-          BaseOverLay(
-            toggleControllerOverLayViewed: toggleControllerOverLayViewed,
-          ),
-          if (controllerOverLayViewed)
-            ControllersOverlay(
-              toggleControllerOverLayViewed: toggleControllerOverLayViewed,
-              toggleLandscape: toggleLandScape,
+              return false;
+            },
+            child: Stack(
+              alignment: Alignment.bottomCenter,
+              children: [
+                ActualVideoPlayer(
+                  mpProvider: mpProvider,
+                ),
+                BaseOverLay(
+                  toggleControllerOverLayViewed: toggleControllerOverLayViewed,
+                ),
+                if (controllerOverLayViewed)
+                  ControllersOverlay(
+                    toggleControllerOverLayViewed:
+                        toggleControllerOverLayViewed,
+                    toggleLandscape: toggleLandScape,
+                  ),
+              ],
             ),
-        ],
-      ),
-    );
+          );
   }
 }

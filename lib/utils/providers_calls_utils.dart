@@ -10,6 +10,7 @@ import 'package:windows_app/providers/util/analyzer_provider.dart';
 import 'package:windows_app/providers/util/explorer_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:windows_app/providers/window_provider.dart';
 
 //? server provider
 ServerProvider serverPF(BuildContext context) {
@@ -100,4 +101,13 @@ ConnectPhoneProvider connectPPF(BuildContext context) {
 
 ConnectPhoneProvider connectPP(BuildContext context) {
   return Provider.of<ConnectPhoneProvider>(context);
+}
+
+//? connect phone provider
+WindowProvider winPF(BuildContext context) {
+  return Provider.of<WindowProvider>(context, listen: false);
+}
+
+WindowProvider winP(BuildContext context) {
+  return Provider.of<WindowProvider>(context);
 }

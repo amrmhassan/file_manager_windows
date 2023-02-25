@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:dart_vlc/dart_vlc.dart';
+import 'package:window_manager/window_manager.dart';
 import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/widget_keys.dart';
 import 'package:windows_app/helpers/hive/hive_initiator.dart';
@@ -21,6 +22,7 @@ import 'package:windows_app/providers/recent_provider.dart';
 import 'package:windows_app/providers/theme_provider.dart';
 import 'package:windows_app/providers/thumbnail_provider.dart';
 import 'package:windows_app/providers/settings_provider.dart';
+import 'package:windows_app/providers/window_provider.dart';
 import 'package:windows_app/screens/about_us_screen/about_us_screen.dart';
 import 'package:windows_app/screens/analyzer_screen/analyzer_screen.dart';
 import 'package:windows_app/screens/connect_phone_screen/connect_phone_screen.dart';
@@ -59,6 +61,7 @@ import 'package:provider/provider.dart';
 bool firstTimeRunApp = false;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  await windowManager.ensureInitialized();
 
   try {
     await HiveInitiator().setup();
@@ -83,13 +86,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  // @override
-  // void initState() {
-  //   Player(id: 1000).stop();
-  //   Player(id: 2000).stop();
-  //   super.initState();
-  //                  }
-
   @override
   Widget build(BuildContext context) {
     return MultiProvider(
@@ -110,6 +106,7 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (ctx) => DownloadProvider()),
         ChangeNotifierProvider(create: (ctx) => QuickSendProvider()),
         ChangeNotifierProvider(create: (ctx) => ConnectPhoneProvider()),
+        ChangeNotifierProvider(create: (ctx) => WindowProvider()),
       ],
       child: MaterialApp(
         debugShowCheckedModeBanner: false,

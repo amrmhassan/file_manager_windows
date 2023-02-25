@@ -20,23 +20,12 @@ class ActualVideoPlayer extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          MediaQuery.of(context).orientation == Orientation.landscape
-              ? Expanded(
-                  child: AspectRatio(
-                    aspectRatio: mpProvider.videoAspectRatio ?? 1,
-                    child: Video(
-                      player: mpProvider.videoPlayerController!,
-                    ),
-                  ),
-                )
-              : Expanded(
-                  child: AspectRatio(
-                    aspectRatio: mpProvider.videoAspectRatio ?? 1,
-                    child: Video(
-                      player: mpProvider.videoPlayerController!,
-                    ),
-                  ),
-                ),
+          Expanded(
+            child: Video(
+              showControls: false,
+              player: mpProvider.videoPlayerController!,
+            ),
+          ),
         ],
       ),
     );

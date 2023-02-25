@@ -199,6 +199,7 @@ class VideoMuteFullScreenControllers extends StatelessWidget {
     var mpProvider = Provider.of<MediaPlayerProvider>(context);
     var mpProviderFalse =
         Provider.of<MediaPlayerProvider>(context, listen: false);
+    var winProvider = winP(context);
     return FadeInRight(
       preferences: AnimationPreferences(
         duration: Duration(milliseconds: 350),
@@ -218,10 +219,9 @@ class VideoMuteFullScreenControllers extends StatelessWidget {
             ),
             CustomIconButton(
               onTap: toggleLandscape,
-              iconData:
-                  MediaQuery.of(context).orientation == Orientation.landscape
-                      ? Icons.fullscreen_exit
-                      : Icons.fullscreen,
+              iconData: winProvider.isFullScreen
+                  ? Icons.fullscreen_exit
+                  : Icons.fullscreen,
             ),
           ],
         ),
