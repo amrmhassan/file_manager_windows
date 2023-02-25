@@ -20,12 +20,13 @@ class ActualVideoPlayer extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Expanded(
-            child: Video(
-              showControls: false,
-              player: mpProvider.videoPlayerController!,
+          if (mpProvider.videoPlayerController != null)
+            Expanded(
+              child: Video(
+                showControls: false,
+                player: mpProvider.videoPlayerController!,
+              ),
             ),
-          ),
         ],
       ),
     );

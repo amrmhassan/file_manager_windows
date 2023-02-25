@@ -28,23 +28,8 @@ class AdvancedVideoPlayer extends StatefulWidget {
 
 class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer>
     with WidgetsBindingObserver {
-  late OverlayEntry overlayEntry;
+  OverlayEntry? overlayEntry;
   bool controllerOverLayViewed = true;
-  //? to activate the landscape mode
-  Future<void> activateLandScapeMode() async {
-    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.leanBack);
-    await SystemChrome.setPreferredOrientations(
-        [DeviceOrientation.landscapeLeft]);
-  }
-
-//? to activate the portrait mode
-  Future<void> activatePortraitMode(bool activateStatusBar) async {
-    if (activateStatusBar) {
-      await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    }
-    await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-    await SystemChrome.restoreSystemUIOverlays();
-  }
 
 //? to toggle between them
   void toggleLandScape() async {
@@ -60,7 +45,7 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer>
         ),
       );
       WidgetsBinding.instance.addPostFrameCallback((_) {
-        Overlay.of(context).insert(overlayEntry);
+        Overlay.of(context).insert(overlayEntry!);
       });
     } else {
       widget.overlayEntry?.remove();
@@ -97,9 +82,9 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer>
 
   @override
   void dispose() {
-    activatePortraitMode(true);
     Wakelock.disable();
     winPF(navigatorKey.currentContext!).setFullScreen(false, false);
+    overlayEntry?.remove();
 
     super.dispose();
   }
@@ -114,7 +99,6 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer>
             onWillPop: () async {
               Provider.of<MediaPlayerProvider>(context, listen: false)
                   .toggleHideVideo();
-              await activatePortraitMode(true);
               setControllersOverlayViewed(true);
 
               return false;
