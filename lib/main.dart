@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:dart_vlc/dart_vlc.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/widget_keys.dart';
@@ -60,6 +61,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 bool firstTimeRunApp = false;
+late String downloadFolder;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await windowManager.ensureInitialized();
@@ -70,6 +72,7 @@ void main() async {
     await setThemeVariables();
     await initWindowSize();
     await DartVLC.initialize();
+    downloadFolder = (await getApplicationDocumentsDirectory()).path;
   } catch (e) {
     printOnDebug('Error with first time app in main() or theme variables');
   }

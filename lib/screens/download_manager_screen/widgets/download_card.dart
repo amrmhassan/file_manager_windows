@@ -36,7 +36,6 @@ class _DownloadCardState extends State<DownloadCard> {
   final ScrollController _downloadCardScrollController = ScrollController();
 
   void navigateToFile() async {
-    await widget.downloadTaskModel.getLocalFilePath();
     File file = File(widget.downloadTaskModel.localFilePath);
     if (file.existsSync()) {
       handleOpenTabFromOtherScreen(
@@ -58,7 +57,6 @@ class _DownloadCardState extends State<DownloadCard> {
     return ButtonWrapper(
       onTap: widget.downloadTaskModel.taskStatus == TaskStatus.finished
           ? () async {
-              await widget.downloadTaskModel.getLocalFilePath();
               openFile(widget.downloadTaskModel.localFilePath, context);
             }
           : null,

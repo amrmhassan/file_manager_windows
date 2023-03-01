@@ -236,10 +236,12 @@ class _ChildDirectoryItemState extends State<ChildDirectoryItem> {
                             children: [
                               Text(
                                 widget.fileName,
-                                style: h4LightTextStyle,
-                                maxLines: 1,
+                                style: h4LightTextStyle.copyWith(height: 1),
+                                softWrap: true,
+                                // maxLines: 1,
                                 // overflow: TextOverflow.ellipsis,
                               ),
+                              VSpace(factor: .2),
                               widget.storageItemModel == null
                                   ? SizedBox()
                                   : Row(

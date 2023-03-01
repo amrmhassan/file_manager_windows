@@ -62,7 +62,6 @@ class FinishedTaskInfo extends StatelessWidget {
                   onOk: () async {
                     // this will delete the task and the file associated with it
                     try {
-                      await downloadTaskModel.getLocalFilePath();
                       File(downloadTaskModel.localFilePath).deleteSync();
                     } catch (e) {
                       showSnackBar(

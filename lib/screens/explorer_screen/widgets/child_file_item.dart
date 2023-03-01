@@ -130,11 +130,16 @@ class _ChildFileItemState extends State<ChildFileItem> {
                                             ExploreMode.selection
                                     ? path_operations.basename(path)
                                     : getFileName(path),
-                                style: h4LightTextStyle,
+                                style: h4LightTextStyle.copyWith(
+                                  height: 1,
+                                ),
+                                softWrap: true,
+                                overflow: TextOverflow.visible,
                                 //! fix the file name
-                                maxLines: 1,
+                                // maxLines: 1,
                                 // overflow: TextOverflow.ellipsis,
                               ),
+                              VSpace(factor: .1),
                               FileSize(
                                 modified: widget.storageItemModel?.modified,
                                 path: widget.storageItemModel?.path ??

@@ -127,6 +127,7 @@ class MediaPlayerProvider extends ChangeNotifier {
 
   //# video controllers
   // VideoPlayerController? videoPlayerController;
+  String? playingVideoPath;
   Player? videoPlayerController;
   double? videoHeight;
   double? videoWidth;
@@ -194,8 +195,10 @@ class MediaPlayerProvider extends ChangeNotifier {
     if (network) {
       String url = '$path/${Uri.encodeComponent(fileRemotePath!)}';
       videoPlayerController?.open(Media.network(url));
+      playingVideoPath = fileRemotePath;
     } else {
       videoPlayerController?.open(Media.file(File(path)));
+      playingVideoPath = path;
     }
     networkVideo = network;
     videoStateStream = videoPlayerController?.playbackStream.listen(
@@ -260,6 +263,7 @@ class MediaPlayerProvider extends ChangeNotifier {
     videoPosition = Duration.zero;
     videoHidden = false;
     bottomVideoControllersHidden = false;
+    playingVideoPath = null;
     // _bufferedParts.clear();
     notifyListeners();
   }

@@ -308,7 +308,6 @@ class DownloadProvider extends ChangeNotifier {
         serverProvider,
         shareProvider,
       );
-      await downloadTaskModel.getLocalFilePath();
 
       //? new way of downloading with multiple streams for faster downloading speed
       rdu.DownloadTaskController downloadTaskController =
