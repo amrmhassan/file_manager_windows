@@ -21,13 +21,15 @@ class BaseOverLay extends StatelessWidget {
         Column(
           children: [
             GestureDetector(
-              onTap: toggleControllerOverLayViewed,
+              onTap: () {
+                toggleControllerOverLayViewed();
+              },
               child: Opacity(
-                opacity: 0,
+                opacity: 1,
                 child: Container(
-                  height: Responsive.getCleanHeight(context) - largeIconSize,
+                  height: Responsive.getHeight(context) - largeIconSize * 1.5,
                   width: Responsive.getWidth(context),
-                  color: Colors.red,
+                  color: Colors.transparent,
                 ),
               ),
             )

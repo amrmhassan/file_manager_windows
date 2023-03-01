@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors
+
 import 'package:flutter/material.dart';
 
 import 'custom_circle.dart';
@@ -137,18 +139,20 @@ class _CustomSliderState extends State<CustomSlider>
           color: widget.listeningAreaColor ?? Colors.transparent,
           height: widget.listeningAreaHeigh,
           width: MediaQuery.of(context).size.width,
-          child: CustomPaint(
-            foregroundPainter: SliderPainter(
-              thickness: widget.activeThickness,
-              value: innerValue,
-              activeColor: widget.activeColor,
-              activeThickness: widget.activeThickness,
-              thumbs: widget.thumbs ?? [defaultThumb],
-              inactiveColor: widget.inactiveColor,
-              inactiveThickness: widget.inactiveThickness,
-              subRanges: innerSubRanges,
-            ),
-          ),
+          child: range == 0
+              ? SizedBox()
+              : CustomPaint(
+                  foregroundPainter: SliderPainter(
+                    thickness: widget.activeThickness,
+                    value: innerValue,
+                    activeColor: widget.activeColor,
+                    activeThickness: widget.activeThickness,
+                    thumbs: widget.thumbs ?? [defaultThumb],
+                    inactiveColor: widget.inactiveColor,
+                    inactiveThickness: widget.inactiveThickness,
+                    subRanges: innerSubRanges,
+                  ),
+                ),
         ),
       ),
     );

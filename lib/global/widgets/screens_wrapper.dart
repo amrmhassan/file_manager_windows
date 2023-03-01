@@ -63,9 +63,9 @@ class _ScreensWrapperState extends State<ScreensWrapper> {
                   splashColor: Colors.transparent,
                   highlightColor: Colors.transparent,
                   focusColor: Colors.transparent,
-                  onTap: () {
-                    FocusScope.of(context).requestFocus(FocusNode());
-                  },
+                  // onTap: () {
+                  //   FocusScope.of(context).requestFocus(FocusNode());
+                  // },
                   child: SafeArea(
                     top: !(mpProvider.videoPlayerController != null &&
                         (!mpProvider.videoHidden)),

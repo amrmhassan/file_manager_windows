@@ -1,6 +1,7 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
 
 import 'package:window_manager/window_manager.dart';
+import 'package:windows_app/constants/global_constants.dart';
 import 'package:windows_app/constants/widget_keys.dart';
 import 'package:windows_app/global/widgets/advanced_video_player/widgets/base_over_lay.dart';
 import 'package:windows_app/global/widgets/advanced_video_player/widgets/controllers_overlay.dart';
@@ -30,6 +31,8 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer>
     with WidgetsBindingObserver {
   OverlayEntry? overlayEntry;
   bool controllerOverLayViewed = true;
+  var previousPressedKey;
+  FocusNode focusNode = FocusNode();
 
 //? to toggle between them
   void toggleLandScape() async {
@@ -94,16 +97,37 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer>
     var winProvider = winP(context);
     return winProvider.isFullScreen && !widget.isOverlay
         ? SizedBox()
-        : RawKeyboardListener(
-            focusNode: FocusNode(),
-            onKey: (value) {
-              if (value.character == null) return;
-              print(value.character);
-              if (value.character == ' ') {
-                mpPF(context).toggleVideoPlay();
-              }
-            },
+        : Focus(
             autofocus: true,
+            focusNode: focusNode,
+            onKey: (node, event) {
+              if (event.data.physicalKey.debugName == previousPressedKey ||
+                  event.repeat) {
+                previousPressedKey = null;
+                return KeyEventResult.ignored;
+              }
+              var pressedKey = event.data.physicalKey;
+              //? here handle pressing keys
+              if (pressedKey == PhysicalKeyboardKey.keyM) {
+                logger.i('Muting');
+              } else if (pressedKey == PhysicalKeyboardKey.keyF) {
+                logger.i('Toggle full screen');
+              } else if (pressedKey == PhysicalKeyboardKey.arrowRight) {
+                logger.i('fast forwarding 10 sec');
+              } else if (pressedKey == PhysicalKeyboardKey.arrowLeft) {
+                logger.i('fast backwarding 10 sec');
+              } else if (pressedKey == PhysicalKeyboardKey.arrowUp) {
+                logger.i('raising voice');
+              } else if (pressedKey == PhysicalKeyboardKey.arrowDown) {
+                logger.i('decreasing voice');
+              } else if (pressedKey == PhysicalKeyboardKey.space) {
+                logger.i('toggle play pause');
+              } else if (pressedKey == PhysicalKeyboardKey.keyH) {
+                logger.i('hiding video');
+              }
+              previousPressedKey = event.data.physicalKey.debugName;
+              return KeyEventResult.handled;
+            },
             child: Stack(
               alignment: Alignment.bottomCenter,
               children: [

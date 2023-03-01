@@ -91,6 +91,7 @@ class SliderPainter extends CustomPainter {
 
   @override
   void paint(Canvas canvas, Size size) {
+    if (value == double.nan) return;
     final paint = Paint();
 
     //? the inactive part

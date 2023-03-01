@@ -41,7 +41,7 @@ class WindowsAppBar extends StatelessWidget {
               child: Container(
                 height: largeIconSize / 1.3,
                 decoration: BoxDecoration(
-                  color: kBackgroundColor,
+                  color: Colors.transparent,
                   borderRadius: BorderRadius.circular(1000),
                 ),
               ),
