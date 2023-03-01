@@ -44,7 +44,6 @@ class _ScreensWrapperState extends State<ScreensWrapper> {
   @override
   Widget build(BuildContext context) {
     var mpProvider = mpP(context);
-    var winProvider = winP(context);
 
     return Scaffold(
       key: scfKey,

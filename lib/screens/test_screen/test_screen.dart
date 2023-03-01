@@ -1,6 +1,5 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
 
-import 'package:dart_vlc/dart_vlc.dart';
 import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/styles.dart';
 import 'package:windows_app/global/widgets/screens_wrapper.dart';

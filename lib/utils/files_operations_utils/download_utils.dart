@@ -4,52 +4,52 @@ import 'package:windows_app/constants/files_types_icons.dart';
 import 'package:windows_app/constants/global_constants.dart';
 
 //? when downloading a file this function will return the download folder path
-String getSaveFilePath(FileType fileType, String fileName) {
+Future<String> getSaveFilePath(FileType fileType, String fileName) async {
   late String downloadFolder;
   switch (fileType) {
     case FileType.apk:
-      downloadFolder = _folderPathCheck(apkDownloadFolder);
+      downloadFolder = await _folderPathCheck(apkDownloadFolder);
       break;
     case FileType.archive:
-      downloadFolder = _folderPathCheck(archiveDownloadFolder);
+      downloadFolder = await _folderPathCheck(archiveDownloadFolder);
       break;
     case FileType.audio:
-      downloadFolder = _folderPathCheck(audioDownloadFolder);
+      downloadFolder = await _folderPathCheck(audioDownloadFolder);
       break;
     case FileType.docs:
-      downloadFolder = _folderPathCheck(docDownloadFolder);
+      downloadFolder = await _folderPathCheck(docDownloadFolder);
       break;
     case FileType.image:
-      downloadFolder = _folderPathCheck(imageDownloadFolder);
+      downloadFolder = await _folderPathCheck(imageDownloadFolder);
       break;
     case FileType.video:
-      downloadFolder = _folderPathCheck(videoDownloadFolder);
+      downloadFolder = await _folderPathCheck(videoDownloadFolder);
       break;
     case FileType.excel:
-      downloadFolder = _folderPathCheck(docDownloadFolder);
+      downloadFolder = await _folderPathCheck(docDownloadFolder);
       break;
     case FileType.word:
-      downloadFolder = _folderPathCheck(docDownloadFolder);
+      downloadFolder = await _folderPathCheck(docDownloadFolder);
       break;
     case FileType.powerPoint:
-      downloadFolder = _folderPathCheck(docDownloadFolder);
+      downloadFolder = await _folderPathCheck(docDownloadFolder);
       break;
     case FileType.text:
-      downloadFolder = _folderPathCheck(docDownloadFolder);
+      downloadFolder = await _folderPathCheck(docDownloadFolder);
       break;
     case FileType.batch:
-      downloadFolder = _folderPathCheck(docDownloadFolder);
+      downloadFolder = await _folderPathCheck(docDownloadFolder);
       break;
     default:
-      downloadFolder = _folderPathCheck(otherDownloadFolder);
+      downloadFolder = await _folderPathCheck(otherDownloadFolder);
       break;
   }
   return '$downloadFolder/$fileName'.replaceAll('//', '/');
 }
 
 //? for checking each sub download folder
-String _folderPathCheck(String folderName) {
-  String mainDownloadPath = _checkMainDownloadFolder();
+Future<String> _folderPathCheck(String folderName) async {
+  String mainDownloadPath = await _checkMainDownloadFolder();
   Directory directory = Directory('$mainDownloadPath/$folderName');
   if (!directory.existsSync()) {
     directory.createSync();
@@ -58,7 +58,7 @@ String _folderPathCheck(String folderName) {
 }
 
 //? for checking the main download folder
-String _checkMainDownloadFolder() {
+Future<String> _checkMainDownloadFolder() async {
   String mainPath = 'sdcard/$mainDownloadFolder';
   Directory mainDir = Directory(mainPath);
   if (!mainDir.existsSync()) {

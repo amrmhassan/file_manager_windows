@@ -1,3 +1,4 @@
+import 'package:windows_app/providers/animation_provider.dart';
 import 'package:windows_app/providers/connect_phone_provider.dart';
 import 'package:windows_app/providers/download_provider.dart';
 import 'package:windows_app/providers/files_operations_provider.dart';
@@ -110,4 +111,13 @@ WindowProvider winPF(BuildContext context) {
 
 WindowProvider winP(BuildContext context) {
   return Provider.of<WindowProvider>(context);
+}
+
+//? connect phone provider
+AnimationProvider animationPF(BuildContext context) {
+  return Provider.of<AnimationProvider>(context, listen: false);
+}
+
+AnimationProvider animationP(BuildContext context) {
+  return Provider.of<AnimationProvider>(context);
 }

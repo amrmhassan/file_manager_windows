@@ -101,7 +101,7 @@ class DownloadProvider extends ChangeNotifier {
   void clearAllTasks() async {
     tasks.clear();
     notifyListeners();
-    File(getSaveFilePath(FileType.video, 'fileName'))
+    File(await getSaveFilePath(FileType.video, 'fileName'))
         .parent
         .parent
         .deleteSync(recursive: true);
@@ -308,6 +308,7 @@ class DownloadProvider extends ChangeNotifier {
         serverProvider,
         shareProvider,
       );
+      await downloadTaskModel.getLocalFilePath();
 
       //? new way of downloading with multiple streams for faster downloading speed
       rdu.DownloadTaskController downloadTaskController =

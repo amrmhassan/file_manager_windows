@@ -52,10 +52,14 @@ class DownloadTaskModel {
     this.count = 0,
     this.taskStatus = TaskStatus.pending,
     // this.peerModel,
-  }) {
+  });
+
+  Future<String> getLocalFilePath() async {
     String fileName = path_operations.basename(remoteFilePath);
     FileType fileType = getFileTypeFromPath(remoteFilePath);
-    localFilePath = getSaveFilePath(fileType, fileName);
+    localFilePath = await getSaveFilePath(fileType, fileName);
+
+    return localFilePath;
   }
 
   //! to json

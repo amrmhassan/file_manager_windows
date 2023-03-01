@@ -1,7 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
-import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/sizes.dart';
 import 'package:windows_app/global/widgets/button_wrapper.dart';
 import 'package:flutter/material.dart';

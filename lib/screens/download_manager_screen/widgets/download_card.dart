@@ -1,4 +1,4 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
 
 import 'dart:io';
 
@@ -35,7 +35,8 @@ class DownloadCard extends StatefulWidget {
 class _DownloadCardState extends State<DownloadCard> {
   final ScrollController _downloadCardScrollController = ScrollController();
 
-  void navigateToFile() {
+  void navigateToFile() async {
+    await widget.downloadTaskModel.getLocalFilePath();
     File file = File(widget.downloadTaskModel.localFilePath);
     if (file.existsSync()) {
       handleOpenTabFromOtherScreen(
@@ -56,7 +57,8 @@ class _DownloadCardState extends State<DownloadCard> {
   Widget build(BuildContext context) {
     return ButtonWrapper(
       onTap: widget.downloadTaskModel.taskStatus == TaskStatus.finished
-          ? () {
+          ? () async {
+              await widget.downloadTaskModel.getLocalFilePath();
               openFile(widget.downloadTaskModel.localFilePath, context);
             }
           : null,

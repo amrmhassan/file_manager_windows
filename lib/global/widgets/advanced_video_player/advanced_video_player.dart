@@ -1,6 +1,5 @@
-// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
+// ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously, prefer_typing_uninitialized_variables
 
-import 'package:window_manager/window_manager.dart';
 import 'package:windows_app/constants/global_constants.dart';
 import 'package:windows_app/constants/widget_keys.dart';
 import 'package:windows_app/global/widgets/advanced_video_player/widgets/base_over_lay.dart';
@@ -94,6 +93,7 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer>
   @override
   Widget build(BuildContext context) {
     var mpProvider = Provider.of<MediaPlayerProvider>(context);
+    var mpProviderFalse = mpPF(context);
     var winProvider = winP(context);
     return winProvider.isFullScreen && !widget.isOverlay
         ? SizedBox()
@@ -121,7 +121,16 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer>
               } else if (pressedKey == PhysicalKeyboardKey.arrowDown) {
                 logger.i('decreasing voice');
               } else if (pressedKey == PhysicalKeyboardKey.space) {
-                logger.i('toggle play pause');
+                mpProviderFalse.toggleVideoPlay();
+                try {
+                  if (mpProviderFalse.isVideoPlaying) {
+                    animationPF(context).pausePlayAnimation?.reverse();
+                  } else {
+                    animationPF(context).pausePlayAnimation?.forward();
+                  }
+                } catch (e) {
+                  //
+                }
               } else if (pressedKey == PhysicalKeyboardKey.keyH) {
                 logger.i('hiding video');
               }
