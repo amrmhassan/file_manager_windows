@@ -433,6 +433,7 @@ void serverCheckHandler(
 
   connectPPF.setMyServerSocket(customServerSocket);
   connectPPF.setMyWSConnLink(myWSConnLink);
+  connectPPF.setMyWsServer(wsServer);
   //!
 // i know my port, but i don't know which of my ips will work
 // so client will provide my ip for me,

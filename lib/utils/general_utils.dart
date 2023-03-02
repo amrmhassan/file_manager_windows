@@ -5,6 +5,7 @@ import 'package:windows_app/analyzing_code/globals/files_folders_operations.dart
 import 'package:windows_app/analyzing_code/storage_analyzer/extensions/file_size.dart';
 import 'package:windows_app/analyzing_code/storage_analyzer/models/local_folder_info.dart';
 import 'package:windows_app/constants/colors.dart';
+import 'package:windows_app/constants/widget_keys.dart';
 import 'package:windows_app/helpers/hive/hive_helper.dart';
 import 'package:windows_app/models/types.dart';
 import 'package:flutter/foundation.dart';
@@ -61,6 +62,20 @@ void showSnackBar({
   } catch (e) {
     //
   }
+}
+
+void fastSnackBar({
+  required String msg,
+  SnackBarType? snackBarType,
+  GlobalKey<NavigatorState>? navKey,
+}) {
+  BuildContext? ctx = (navKey ?? navigatorKey).currentContext;
+  if (ctx == null) return;
+  showSnackBar(
+    context: ctx,
+    message: msg,
+    snackBarType: snackBarType,
+  );
 }
 
 //? to get the size

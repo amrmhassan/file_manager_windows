@@ -10,6 +10,7 @@ import 'package:windows_app/providers/server_provider.dart';
 import 'package:windows_app/providers/share_provider.dart';
 import 'package:windows_app/utils/client_utils.dart' as client_utils;
 import 'package:uuid/uuid.dart';
+import 'package:windows_app/utils/general_utils.dart';
 
 import 'constants.dart';
 import 'socket_conn_model.dart';
@@ -125,19 +126,49 @@ class ConnectPhoneServerSocket {
     logger.i('phone ws server listening at ${server.port}');
 
     await for (var socket in websocketServer) {
+      String id = Uuid().v4();
       logger.i('New socket connected');
+      sockets.add(
+        SocketConnModel(
+          sessionID: id,
+          webSocket: socket,
+        ),
+      );
 
       socket.listen(
         (event) {
           // here the server(host) will receive joining requests
         },
-        onDone: () {
+        onDone: () async {
           logger.w('phone disconnected');
+          fastSnackBar(msg: 'Phone disconnected');
+          int index = sockets.indexWhere((element) => element.sessionID == id);
+          await sockets[index].webSocket.close();
+          sockets.removeAt(index);
 
           connectPhoneProvider.closeServer();
           if (navigatorKey.currentContext == null) return;
         },
       );
     }
+  }
+
+  Future<void> closeServer() async {
+    for (var socket in sockets) {
+      try {
+        _sendToClient(
+          'server disconnected',
+          serverDisconnected,
+          socket.webSocket,
+        );
+        await socket.webSocket.close();
+      } catch (e) {
+        logger.e(e.toString());
+      }
+    }
+  }
+
+  void _sendToClient(String msg, String path, WebSocket socket) {
+    socket.add('$path[||]$msg');
   }
 }

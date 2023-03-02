@@ -26,12 +26,17 @@ class ConnectPhoneProvider extends ChangeNotifier {
   String? remoteIP;
   int? remotePort;
   HttpServer? httpServer;
-  late ConnectPhoneServerSocket customServerSocket;
+  ConnectPhoneServerSocket? customServerSocket;
 
   HttpServer? wsServer;
 
   void setMyWSConnLink(String s) {
     myWSConnLink = s;
+    notifyListeners();
+  }
+
+  void setMyWsServer(HttpServer s) {
+    wsServer = s;
     notifyListeners();
   }
 
@@ -54,14 +59,17 @@ class ConnectPhoneProvider extends ChangeNotifier {
     myIp = ip;
   }
 
-  void setMyServerSocket(ConnectPhoneServerSocket s) {
+  Future setMyServerSocket(ConnectPhoneServerSocket s) async {
     customServerSocket = s;
     notifyListeners();
   }
 
   Future<void> closeWsServer() async {
+    print('here');
     if (wsServer == null) return;
     logger.i('Closing phone ws Server');
+    await customServerSocket?.closeServer();
+
     await wsServer?.close();
   }
 
