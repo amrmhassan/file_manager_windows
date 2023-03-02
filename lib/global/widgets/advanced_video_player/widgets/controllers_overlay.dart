@@ -250,12 +250,15 @@ class VideoUpperControllers extends StatelessWidget {
             //   'data',
             //   style: h4LightTextStyle.copyWith(height: 1),
             // ),
-            SafeArea(
+            Expanded(
+              child: SafeArea(
                 child: Text(
-              getFileName(mpProvider.playingVideoPath ?? ''),
-              style: h4TextStyleInactive.copyWith(height: 5),
-              overflow: TextOverflow.ellipsis,
-            )),
+                  getFileName(mpProvider.playingVideoPath ?? ''),
+                  style: h4TextStyle.copyWith(height: 5),
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ),
+            ),
 
             Spacer(),
             FadeInRight(

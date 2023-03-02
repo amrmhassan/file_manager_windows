@@ -55,7 +55,7 @@ class _RecentScreenState extends State<RecentScreen> {
               ),
               VSpace(),
               AnalyzerOptionsItem(
-                logoName: 'management',
+                logoName: 'mobile-phone',
                 onTap: () async {
                   try {
                     if (connectPPF(context).remoteIP == null) {

@@ -205,14 +205,12 @@ class _ShareSpaceVScreenState extends State<ShareSpaceVScreen> {
                                         ).addDownloadTask(
                                           fileSize: shareExpProvider
                                               .viewedItems[index].size,
-                                          remoteDeviceID:
-                                              remotePeerModel!.deviceID,
+                                          remoteDeviceID: phoneID,
                                           remoteFilePath: shareExpProvider
                                               .viewedItems[index].path,
                                           serverProvider: serverPF(context),
                                           shareProvider: sharePF(context),
-                                          remoteDeviceName:
-                                              remotePeerModel!.name,
+                                          remoteDeviceName: phoneName,
                                         );
                                         Navigator.pop(context);
                                       } catch (e) {

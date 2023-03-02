@@ -51,7 +51,19 @@ class ConnectPhoneScreen extends StatelessWidget {
             ),
             leftIcon: IconButton(
               onPressed: () {
-                connectPPF(context).closeServer();
+                showModalBottomSheet(
+                  backgroundColor: Colors.transparent,
+                  context: context,
+                  builder: (context) => DoubleButtonsModal(
+                    onOk: () {
+                      connectPPF(context).closeServer();
+                    },
+                    okText: 'Close',
+                    title: 'Close Connection',
+                    subTitle:
+                        'Do you really want to close the connection with phone?',
+                  ),
+                );
               },
               icon: Icon(
                 Icons.close,

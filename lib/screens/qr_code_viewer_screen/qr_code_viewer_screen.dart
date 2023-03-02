@@ -68,57 +68,51 @@ class QrCodeViewerScreen extends StatelessWidget {
               children: [
                 Text('You can go back after scanning'),
                 VSpace(),
-                GestureDetector(
-                  onTap: () {
-                    Navigator.pop(context);
-                    copyToClipboard(context, serverProvider.myConnLink!);
-                  },
-                  child: Container(
-                    padding: EdgeInsets.symmetric(horizontal: kHPad),
-                    child: Column(
-                      children: [
-                        Container(
-                          constraints: BoxConstraints(
-                            maxWidth: 250,
-                            maxHeight: 250,
-                            minHeight: 100,
-                            minWidth: 100,
-                          ),
-                          child: QrImage(
-                            backgroundColor: Colors.white,
-                            data: laptop == true
-                                ? connPhoneProvider.myConnLink!
-                                : (quickSendLink ?? serverProvider.myConnLink!),
-                          ),
+                Container(
+                  padding: EdgeInsets.symmetric(horizontal: kHPad),
+                  child: Column(
+                    children: [
+                      Container(
+                        constraints: BoxConstraints(
+                          maxWidth: 250,
+                          maxHeight: 250,
+                          minHeight: 100,
+                          minWidth: 100,
                         ),
-                        // SelectableText(
-                        //   quickSendLink ?? serverProvider.myConnLink!,
-                        //   style: h3InactiveTextStyle,
-                        // ),
-                        VSpace(),
-                        if (quickSendLink != null && laptop != true)
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              ButtonWrapper(
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: kHPad,
-                                  vertical: kVPad / 2,
-                                ),
-                                onTap: () async {
-                                  await quickSPF(context).closeSend();
-                                  Navigator.pop(context);
-                                },
-                                backgroundColor: kDangerColor,
-                                child: Text(
-                                  'Close Send',
-                                  style: h4TextStyle,
-                                ),
+                        child: QrImage(
+                          backgroundColor: Colors.white,
+                          data: laptop == true
+                              ? connPhoneProvider.myConnLink!
+                              : (quickSendLink ?? serverProvider.myConnLink!),
+                        ),
+                      ),
+                      // SelectableText(
+                      //   quickSendLink ?? serverProvider.myConnLink!,
+                      //   style: h3InactiveTextStyle,
+                      // ),
+                      VSpace(),
+                      if (quickSendLink != null && laptop != true)
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ButtonWrapper(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: kHPad,
+                                vertical: kVPad / 2,
                               ),
-                            ],
-                          ),
-                      ],
-                    ),
+                              onTap: () async {
+                                await quickSPF(context).closeSend();
+                                Navigator.pop(context);
+                              },
+                              backgroundColor: kDangerColor,
+                              child: Text(
+                                'Close Send',
+                                style: h4TextStyle,
+                              ),
+                            ),
+                          ],
+                        ),
+                    ],
                   ),
                 )
               ],
