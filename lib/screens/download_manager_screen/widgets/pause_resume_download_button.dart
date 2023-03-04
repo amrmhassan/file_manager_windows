@@ -4,6 +4,7 @@ import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/sizes.dart';
 import 'package:windows_app/global/widgets/button_wrapper.dart';
 import 'package:windows_app/models/download_task_model.dart';
+import 'package:windows_app/models/types.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
 import 'package:flutter/material.dart';
 

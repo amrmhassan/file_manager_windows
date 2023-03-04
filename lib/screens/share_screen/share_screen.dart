@@ -33,11 +33,6 @@ class _ShareScreenState extends State<ShareScreen> {
 
   @override
   Widget build(BuildContext context) {
-    var serverProvider = Provider.of<ServerProvider>(context);
-
-    var shareProvider = Provider.of<ShareProvider>(context);
-    var shareProviderFalse = Provider.of<ShareProvider>(context, listen: false);
-
     return ScreensWrapper(
       backgroundColor: kBackgroundColor,
       child: Column(
@@ -45,71 +40,8 @@ class _ShareScreenState extends State<ShareScreen> {
         children: [
           ShareSpaceScreenAppBar(),
           VSpace(),
-          serverProvider.httpServer == null
-              ? NotSharingView()
-              : Builder(builder: (context) {
-                  PeerModel? hostPeer = serverProvider.getHostPeer;
-                  if (hostPeer == null) {
-                    return Expanded(
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        children: [
-                          SizedBox(width: double.infinity),
-                          CircularProgressIndicator(
-                            color: kMainIconColor,
-                            strokeWidth: 3,
-                          ),
-                          VSpace(factor: .8),
-                          Text(
-                            'Loading Group Info',
-                            style: h4TextStyleInactive,
-                          ),
-                        ],
-                      ),
-                    );
-                  }
-
-                  bool iamTheHost =
-                      shareProvider.myDeviceId == hostPeer.deviceID;
-
-                  var otherPeersButMe = serverProvider.peers.where(
-                    (element) =>
-                        element.deviceID != shareProviderFalse.myDeviceId,
-                  );
-                  PeerModel me = serverProvider.peers.firstWhere(
-                    (element) =>
-                        element.deviceID == shareProviderFalse.myDeviceId,
-                  );
-                  return Expanded(
-                    child: PaddingWrapper(
-                      child: Column(
-                        children: [
-                          Row(
-                            children: [
-                              Text(
-                                iamTheHost
-                                    ? 'You are the group host'
-                                    : 'Connected to ${hostPeer.name}',
-                                style: h4TextStyleInactive,
-                              ),
-                            ],
-                          ),
-                          VSpace(),
-                          ShareSpaceCard(
-                            peerModel: me,
-                            me: true,
-                          ),
-                          ...otherPeersButMe.map((e) => ShareSpaceCard(
-                                peerModel: e,
-                                me: false,
-                              )),
-                        ],
-                      ),
-                    ),
-                  );
-                }),
-          ShareScreenNavBar(),
+          NotSharingView(),
+          // ShareScreenNavBar(),
         ],
       ),
     );

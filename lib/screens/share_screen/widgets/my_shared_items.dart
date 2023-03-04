@@ -33,13 +33,8 @@ class MySharedItems extends StatelessWidget {
         Expanded(
           child: ListView.builder(
             physics: BouncingScrollPhysics(),
-            itemCount: shareProvider.sharedItems.length + 1,
+            itemCount: shareProvider.sharedItems.length,
             itemBuilder: (context, index) {
-              if (index == shareProvider.sharedItems.length) {
-                return SizedBox(
-                  height: 50,
-                );
-              }
               ShareSpaceItemModel shareSpaceItemModel =
                   shareProvider.sharedItems[index];
 

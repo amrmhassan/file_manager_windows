@@ -1,5 +1,6 @@
 import 'package:windows_app/constants/styles.dart';
 import 'package:windows_app/models/download_task_model.dart';
+import 'package:windows_app/models/types.dart';
 import 'package:windows_app/utils/general_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

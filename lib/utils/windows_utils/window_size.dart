@@ -4,9 +4,11 @@ import 'dart:io';
 
 import 'package:bitsdojo_window/bitsdojo_window.dart';
 import 'package:flutter/material.dart';
+import 'package:windows_app/constants/global_constants.dart';
 
 Future<void> initWindowSize() async {
   if (!Platform.isWindows) return;
+  appWindow.show();
 
   doWhenWindowReady(() {
     Size initialSize = Size(400, 800);

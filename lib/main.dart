@@ -1,9 +1,11 @@
 // ignore_for_file: prefer_const_constructors
 
 import 'package:dart_vlc/dart_vlc.dart';
+import 'package:firedart/firestore/firestore.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:windows_app/constants/colors.dart';
+import 'package:windows_app/constants/global_constants.dart';
 import 'package:windows_app/constants/widget_keys.dart';
 import 'package:windows_app/helpers/hive/hive_initiator.dart';
 import 'package:windows_app/helpers/shared_pref_helper.dart';
@@ -64,6 +66,8 @@ bool firstTimeRunApp = false;
 late String downloadFolder;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  Firestore.initialize('advanced-file-manager-8b7ab');
+
   await windowManager.ensureInitialized();
 
   try {
@@ -80,7 +84,7 @@ void main() async {
   runApp(const MyApp());
 }
 
-bool testing = false;
+bool testing = true;
 
 class MyApp extends StatefulWidget {
   const MyApp({super.key});

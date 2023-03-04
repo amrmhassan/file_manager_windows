@@ -26,7 +26,6 @@ class NotSharingView extends StatelessWidget {
             MySharedItems()
           else
             EmptyShareItems(),
-          if (serverProvider.httpServer == null) ShadingBackground(),
         ],
       ),
     );

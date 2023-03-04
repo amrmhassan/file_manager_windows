@@ -12,6 +12,7 @@ import 'package:windows_app/constants/server_constants.dart';
 
 import 'package:windows_app/models/download_task_model.dart';
 import 'package:windows_app/models/peer_model.dart';
+import 'package:windows_app/models/types.dart';
 import 'package:windows_app/providers/server_provider.dart';
 import 'package:windows_app/providers/share_provider.dart';
 import 'package:windows_app/utils/errors_collection/custom_exception.dart';

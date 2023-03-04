@@ -17,6 +17,7 @@ import 'package:windows_app/screens/recent_items_viewer_screen/recent_items_view
 import 'package:windows_app/screens/recent_screen/widget/storage_segments.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:windows_app/screens/share_screen/share_screen.dart';
 import 'package:windows_app/utils/general_utils.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
 
@@ -126,19 +127,18 @@ class _RecentScreenState extends State<RecentScreen> {
                 title: 'Listy',
               ),
               VSpace(),
+              AnalyzerOptionsItem(
+                logoName: 'management',
+                onTap: () {
+                  Navigator.pushNamed(context, ShareScreen.routeName);
+                },
+                title: 'Share Space',
+                color: kMainIconColor,
+              ),
+              VSpace(),
             ],
           ),
         ),
-        //# windows
-        if (!Platform.isWindows)
-          (analyzerProvider.allExtensionInfo == null ||
-                  (analyzerProvider.allExtensionInfo ?? []).isEmpty
-              ? ShimmerWrapper(
-                  baseColor: Colors.white,
-                  lightColor: Color.fromARGB(255, 172, 172, 172),
-                  child: StorageSegments(),
-                )
-              : StorageSegments()),
       ],
     );
   }
