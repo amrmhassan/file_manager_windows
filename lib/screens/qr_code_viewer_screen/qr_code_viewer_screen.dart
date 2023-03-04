@@ -9,7 +9,6 @@ import 'package:windows_app/global/widgets/padding_wrapper.dart';
 import 'package:windows_app/global/widgets/screens_wrapper.dart';
 import 'package:windows_app/global/widgets/v_space.dart';
 import 'package:windows_app/providers/server_provider.dart';
-import 'package:windows_app/utils/general_utils.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

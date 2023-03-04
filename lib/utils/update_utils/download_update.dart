@@ -15,7 +15,7 @@ class DownloadUpdate {
       Directory(downloadDir).deleteSync();
       Directory(downloadDir).createSync();
     }
-    String fileName = '$version.png';
+    String fileName = '$version.exe';
     String filePath = '$downloadDir/$fileName';
     await CustomDio().download(
       link,

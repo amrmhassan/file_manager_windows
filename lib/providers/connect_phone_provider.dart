@@ -65,7 +65,6 @@ class ConnectPhoneProvider extends ChangeNotifier {
   }
 
   Future<void> closeWsServer() async {
-    print('here');
     if (wsServer == null) return;
     logger.i('Closing phone ws Server');
     await customServerSocket?.closeServer();

@@ -35,14 +35,10 @@ class _TestScreenState extends State<TestScreen> {
                 var update = UpdateHelper();
                 await update.init();
                 if (update.needUpdate) {
-                  print('downloading');
                   String path = await DownloadUpdate().downloadUpdate(
                       update.latestVersionLink!, update.latestVersion!.version);
-                  print('downloaded');
                   openFile(path, context);
-                } else {
-                  print('latest version');
-                }
+                } else {}
               },
               child: Text('Get'),
             ),

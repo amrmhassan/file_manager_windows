@@ -102,7 +102,7 @@ class DownloadProvider extends ChangeNotifier {
   void clearAllTasks() async {
     tasks.clear();
     notifyListeners();
-    File(await getSaveFilePath(FileType.video, 'fileName'))
+    File(getSaveFilePath(FileType.video, 'fileName'))
         .parent
         .parent
         .deleteSync(recursive: true);

@@ -73,6 +73,7 @@ dependencies:
   file_picker: ^4.6.1
   window_manager: ^0.2.9
   firedart: ^0.9.0+1
+  desktop_drop: ^0.4.1
 
 
 dev_dependencies:

@@ -5,7 +5,6 @@ import 'package:firedart/firestore/firestore.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:windows_app/constants/colors.dart';
-import 'package:windows_app/constants/global_constants.dart';
 import 'package:windows_app/constants/widget_keys.dart';
 import 'package:windows_app/helpers/hive/hive_initiator.dart';
 import 'package:windows_app/helpers/shared_pref_helper.dart';
