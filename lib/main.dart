@@ -56,7 +56,7 @@ import 'package:windows_app/screens/whats_app_screen/whats_app_screen.dart';
 import 'package:windows_app/screens/white_block_list_screen/white_block_list_screen.dart';
 import 'package:windows_app/utils/general_utils.dart';
 import 'package:windows_app/utils/theme_utils.dart';
-import 'package:windows_app/utils/update_utils/start.dart';
+import 'package:windows_app/utils/update_utils/run_updates.dart';
 import 'package:windows_app/utils/windows_utils/window_size.dart';
 
 import 'package:flutter/material.dart';
@@ -96,7 +96,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   @override
   void initState() {
-    runUpdates(context);
+    // runUpdates(context);
     super.initState();
   }
 
