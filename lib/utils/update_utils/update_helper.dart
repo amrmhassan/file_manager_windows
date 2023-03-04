@@ -1,6 +1,6 @@
 import 'package:firedart/firestore/firestore.dart';
 import 'package:windows_app/constants/global_constants.dart';
-import 'package:windows_app/utils/update_utils/constants.dart';
+import 'package:windows_app/utils/update_utils/update_constants.dart';
 import 'package:windows_app/utils/update_utils/version_mode.dart';
 
 class UpdateHelper {

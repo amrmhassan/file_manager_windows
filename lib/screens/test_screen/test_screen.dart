@@ -31,15 +31,7 @@ class _TestScreenState extends State<TestScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ElevatedButton(
-              onPressed: () async {
-                var update = UpdateHelper();
-                await update.init();
-                if (update.needUpdate) {
-                  String path = await DownloadUpdate().downloadUpdate(
-                      update.latestVersionLink!, update.latestVersion!.version);
-                  openFile(path, context);
-                } else {}
-              },
+              onPressed: () async {},
               child: Text('Get'),
             ),
           ],

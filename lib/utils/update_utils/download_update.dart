@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:windows_app/constants/global_constants.dart';
 import 'package:windows_app/utils/download_utils/custom_dio.dart';
 
 class DownloadUpdate {
