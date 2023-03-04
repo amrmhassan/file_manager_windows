@@ -1,15 +1,39 @@
 import 'package:firedart/firestore/firestore.dart';
+import 'package:windows_app/constants/global_constants.dart';
+import 'package:windows_app/utils/update_utils/constants.dart';
 import 'package:windows_app/utils/update_utils/version_mode.dart';
 
 class UpdateHelper {
-  static Future<List<VersionModel>?> getVersions() async {
+  List<VersionModel>? versions;
+  bool needUpdate = false;
+  VersionModel? latestVersion;
+  String? latestVersionLink;
+
+  Future<void> init() async {
     try {
       var map = await Firestore.instance.collection("laptop").get();
-      var versions =
+      versions =
           map.map((element) => VersionModel.fromJSON(element.map)).toList();
-      return versions;
+      latestVersion = getLatestVersion();
+      needUpdate = setNeedUpdate();
+      latestVersionLink = getLatestVersionLink();
     } catch (e) {
-      return null;
+      logger.e('cant load update data');
     }
+  }
+
+  VersionModel? getLatestVersion() {
+    if (versions == null) return null;
+    return versions?.first;
+  }
+
+  bool setNeedUpdate() {
+    if (latestVersion == null) return false;
+    return latestVersion!.version != UpdateConstants.currentVersion;
+  }
+
+  String? getLatestVersionLink() {
+    if (latestVersion == null) return null;
+    return latestVersion!.link;
   }
 }

@@ -1,2 +1,4 @@
-const String currentVersion = '';
-const String collectionName = 'laptop';
+class UpdateConstants {
+  static const String currentVersion = '';
+  static const String collectionName = 'laptop';
+}

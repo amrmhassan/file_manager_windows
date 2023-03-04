@@ -3,6 +3,8 @@
 import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/global/widgets/screens_wrapper.dart';
 import 'package:flutter/material.dart';
+import 'package:windows_app/utils/files_operations_utils/files_utils.dart';
+import 'package:windows_app/utils/update_utils/download_update.dart';
 import 'package:windows_app/utils/update_utils/update_helper.dart';
 
 class TestScreen extends StatefulWidget {
@@ -30,8 +32,17 @@ class _TestScreenState extends State<TestScreen> {
           children: [
             ElevatedButton(
               onPressed: () async {
-                var res = await UpdateHelper.getVersions();
-                print(res.toString());
+                var update = UpdateHelper();
+                await update.init();
+                if (update.needUpdate) {
+                  print('downloading');
+                  String path = await DownloadUpdate().downloadUpdate(
+                      update.latestVersionLink!, update.latestVersion!.version);
+                  print('downloaded');
+                  openFile(path, context);
+                } else {
+                  print('latest version');
+                }
               },
               child: Text('Get'),
             ),
