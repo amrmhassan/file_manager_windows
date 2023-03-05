@@ -3,9 +3,6 @@
 import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/global/widgets/screens_wrapper.dart';
 import 'package:flutter/material.dart';
-import 'package:windows_app/utils/files_operations_utils/files_utils.dart';
-import 'package:windows_app/utils/update_utils/download_update.dart';
-import 'package:windows_app/utils/update_utils/update_helper.dart';
 
 class TestScreen extends StatefulWidget {
   static const String routeName = '/testing-screen';

@@ -8,9 +8,18 @@ import 'package:flutter/material.dart';
 class BaseOverLay extends StatelessWidget {
   // this will be clicked when no other element is being clicked
   final VoidCallback toggleControllerOverLayViewed;
+  final int backwardActualAmount;
+  final bool backwardShown;
+
+  final int forwardActualAmount;
+  final bool forwardShown;
   const BaseOverLay({
     super.key,
     required this.toggleControllerOverLayViewed,
+    required this.backwardActualAmount,
+    required this.backwardShown,
+    required this.forwardActualAmount,
+    required this.forwardShown,
   });
 
   @override
@@ -36,12 +45,16 @@ class BaseOverLay extends StatelessWidget {
           ],
         ),
         VideoFastSeeker(
+          actualAmount: backwardActualAmount,
           backward: true,
           toggleControllerOverLayViewed: toggleControllerOverLayViewed,
+          shown: backwardShown,
         ),
         VideoFastSeeker(
           backward: false,
           toggleControllerOverLayViewed: toggleControllerOverLayViewed,
+          actualAmount: forwardActualAmount,
+          shown: forwardShown,
         ),
       ],
     );

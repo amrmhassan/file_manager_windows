@@ -32,6 +32,14 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer>
   bool controllerOverLayViewed = true;
   var previousPressedKey;
   FocusNode focusNode = FocusNode();
+  // fast seek backward
+  bool backwardShown = false;
+  int backwardAmount = 0;
+  int backwardActualAmount = 0;
+  // fast seek forward
+  bool forwardShown = false;
+  int forwardAmount = 0;
+  int forwardActualAmount = 0;
 
 //? to toggle between them
   void toggleLandScape() async {
@@ -93,50 +101,13 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer>
   @override
   Widget build(BuildContext context) {
     var mpProvider = Provider.of<MediaPlayerProvider>(context);
-    var mpProviderFalse = mpPF(context);
     var winProvider = winP(context);
     return winProvider.isFullScreen && !widget.isOverlay
         ? SizedBox()
         : Focus(
             autofocus: true,
             focusNode: focusNode,
-            onKey: (node, event) {
-              if (event.data.physicalKey.debugName == previousPressedKey ||
-                  event.repeat) {
-                previousPressedKey = null;
-                return KeyEventResult.ignored;
-              }
-              var pressedKey = event.data.physicalKey;
-              //? here handle pressing keys
-              if (pressedKey == PhysicalKeyboardKey.keyM) {
-                logger.i('Muting');
-              } else if (pressedKey == PhysicalKeyboardKey.keyF) {
-                logger.i('Toggle full screen');
-              } else if (pressedKey == PhysicalKeyboardKey.arrowRight) {
-                logger.i('fast forwarding 10 sec');
-              } else if (pressedKey == PhysicalKeyboardKey.arrowLeft) {
-                logger.i('fast backwarding 10 sec');
-              } else if (pressedKey == PhysicalKeyboardKey.arrowUp) {
-                logger.i('raising voice');
-              } else if (pressedKey == PhysicalKeyboardKey.arrowDown) {
-                logger.i('decreasing voice');
-              } else if (pressedKey == PhysicalKeyboardKey.space) {
-                mpProviderFalse.toggleVideoPlay();
-                try {
-                  if (mpProviderFalse.isVideoPlaying) {
-                    animationPF(context).pausePlayAnimation?.reverse();
-                  } else {
-                    animationPF(context).pausePlayAnimation?.forward();
-                  }
-                } catch (e) {
-                  //
-                }
-              } else if (pressedKey == PhysicalKeyboardKey.keyH) {
-                logger.i('hiding video');
-              }
-              previousPressedKey = event.data.physicalKey.debugName;
-              return KeyEventResult.handled;
-            },
+            onKey: okKeyboardPressed,
             child: Stack(
               alignment: Alignment.bottomCenter,
               children: [
@@ -145,6 +116,10 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer>
                 ),
                 BaseOverLay(
                   toggleControllerOverLayViewed: toggleControllerOverLayViewed,
+                  backwardActualAmount: backwardActualAmount,
+                  backwardShown: backwardShown,
+                  forwardActualAmount: forwardActualAmount,
+                  forwardShown: forwardShown,
                 ),
                 if (controllerOverLayViewed)
                   ControllersOverlay(
@@ -155,5 +130,90 @@ class _AdvancedVideoPlayerState extends State<AdvancedVideoPlayer>
               ],
             ),
           );
+  }
+
+  void handleForward() {
+    if (!mpPF(context).isVideoPlaying) return;
+    mpPF(context).videoForWard10();
+    setState(() {
+      forwardAmount += 10;
+      forwardActualAmount += 10;
+      forwardShown = true;
+    });
+
+    Future.delayed(Duration(milliseconds: 600)).then((value) {
+      forwardAmount -= 10;
+
+      if (!mounted) return;
+      if (forwardAmount == 0) {
+        setState(() {
+          forwardActualAmount = 0;
+          forwardShown = false;
+        });
+      }
+    });
+  }
+
+  void handleBackward() {
+    if (!mpPF(context).isVideoPlaying) return;
+
+    mpPF(context).videoBackWard10();
+    setState(() {
+      backwardAmount += 10;
+      backwardActualAmount += 10;
+      backwardShown = true;
+    });
+
+    Future.delayed(Duration(milliseconds: 600)).then((value) {
+      backwardAmount -= 10;
+
+      if (!mounted) return;
+      if (backwardAmount == 0) {
+        setState(() {
+          backwardActualAmount = 0;
+          backwardShown = false;
+        });
+      }
+    });
+  }
+
+  KeyEventResult okKeyboardPressed(FocusNode node, RawKeyEvent event) {
+    var mpProviderFalse = mpPF(context);
+
+    if (event.data.physicalKey.debugName == previousPressedKey ||
+        event.repeat) {
+      previousPressedKey = null;
+      return KeyEventResult.ignored;
+    }
+    var pressedKey = event.data.physicalKey;
+    //? here handle pressing keys
+    if (pressedKey == PhysicalKeyboardKey.keyM) {
+      mpProviderFalse.toggleMuteVideo();
+    } else if (pressedKey == PhysicalKeyboardKey.keyF) {
+      toggleLandScape();
+    } else if (pressedKey == PhysicalKeyboardKey.arrowRight) {
+      handleForward();
+    } else if (pressedKey == PhysicalKeyboardKey.arrowLeft) {
+      handleBackward();
+    } else if (pressedKey == PhysicalKeyboardKey.arrowUp) {
+      logger.i('raising voice');
+    } else if (pressedKey == PhysicalKeyboardKey.arrowDown) {
+      logger.i('decreasing voice');
+    } else if (pressedKey == PhysicalKeyboardKey.space) {
+      mpProviderFalse.toggleVideoPlay();
+      try {
+        if (mpProviderFalse.isVideoPlaying) {
+          animationPF(context).pausePlayAnimation?.reverse();
+        } else {
+          animationPF(context).pausePlayAnimation?.forward();
+        }
+      } catch (e) {
+        //
+      }
+    } else if (pressedKey == PhysicalKeyboardKey.keyH) {
+      logger.i('hiding video');
+    }
+    previousPressedKey = event.data.physicalKey.debugName;
+    return KeyEventResult.handled;
   }
 }
