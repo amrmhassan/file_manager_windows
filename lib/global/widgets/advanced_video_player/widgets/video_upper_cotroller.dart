@@ -6,7 +6,6 @@ import 'package:flutter_animator/widgets/fading_entrances/fade_in_right.dart';
 import 'package:windows_app/analyzing_code/globals/files_folders_operations.dart';
 import 'package:windows_app/constants/styles.dart';
 import 'package:windows_app/global/widgets/advanced_video_player/widgets/close_video_button.dart';
-import 'package:windows_app/global/widgets/advanced_video_player/widgets/controllers_overlay.dart';
 import 'package:windows_app/global/widgets/advanced_video_player/widgets/settings_button.dart';
 import 'package:windows_app/global/widgets/advanced_video_player/widgets/video_lower_background_shader.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
