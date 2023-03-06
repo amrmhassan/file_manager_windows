@@ -44,6 +44,7 @@ import 'package:windows_app/screens/qr_code_viewer_screen/qr_code_viewer_screen.
 import 'package:windows_app/screens/recent_items_viewer_screen/recent_items_viewer_screen.dart';
 import 'package:windows_app/screens/scan_qr_code_screen/scan_qr_code_screen.dart';
 import 'package:windows_app/screens/selected_items_screen/selected_items_screen.dart';
+import 'package:windows_app/screens/send_files_screen/send_files_screen.dart';
 import 'package:windows_app/screens/settings_screen/settings_screen.dart';
 import 'package:windows_app/screens/share_screen/share_screen.dart';
 import 'package:windows_app/screens/share_settings_screen/share_settings_screen.dart';
@@ -171,6 +172,7 @@ class _MyAppState extends State<MyApp> {
           AboutUsScreen.routeName: (context) => AboutUsScreen(),
           ConnectPhoneScreen.routeName: (context) => ConnectPhoneScreen(),
           LaptopMessagesScreen.routeName: (context) => LaptopMessagesScreen(),
+          SendFilesScreen.routeName: (context) => SendFilesScreen(),
         },
       ),
     );

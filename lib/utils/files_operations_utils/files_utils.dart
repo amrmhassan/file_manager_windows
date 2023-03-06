@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:windows_app/analyzing_code/globals/files_folders_operations.dart';
 import 'package:windows_app/models/captures_entity_model.dart';
-import 'package:windows_app/models/storage_item_model.dart';
 import 'package:windows_app/models/types.dart';
 import 'package:windows_app/utils/general_utils.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
@@ -25,18 +24,19 @@ void openFile(String path, BuildContext context) async {
   await OpenFile.open(path);
 }
 
-List<CapturedEntityModel> xfilesToEntities(List<XFile> xFiles) {
+List<CapturedEntityModel> pathsToEntities(Iterable<String?> paths) {
   List<CapturedEntityModel> res = [];
-  for (var xFile in xFiles) {
+  for (var path in paths) {
+    if (path == null) continue;
     CapturedEntityModel? capturedEntityModel;
-    if (isFile(xFile.path)) {
+    if (isFile(path)) {
       capturedEntityModel = CapturedEntityModel(
-        xFile.path,
+        path,
         EntityType.file,
       );
-    } else if (isDir(xFile.path)) {
+    } else if (isDir(path)) {
       capturedEntityModel = CapturedEntityModel(
-        xFile.path,
+        path,
         EntityType.folder,
       );
     }

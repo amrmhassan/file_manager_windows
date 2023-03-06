@@ -77,7 +77,7 @@ Future<String?> getPhoneClipboard(
   }
 }
 
-Future<void> startDownloadFile(
+Future<void> startSendFile(
   String filePath,
   int fileSize,
   BuildContext context,

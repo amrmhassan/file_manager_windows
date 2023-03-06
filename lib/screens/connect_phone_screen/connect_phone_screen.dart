@@ -1,11 +1,8 @@
 // ignore_for_file: prefer_const_literals_to_create_immutables, prefer_const_constructors, use_build_context_synchronously
 
-import 'dart:io';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:windows_app/constants/colors.dart';
-import 'package:windows_app/constants/global_constants.dart';
 import 'package:windows_app/constants/styles.dart';
 import 'package:windows_app/global/modals/double_buttons_modal.dart';
 import 'package:windows_app/global/modals/send_txt_to_phone_modal.dart';
@@ -18,12 +15,12 @@ import 'package:windows_app/models/peer_model.dart';
 import 'package:windows_app/providers/share_provider.dart';
 import 'package:windows_app/screens/analyzer_screen/widgets/analyzer_options_item.dart';
 import 'package:windows_app/screens/connect_phone_screen/widgets/phone_storage_card.dart';
+import 'package:windows_app/screens/send_files_screen/send_files_screen.dart';
 import 'package:windows_app/utils/connect_to_phone_utils/connect_to_phone_utils.dart';
 import 'package:windows_app/utils/general_utils.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
 import 'package:windows_app/utils/server_utils/connection_utils.dart';
 import 'package:windows_app/screens/share_space_viewer_screen/share_space_viewer_screen.dart';
-import 'package:file_picker/file_picker.dart' as file_picker;
 
 class ConnectPhoneScreen extends StatelessWidget {
   static const String routeName = '/ConnectPhoneScreen';
@@ -183,17 +180,7 @@ class ConnectPhoneScreen extends StatelessWidget {
                   AnalyzerOptionsItem(
                     enablePadding: false,
                     onTap: () async {
-                      var res = await file_picker.FilePicker.platform
-                          .pickFiles(allowMultiple: false);
-                      if (res != null && res.files.isNotEmpty) {
-                        String? path = res.files.first.path;
-                        if (path == null) return;
-                        int fileSize = File(path).lengthSync();
-                        await startDownloadFile(path, fileSize, context);
-                        logger.i('sending file $path to phone');
-                        showSnackBar(
-                            context: context, message: 'Sending file to phone');
-                      }
+                      Navigator.pushNamed(context, SendFilesScreen.routeName);
                     },
                     title: 'Send File',
                     logoName: 'link',
