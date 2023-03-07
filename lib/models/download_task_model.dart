@@ -29,8 +29,11 @@ class DownloadTaskModel {
   final int? size;
   DownloadTaskController? downloadTaskController;
 
+  @HiveField(7)
   DateTime? finishedAt;
+  @HiveField(8)
   TaskStatus taskStatus;
+  @HiveField(9)
   int count;
 
   DownloadTaskModel({

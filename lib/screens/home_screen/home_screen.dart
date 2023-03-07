@@ -16,6 +16,7 @@ import 'package:windows_app/screens/error_viewing_screen/error_viewing_screen.da
 import 'package:windows_app/screens/explorer_screen/explorer_screen.dart';
 import 'package:windows_app/screens/home_screen/utils/permissions.dart';
 import 'package:windows_app/screens/recent_screen/recent_screen.dart';
+import 'package:windows_app/utils/providers_calls_utils.dart';
 import 'package:windows_app/utils/screen_utils/home_screen_utils.dart';
 
 import 'package:windows_app/global/widgets/screens_wrapper.dart';
@@ -63,6 +64,10 @@ class _HomeScreenState extends State<HomeScreen> {
       //? to set the device id
       await Provider.of<ShareProvider>(context, listen: false)
           .loadDeviceIdAndName();
+      //?
+      await downPF(context).loadDownloadSettings();
+      //?
+      downPF(context).loadTasks();
 
       //* getting storage permission
       bool res = await showPermissionsModal(

@@ -24,7 +24,7 @@ class DownloadPercentBar extends StatelessWidget {
           width: double.infinity,
           alignment: Alignment.centerLeft,
           child: FractionallySizedBox(
-            widthFactor: downloadTaskModel.count / downloadTaskModel.size!,
+            widthFactor: (downloadTaskModel.count) / downloadTaskModel.size!,
             child: Container(
               width: double.infinity,
               height: 4,
@@ -45,7 +45,7 @@ class DownloadPercentBar extends StatelessWidget {
             ),
             Spacer(),
             Text(
-              '${(downloadTaskModel.count / downloadTaskModel.size! * 100).toStringAsFixed(0)}%',
+              '${((downloadTaskModel.count) / downloadTaskModel.size! * 100).toStringAsFixed(0)}%',
               style: h5TextStyle,
             ),
           ],

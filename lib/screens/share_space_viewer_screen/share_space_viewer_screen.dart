@@ -4,7 +4,6 @@ import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/global_constants.dart';
 import 'package:windows_app/constants/sizes.dart';
 import 'package:windows_app/constants/styles.dart';
-import 'package:windows_app/global/modals/double_buttons_modal.dart';
 import 'package:windows_app/global/widgets/custom_app_bar/custom_app_bar.dart';
 import 'package:windows_app/global/widgets/modal_wrapper/modal_wrapper.dart';
 import 'package:windows_app/global/widgets/screens_wrapper.dart';
@@ -212,17 +211,15 @@ class _ShareSpaceVScreenState extends State<ShareSpaceVScreen> {
                                           shareProvider: sharePF(context),
                                           remoteDeviceName: phoneName,
                                         );
-                                        Navigator.pop(context);
                                       } catch (e) {
-                                        showModalBottomSheet(
+                                        logger.e(e);
+                                        showSnackBar(
                                           context: context,
-                                          builder: (context) =>
-                                              DoubleButtonsModal(
-                                            onOk: () {},
-                                            title: e.toString(),
-                                          ),
+                                          message: e.toString(),
+                                          snackBarType: SnackBarType.error,
                                         );
                                       }
+                                      Navigator.pop(context);
                                     },
                                   ),
                                 ],
