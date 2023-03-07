@@ -264,3 +264,25 @@ Future<void> startDownloadFileHandler(
     );
   }
 }
+
+Future<void> getFolderChildrenRecrusive(
+  HttpRequest request,
+  HttpResponse response,
+) async {
+  BuildContext? context = navigatorKey.currentContext;
+  if (context == null) {
+    response
+      ..statusCode = HttpStatus.internalServerError
+      ..write('An error with context')
+      ..close();
+    return;
+  }
+  await getFolderContentHandler(
+    request,
+    response,
+    serverPF(context),
+    sharePF(context),
+    true,
+    true,
+  );
+}
