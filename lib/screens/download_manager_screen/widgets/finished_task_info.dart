@@ -1,7 +1,5 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, use_build_context_synchronously
 
-import 'dart:io';
-
 import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/sizes.dart';
 import 'package:windows_app/constants/styles.dart';
@@ -61,9 +59,7 @@ class FinishedTaskInfo extends StatelessWidget {
                   okText: 'Also File',
                   onOk: () async {
                     // this will delete the task and the file associated with it
-                    try {
-                      File(downloadTaskModel.localFilePath).deleteSync();
-                    } catch (e) {
+                    try {} catch (e) {
                       showSnackBar(
                         context: context,
                         message: 'File does\'t exist already ',
@@ -74,14 +70,24 @@ class FinishedTaskInfo extends StatelessWidget {
                       context: context,
                       message: 'Task Deleted',
                     );
-                    await downPF(context).removeTaskById(downloadTaskModel.id);
+                    downPF(context).deleteTaskCompletely(
+                      downloadTaskModel.id,
+                      serverPF(context),
+                      sharePF(context),
+                      alsoFile: true,
+                    );
                   },
                   onCancel: () async {
                     showSnackBar(
                       context: context,
                       message: 'Task Deleted',
                     );
-                    await downPF(context).removeTaskById(downloadTaskModel.id);
+                    downPF(context).deleteTaskCompletely(
+                      downloadTaskModel.id,
+                      serverPF(context),
+                      sharePF(context),
+                      alsoFile: false,
+                    );
                   },
                 );
               },

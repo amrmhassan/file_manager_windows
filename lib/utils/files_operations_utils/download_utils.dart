@@ -67,3 +67,12 @@ String _checkMainDownloadFolder() {
   }
   return mainPath;
 }
+
+String checkMainDownloadFolder() {
+  String mainPath = '$downloadFolder/$mainDownloadFolder';
+  Directory mainDir = Directory(mainPath);
+  if (!mainDir.existsSync()) {
+    mainDir.createSync();
+  }
+  return mainPath;
+}

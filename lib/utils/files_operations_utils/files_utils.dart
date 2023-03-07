@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:image_picker/image_picker.dart';
 import 'package:windows_app/analyzing_code/globals/files_folders_operations.dart';
 import 'package:windows_app/models/captures_entity_model.dart';
 import 'package:windows_app/models/types.dart';

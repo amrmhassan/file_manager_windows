@@ -202,7 +202,7 @@ class _ShareSpaceVScreenState extends State<ShareSpaceVScreen> {
                                         await Provider.of<DownloadProvider>(
                                           context,
                                           listen: false,
-                                        ).addDownloadTask(
+                                        ).addDownloadTaskFromPeer(
                                           fileSize: shareExpProvider
                                               .viewedItems[index].size,
                                           remoteDeviceID: phoneID,

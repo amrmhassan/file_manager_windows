@@ -244,7 +244,7 @@ Future<void> startDownloadFileHandler(
 
     var downProvider = downPF(context);
 
-    await downProvider.addDownloadTask(
+    await downProvider.addDownloadTaskFromPeer(
       remoteFilePath: remoteFilepath,
       fileSize: fileSize,
       serverProvider: serverPF(context),
