@@ -24,7 +24,7 @@ class UpdateHelper {
 
   VersionModel? getLatestVersion() {
     if (versions == null) return null;
-    return versions?.first;
+    return versions?.last;
   }
 
   bool setNeedUpdate() {

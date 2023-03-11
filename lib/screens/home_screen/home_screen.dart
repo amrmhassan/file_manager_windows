@@ -6,6 +6,7 @@ import 'dart:isolate';
 import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
+import 'package:windows_app/constants/global_constants.dart';
 import 'package:windows_app/providers/share_provider.dart';
 import 'package:windows_app/providers/util/analyzer_provider.dart';
 import 'package:windows_app/providers/util/explorer_provider.dart';
@@ -70,7 +71,11 @@ class _HomeScreenState extends State<HomeScreen> {
       //?
       downPF(context).loadTasks();
       //?
-      runUpdates(context);
+      try {
+        runUpdates(context);
+      } catch (e) {
+        logger.e(e);
+      }
 
       //* getting storage permission
       bool res = await showPermissionsModal(
