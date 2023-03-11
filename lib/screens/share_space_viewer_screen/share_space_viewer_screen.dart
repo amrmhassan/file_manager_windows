@@ -2,11 +2,9 @@
 
 import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/global_constants.dart';
-import 'package:windows_app/constants/sizes.dart';
 import 'package:windows_app/constants/styles.dart';
 import 'package:windows_app/global/modals/show_modal_funcs.dart';
 import 'package:windows_app/global/widgets/custom_app_bar/custom_app_bar.dart';
-import 'package:windows_app/global/widgets/modal_wrapper/modal_wrapper.dart';
 import 'package:windows_app/global/widgets/screens_wrapper.dart';
 import 'package:windows_app/global/widgets/v_space.dart';
 import 'package:windows_app/models/peer_model.dart';
@@ -15,13 +13,11 @@ import 'package:windows_app/models/types.dart';
 import 'package:windows_app/providers/files_operations_provider.dart';
 import 'package:windows_app/screens/share_screen/widgets/not_sharing_view.dart';
 import 'package:windows_app/utils/client_utils.dart' as client_utils;
-import 'package:windows_app/providers/download_provider.dart';
 import 'package:windows_app/providers/server_provider.dart';
 import 'package:windows_app/providers/share_provider.dart';
 import 'package:windows_app/providers/shared_items_explorer_provider.dart';
 import 'package:windows_app/screens/explorer_screen/widgets/current_path_viewer.dart';
 import 'package:windows_app/screens/explorer_screen/widgets/storage_item.dart';
-import 'package:windows_app/screens/home_screen/widgets/modal_button_element.dart';
 import 'package:windows_app/utils/general_utils.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
 import 'package:flutter/material.dart';

@@ -12,7 +12,6 @@ import 'package:windows_app/global/modals/details_modal/details_modal.dart';
 import 'package:windows_app/global/modals/entity_options_modal.dart';
 import 'package:windows_app/global/modals/sort_by_modal.dart';
 import 'package:windows_app/global/widgets/modal_wrapper/modal_wrapper.dart';
-import 'package:windows_app/main.dart';
 import 'package:windows_app/models/peer_model.dart';
 import 'package:windows_app/models/share_space_item_model.dart';
 import 'package:windows_app/models/types.dart';

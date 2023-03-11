@@ -10,7 +10,6 @@ import 'package:windows_app/models/types.dart';
 import 'package:windows_app/utils/download_utils/download_folder_controller.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
 import 'package:flutter/material.dart';
-import 'package:path/path.dart';
 import 'package:uuid/uuid.dart';
 
 import 'package:windows_app/constants/server_constants.dart';
@@ -248,20 +247,6 @@ class DownloadProvider extends ChangeNotifier {
     newTask.count = count;
     tasks[index] = newTask;
     notifyListeners();
-    int percent = ((count / (newTask.size ?? 1)) * 100).toInt();
-    // if (count == newTask.size) {
-    //   try {
-    //     await _markDownloadTask(
-    //       taskID,
-    //       TaskStatus.finished,
-    //       serverPF(navigatorKey.currentContext!),
-    //       sharePF(navigatorKey.currentContext!),
-    //     );
-    //   } catch (e) {
-    //     logger.e(e);
-    //   }
-    // } else {
-    // }
   }
   // ! when loading tasks from the sqlite don't load all tasks, just load the tasks that need to be download or whose status isn't finished,
   //! and only load the finished tasks when the user wants to see them
