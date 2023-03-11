@@ -134,8 +134,6 @@ class _SendFilesScreenState extends State<SendFilesScreen> {
   void handleSendCapturesFiles(List<CapturedEntityModel> entities) async {
     showSnackBar(context: context, message: 'Sending to phone');
     Navigator.pop(context);
-    String? path = entities.first.path;
-    int fileSize = File(path).lengthSync();
-    await startSendFile(path, fileSize, context);
+    await startSendEntities(entities, context);
   }
 }

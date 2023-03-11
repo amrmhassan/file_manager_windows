@@ -32,11 +32,13 @@ List<CapturedEntityModel> pathsToEntities(Iterable<String?> paths) {
       capturedEntityModel = CapturedEntityModel(
         path,
         EntityType.file,
+        File(path).lengthSync(),
       );
     } else if (isDir(path)) {
       capturedEntityModel = CapturedEntityModel(
         path,
         EntityType.folder,
+        null,
       );
     }
     if (capturedEntityModel != null) res.add(capturedEntityModel);

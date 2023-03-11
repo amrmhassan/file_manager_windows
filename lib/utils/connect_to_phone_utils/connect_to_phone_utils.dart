@@ -1,12 +1,16 @@
+import 'dart:convert';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:windows_app/constants/server_constants.dart';
+import 'package:windows_app/models/captures_entity_model.dart';
 import 'package:windows_app/models/share_space_item_model.dart';
 import 'package:windows_app/providers/connect_phone_provider.dart';
 import 'package:windows_app/providers/shared_items_explorer_provider.dart';
 import 'package:windows_app/utils/errors_collection/custom_exception.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
 import 'package:windows_app/utils/server_utils/connection_utils.dart';
+import 'package:windows_app/utils/server_utils/encoding_utils.dart';
 
 Future<Map<String, int>> getPhoneStorageInfo(BuildContext context) async {
   int port = connectPPF(context).remotePort!;
@@ -77,20 +81,16 @@ Future<String?> getPhoneClipboard(
   }
 }
 
-Future<void> startSendFile(
-  String filePath,
-  int fileSize,
+Future<void> startSendEntities(
+  List<CapturedEntityModel> entities,
   BuildContext context,
 ) async {
+  var data = entities.map((e) => e.toJSON()).toList();
+  var encodedData = json.encode(data);
   String connLink =
       connectPPF(context).getPhoneConnLink(startDownloadFileEndPoint);
   await Dio().post(
     connLink,
-    data: filePath,
-    options: Options(
-      headers: {
-        fileSizeHeaderKey: fileSize,
-      },
-    ),
+    data: encodedData,
   );
 }
