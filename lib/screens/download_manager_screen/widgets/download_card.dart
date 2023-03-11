@@ -2,7 +2,6 @@
 
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/sizes.dart';
 import 'package:windows_app/constants/styles.dart';
@@ -20,6 +19,7 @@ import 'package:windows_app/utils/files_operations_utils/files_utils.dart';
 import 'package:windows_app/utils/general_utils.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
 import 'package:windows_app/utils/screen_utils/home_screen_utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path_operations;
 
@@ -38,30 +38,13 @@ class DownloadCard extends StatefulWidget {
 class _DownloadCardState extends State<DownloadCard> {
   final ScrollController _downloadCardScrollController = ScrollController();
 
-  void navigateToFile() {
-    File file = File(widget.downloadTaskModel.localFilePath);
-    if (file.existsSync()) {
-      handleOpenTabFromOtherScreen(
-        path_operations.dirname(widget.downloadTaskModel.localFilePath),
-        context,
-        widget.downloadTaskModel.localFilePath,
-      );
-    } else {
-      showSnackBar(
-        context: context,
-        message: 'file doesn\'t exist',
-        snackBarType: SnackBarType.error,
-      );
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
-    if (widget.downloadTaskModel.size == 0 &&
-        widget.downloadTaskModel.count == 0) {
-      //! this is an error, for files with 0 size and 0 count
-      return SizedBox();
-    }
+    // if (widget.downloadTaskModel.size == 0 &&
+    //     widget.downloadTaskModel.count == 0) {
+    //   //! this is an error, for files with 0 size and 0 count
+    //   return SizedBox();
+    // }
     return Dismissible(
       direction: widget.downloadTaskModel.taskStatus == TaskStatus.finished
           ? DismissDirection.none
@@ -179,5 +162,39 @@ class _DownloadCardState extends State<DownloadCard> {
         ),
       ),
     );
+  }
+
+  void navigateToFile() {
+    if (widget.downloadTaskModel.entityType == EntityType.folder) {
+      Directory directory = Directory(widget.downloadTaskModel.localFilePath);
+      if (directory.existsSync()) {
+        handleOpenTabFromOtherScreen(
+          path_operations.dirname(widget.downloadTaskModel.localFilePath),
+          context,
+          widget.downloadTaskModel.localFilePath,
+        );
+      } else {
+        showSnackBar(
+          context: context,
+          message: 'folder doesn\'t exist',
+          snackBarType: SnackBarType.error,
+        );
+      }
+    } else {
+      File file = File(widget.downloadTaskModel.localFilePath);
+      if (file.existsSync()) {
+        handleOpenTabFromOtherScreen(
+          path_operations.dirname(widget.downloadTaskModel.localFilePath),
+          context,
+          widget.downloadTaskModel.localFilePath,
+        );
+      } else {
+        showSnackBar(
+          context: context,
+          message: 'file doesn\'t exist',
+          snackBarType: SnackBarType.error,
+        );
+      }
+    }
   }
 }

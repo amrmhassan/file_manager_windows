@@ -2,9 +2,12 @@
 
 import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/global_constants.dart';
+import 'package:windows_app/constants/sizes.dart';
 import 'package:windows_app/constants/styles.dart';
 import 'package:windows_app/global/modals/show_modal_funcs.dart';
+import 'package:windows_app/global/widgets/button_wrapper.dart';
 import 'package:windows_app/global/widgets/custom_app_bar/custom_app_bar.dart';
+import 'package:windows_app/global/widgets/h_space.dart';
 import 'package:windows_app/global/widgets/screens_wrapper.dart';
 import 'package:windows_app/global/widgets/v_space.dart';
 import 'package:windows_app/models/peer_model.dart';
@@ -134,6 +137,42 @@ class _ShareSpaceVScreenState extends State<ShareSpaceVScreen> {
                 color: kActiveTextColor,
               ),
             ),
+            rightIcon: shareExpProvider.allowSelect
+                ? Row(
+                    children: [
+                      Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          ButtonWrapper(
+                            padding: EdgeInsets.all(mediumPadding),
+                            onTap: () {
+                              var selectedItems =
+                                  shareExpPF(context).selectedItems;
+                              downPF(context).addMultipleDownloadTasks(
+                                remoteEntitiesPaths:
+                                    selectedItems.map((e) => e.path),
+                                sizes: selectedItems.map((e) => e.size),
+                                remoteDeviceID: remotePeerModel?.deviceID,
+                                remoteDeviceName: remotePeerModel?.name,
+                                serverProvider: serverPF(context),
+                                shareProvider: sharePF(context),
+                                entitiesTypes: selectedItems.map(
+                                  (e) => e.entityType,
+                                ),
+                              );
+                              shareExpPF(context).clearSelectedItems();
+                            },
+                            child: Image.asset(
+                              'assets/icons/download.png',
+                              width: mediumIconSize,
+                            ),
+                          ),
+                        ],
+                      ),
+                      HSpace(),
+                    ],
+                  )
+                : null,
           ),
           if (me) NotSharingView(),
           if (shareExpProvider.currentPath != null)

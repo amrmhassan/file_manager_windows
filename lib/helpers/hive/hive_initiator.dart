@@ -1,6 +1,10 @@
+import 'dart:io';
+
+import 'package:path_provider/path_provider.dart';
 import 'package:windows_app/analyzing_code/storage_analyzer/models/extension_info.dart';
 import 'package:windows_app/analyzing_code/storage_analyzer/models/local_file_info.dart';
 import 'package:windows_app/analyzing_code/storage_analyzer/models/local_folder_info.dart';
+import 'package:windows_app/constants/global_constants.dart';
 import 'package:windows_app/models/analyzer_report_info_model.dart';
 import 'package:windows_app/models/download_task_model.dart';
 import 'package:windows_app/models/folder_item_info_model.dart';
@@ -14,7 +18,12 @@ import 'package:hive_flutter/hive_flutter.dart';
 
 class HiveInitiator {
   Future<void> setup() async {
-    await Hive.initFlutter();
+    Directory docDirectory = await getApplicationDocumentsDirectory();
+    Directory appDataDirectory = Directory('${docDirectory.path}/afm_data');
+    if (!appDataDirectory.existsSync()) appDataDirectory.createSync();
+    logger.i('app data dir ${appDataDirectory.path}');
+
+    await Hive.initFlutter(appDataDirectory.path);
     _registerAdapters();
   }
 

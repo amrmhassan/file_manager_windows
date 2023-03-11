@@ -6,7 +6,6 @@ import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/global_constants.dart';
 import 'package:windows_app/constants/sizes.dart';
 import 'package:windows_app/global/custom_app_drawer/widgets/app_drawer_item.dart';
-import 'package:windows_app/global/custom_app_drawer/widgets/storage_analyzer_button.dart';
 import 'package:windows_app/global/widgets/v_space.dart';
 import 'package:windows_app/helpers/hive/hive_collections.dart';
 import 'package:windows_app/helpers/hive/hive_helper.dart';
@@ -78,7 +77,7 @@ class CustomAppDrawer extends StatelessWidget {
               allowBadge: activeTasks.isNotEmpty,
               badgeContent: activeTasks.length.toString(),
             ),
-            StorageAnalyzerButton(),
+            // StorageAnalyzerButton(),
             AppDrawerItem(
               iconPath: 'settings',
               title: 'Settings',
