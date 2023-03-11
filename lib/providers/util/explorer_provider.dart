@@ -24,6 +24,8 @@ import 'package:windows_app/isolates/load_folder_children_isolates.dart';
 import 'package:windows_app/utils/directory_watchers.dart';
 import 'package:windows_app/utils/screen_utils/children_view_utils.dart';
 
+Map<String, String> mainDisksMapper = {};
+
 class ExplorerProvider extends ChangeNotifier
     implements ExplorerProviderAbstract {
   // this will indicate that the mode is just to view the downloaded file or folder

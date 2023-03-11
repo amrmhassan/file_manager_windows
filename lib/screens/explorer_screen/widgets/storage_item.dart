@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:windows_app/constants/global_constants.dart';
 import 'package:windows_app/constants/styles.dart';
-import 'package:windows_app/global/modals/show_modal_funcs.dart';
 import 'package:windows_app/global/widgets/button_wrapper.dart';
 import 'package:windows_app/models/share_space_item_model.dart';
 import 'package:windows_app/models/storage_item_model.dart';
@@ -12,12 +12,12 @@ import 'package:windows_app/screens/explorer_screen/widgets/animation_wrapper.da
 import 'package:windows_app/screens/explorer_screen/widgets/child_file_item.dart';
 import 'package:windows_app/screens/explorer_screen/widgets/child_item_directory.dart';
 import 'package:windows_app/utils/files_operations_utils/files_utils.dart';
+import 'package:windows_app/utils/providers_calls_utils.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_animator/flutter_animator.dart';
 import 'package:path/path.dart' as path_operations;
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:windows_app/utils/providers_calls_utils.dart';
 
 class StorageItem extends StatefulWidget {
   final StorageItemModel? storageItemModel;
@@ -31,6 +31,11 @@ class StorageItem extends StatefulWidget {
   final Function(String path)? onFileTapped;
   final bool network;
   final String? viewedFilePath;
+  final Function(String path, EntityType entityType, bool network)?
+      onLongPressed;
+  final bool? isSelected;
+  final ExploreMode? exploreMode;
+  final VoidCallback? onSelectClicked;
 
   const StorageItem({
     super.key,
@@ -45,6 +50,10 @@ class StorageItem extends StatefulWidget {
     this.onFileTapped,
     this.network = false,
     this.viewedFilePath,
+    this.onLongPressed,
+    this.isSelected,
+    this.exploreMode,
+    this.onSelectClicked,
   });
 
   @override
@@ -98,6 +107,7 @@ class _StorageItemState extends State<StorageItem> {
     var foProviderFalse =
         Provider.of<FilesOperationsProvider>(context, listen: false);
     var foProvider = Provider.of<FilesOperationsProvider>(context);
+    var expProviderFalse = expPF(context);
 
     return Stack(
       children: [
@@ -121,13 +131,6 @@ class _StorageItemState extends State<StorageItem> {
         ),
         AnimationWrapper(
           child: ButtonWrapper(
-            onSecondaryTap: () async {
-              if (widget.storageItemModel != null) {
-                foProviderFalse.toggleFromSelectedItems(
-                    widget.storageItemModel!, expPF(context));
-                await showEntityOptionsModal(context);
-              }
-            },
             key: globalKey,
             onTap: widget.allowClick
                 ? () async {
@@ -143,15 +146,25 @@ class _StorageItemState extends State<StorageItem> {
                     }
                   }
                 : null,
-            onLongPress: widget.allowSelect
-                ? () {
-                    var expProvider =
-                        Provider.of<ExplorerProvider>(context, listen: false);
+            onLongPress: widget.onLongPressed != null
+                ? () => widget.onLongPressed!(
+                      widget.storageItemModel?.path ??
+                          widget.shareSpaceItemModel!.path,
+                      widget.storageItemModel?.entityType ??
+                          widget.shareSpaceItemModel!.entityType,
+                      widget.storageItemModel == null,
+                    )
+                : widget.allowSelect &&
+                        expProviderFalse.currentActiveDir.path !=
+                            initialDirs.first.path
+                    ? () {
+                        var expProvider = Provider.of<ExplorerProvider>(context,
+                            listen: false);
 
-                    foProviderFalse.toggleFromSelectedItems(
-                        widget.storageItemModel!, expProvider);
-                  }
-                : null,
+                        foProviderFalse.toggleFromSelectedItems(
+                            widget.storageItemModel!, expProvider);
+                      }
+                    : null,
             borderRadius: 0,
             child: entityType == EntityType.folder
                 ? ChildDirectoryItem(
@@ -159,19 +172,23 @@ class _StorageItemState extends State<StorageItem> {
                     storageItemModel: widget.storageItemModel,
                     parentSize: widget.parentSize,
                     sizesExplorer: widget.sizesExplorer,
-                    isSelected: isSelected(context),
+                    isSelected: widget.isSelected ?? isSelected(context),
                     allowShowingFavIcon: widget.allowShowingFavIcon,
                     allowSelect: widget.allowSelect,
                     shareSpaceItemModel: widget.shareSpaceItemModel,
+                    exploreMode: widget.exploreMode,
+                    onSelectClicked: widget.onSelectClicked,
                   )
                 : ChildFileItem(
                     storageItemModel: widget.storageItemModel,
                     parentSize: widget.parentSize,
                     sizesExplorer: widget.sizesExplorer,
-                    isSelected: isSelected(context),
+                    isSelected: widget.isSelected ?? isSelected(context),
                     allowSelect: widget.allowSelect,
                     shareSpaceItemModel: widget.shareSpaceItemModel,
                     network: widget.network,
+                    exploreMode: widget.exploreMode,
+                    onSelectClicked: widget.onSelectClicked,
                   ),
           ),
         ),

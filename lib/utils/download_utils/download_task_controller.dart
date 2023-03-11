@@ -79,6 +79,7 @@ class DownloadTaskController {
   final Function(double speed) setSpeed;
   final String remoteDeviceName;
   final String remoteDeviceID;
+  final Function(int chunkSize)? onReceived;
 
   DownloadTaskController({
     required this.downloadPath,
@@ -91,6 +92,7 @@ class DownloadTaskController {
     required this.remoteDeviceID,
     required this.remoteDeviceName,
     this.maximumParallelDownloadThreads = 5,
+    this.onReceived,
   });
 
   // void _resetRunTimeVariables() {
@@ -185,9 +187,10 @@ class DownloadTaskController {
     chunksInfo[index] = chunkProgressModel;
   }
 
-  Future<bool> _fileAlreadyDownloadedChecker() async {
+  Future<bool> _fileAlreadyDownloadedChecker([bool ask = true]) async {
     // this function will block the download process if it was returned true
     bool exist = File(downloadPath).existsSync();
+    if (!ask && exist) return true;
 
     // overwrite or rename can be true not both
     bool overwrite = false;
@@ -306,7 +309,9 @@ class DownloadTaskController {
             );
 
             setProgress(received);
-            if (received == length) {}
+            if (onReceived != null) {
+              onReceived!(chunkSize);
+            }
             DateTime after = DateTime.now();
             int diff = after.difference(before).inMilliseconds;
             //! i subtracted the initialReceived to avoid miss speed measuring=> never tested yet
@@ -362,10 +367,10 @@ class DownloadTaskController {
   }
 
   //? to download a file as chunks each chunk is at most equals the chunkSize
-  Future<dynamic> downloadFile() async {
+  Future<dynamic> downloadFile([bool ask = true]) async {
     try {
       //? this function will support continue corrupted downloads later by downloading the stopped chunks
-      if (await _fileAlreadyDownloadedChecker()) {
+      if (await _fileAlreadyDownloadedChecker(ask)) {
         return;
       }
       await _initFileInfo();
@@ -375,9 +380,9 @@ class DownloadTaskController {
       _createChunksInfoFile();
       _handleSplitFileTask();
       try {
-        logger.i('Downloading chunks');
         await _downloadChunks();
-        logger.i('received $received length $length');
+        // i returned this value not to notifiy the download provider that the download is paused
+        if (length == 0) return 10;
 
         if ((received) != length) {
           // zero return mean that the  isn't finished, paused
@@ -405,7 +410,18 @@ class DownloadTaskController {
     return '${path_operations.dirname(localDownloadPath)}/.$fName-tmp';
   }
 
-  static Future<void> deleteTaskFromStorage(String localFilePath) async {
+  static Future<void> deleteTaskFromStorage(
+    String localFilePath, [
+    bool folder = false,
+  ]) async {
+    try {
+      if (folder) {
+        var dir = Directory(localFilePath);
+        await dir.delete(recursive: true);
+      }
+    } catch (e) {
+      logger.e(e);
+    }
     try {
       var file = File(localFilePath);
       if (await file.exists()) {

@@ -1,6 +1,8 @@
 // ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 
 import 'package:windows_app/constants/colors.dart';
+import 'package:windows_app/constants/global_constants.dart';
+import 'package:windows_app/constants/sizes.dart';
 import 'package:windows_app/constants/widget_keys.dart';
 import 'package:windows_app/global/modals/ask_for_share_space_modal.dart';
 import 'package:windows_app/global/modals/entity_info_modal.dart';
@@ -9,8 +11,17 @@ import 'package:windows_app/global/modals/double_buttons_modal.dart';
 import 'package:windows_app/global/modals/details_modal/details_modal.dart';
 import 'package:windows_app/global/modals/entity_options_modal.dart';
 import 'package:windows_app/global/modals/sort_by_modal.dart';
+import 'package:windows_app/global/widgets/modal_wrapper/modal_wrapper.dart';
+import 'package:windows_app/main.dart';
+import 'package:windows_app/models/peer_model.dart';
+import 'package:windows_app/models/share_space_item_model.dart';
+import 'package:windows_app/models/types.dart';
+import 'package:windows_app/providers/download_provider.dart';
 import 'package:windows_app/providers/util/explorer_provider.dart';
 import 'package:windows_app/providers/files_operations_provider.dart';
+import 'package:windows_app/screens/home_screen/widgets/modal_button_element.dart';
+import 'package:windows_app/utils/connect_to_phone_utils/connect_to_phone_utils.dart';
+import 'package:windows_app/utils/general_utils.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -201,3 +212,68 @@ void sortByModal(BuildContext context) {
 //     ),
 //   );
 // }
+
+void showDownloadFromShareSpaceModal(
+  BuildContext context,
+  PeerModel? peerModel,
+  int index,
+) async {
+  var shareExpProvider = shareExpPF(context);
+  ShareSpaceItemModel shareSpaceItemModel = shareExpProvider.viewedItems[index];
+  showModalBottomSheet(
+    backgroundColor: Colors.transparent,
+    context: context,
+    builder: (context) => ModalWrapper(
+      padding: EdgeInsets.symmetric(
+        vertical: kVPad / 2,
+      ),
+      bottomPaddingFactor: 0,
+      afterLinePaddingFactor: 0,
+      showTopLine: false,
+      color: kBackgroundColor,
+      child: Column(
+        children: [
+          ModalButtonElement(
+            inactiveColor: Colors.transparent,
+            title: 'Download Now',
+            onTap: () async {
+              if (shareSpaceItemModel.entityType == EntityType.folder) {
+                Navigator.pop(context);
+                await downloadFolderUtil(
+                  remoteDeviceID: peerModel?.deviceID ?? phoneID,
+                  remoteDeviceName: peerModel?.name ?? phoneName,
+                  remoteFilePath: shareSpaceItemModel.path,
+                  serverProvider: serverPF(context),
+                  shareProvider: sharePF(context),
+                );
+              } else {
+                try {
+                  await Provider.of<DownloadProvider>(
+                    context,
+                    listen: false,
+                  ).addDownloadTask(
+                    size: shareSpaceItemModel.size,
+                    remoteDeviceID: peerModel?.deviceID ?? phoneID,
+                    remoteEntityPath: shareSpaceItemModel.path,
+                    serverProvider: serverPF(context),
+                    shareProvider: sharePF(context),
+                    entityType: EntityType.file,
+                    remoteDeviceName: peerModel?.name ?? phoneName,
+                  );
+                  Navigator.pop(context);
+                } catch (e) {
+                  logger.e(e);
+                  showSnackBar(
+                    context: context,
+                    message: 'An Error occurred',
+                    snackBarType: SnackBarType.error,
+                  );
+                }
+              }
+            },
+          ),
+        ],
+      ),
+    ),
+  );
+}

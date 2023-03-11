@@ -38,7 +38,7 @@ List<CapturedEntityModel> pathsToEntities(Iterable<String?> paths) {
       capturedEntityModel = CapturedEntityModel(
         path,
         EntityType.folder,
-        null,
+        0,
       );
     }
     if (capturedEntityModel != null) res.add(capturedEntityModel);

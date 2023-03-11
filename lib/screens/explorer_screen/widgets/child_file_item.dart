@@ -14,6 +14,7 @@ import 'package:windows_app/helpers/responsive.dart';
 import 'package:windows_app/models/share_space_item_model.dart';
 import 'package:windows_app/models/storage_item_model.dart';
 import 'package:windows_app/providers/files_operations_provider.dart';
+import 'package:windows_app/providers/util/explorer_provider.dart';
 import 'package:windows_app/screens/explorer_screen/utils/sizes_utils.dart';
 import 'package:windows_app/screens/explorer_screen/widgets/file_size.dart';
 import 'package:windows_app/screens/explorer_screen/widgets/media_player_button.dart';
@@ -34,6 +35,8 @@ class ChildFileItem extends StatefulWidget {
   final bool isSelected;
   final bool allowSelect;
   final bool network;
+  final ExploreMode? exploreMode;
+  final VoidCallback? onSelectClicked;
 
   const ChildFileItem({
     super.key,
@@ -44,6 +47,8 @@ class ChildFileItem extends StatefulWidget {
     required this.isSelected,
     required this.allowSelect,
     required this.network,
+    this.exploreMode,
+    required this.onSelectClicked,
   });
 
   @override
@@ -131,15 +136,11 @@ class _ChildFileItemState extends State<ChildFileItem> {
                                     ? path_operations.basename(path)
                                     : getFileName(path),
                                 style: h4LightTextStyle.copyWith(
-                                  height: 1,
+                                  height: 1.2,
+                                  fontSize: 13,
                                 ),
-                                softWrap: true,
-                                overflow: TextOverflow.visible,
-                                //! fix the file name
-                                // maxLines: 1,
-                                // overflow: TextOverflow.ellipsis,
                               ),
-                              VSpace(factor: .1),
+                              VSpace(factor: .3),
                               FileSize(
                                 modified: widget.storageItemModel?.modified,
                                 path: widget.storageItemModel?.path ??
@@ -157,11 +158,24 @@ class _ChildFileItemState extends State<ChildFileItem> {
                           network: widget.network,
                         ),
                         HSpace(),
-                        foProvider.exploreMode == ExploreMode.selection &&
+                        (widget.exploreMode ?? foProvider.exploreMode) ==
+                                    ExploreMode.selection &&
                                 widget.allowSelect
                             ? EntityCheckBox(
                                 isSelected: widget.isSelected,
-                                storageItemModel: widget.storageItemModel!,
+                                onTap: widget.onSelectClicked ??
+                                    () {
+                                      var expProvider =
+                                          Provider.of<ExplorerProvider>(context,
+                                              listen: false);
+                                      Provider.of<FilesOperationsProvider>(
+                                              context,
+                                              listen: false)
+                                          .toggleFromSelectedItems(
+                                        widget.storageItemModel!,
+                                        expProvider,
+                                      );
+                                    },
                               )
                             : Container(
                                 constraints:

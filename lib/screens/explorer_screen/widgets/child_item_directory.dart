@@ -17,6 +17,7 @@ import 'package:windows_app/models/storage_item_model.dart';
 import 'package:windows_app/providers/children_info_provider.dart';
 import 'package:windows_app/providers/files_operations_provider.dart';
 import 'package:windows_app/providers/listy_provider.dart';
+import 'package:windows_app/providers/util/explorer_provider.dart';
 import 'package:windows_app/screens/explorer_screen/utils/sizes_utils.dart';
 import 'package:windows_app/screens/explorer_screen/widgets/entity_check_box.dart';
 import 'package:windows_app/screens/explorer_screen/widgets/home_item_h_line.dart';
@@ -41,6 +42,9 @@ class ChildDirectoryItem extends StatefulWidget {
   final bool isSelected;
   final bool allowShowingFavIcon;
   final bool allowSelect;
+  final ExploreMode? exploreMode;
+  final VoidCallback? onSelectClicked;
+
   const ChildDirectoryItem({
     super.key,
     required this.fileName,
@@ -51,6 +55,8 @@ class ChildDirectoryItem extends StatefulWidget {
     required this.isSelected,
     required this.allowShowingFavIcon,
     required this.allowSelect,
+    this.exploreMode,
+    required this.onSelectClicked,
   });
 
   @override
@@ -186,6 +192,16 @@ class _ChildDirectoryItemState extends State<ChildDirectoryItem> {
     Directory dir = Directory(path);
     bool exists = dir.existsSync();
 
+    var directorySecondaryInfo = widget.sizesExplorer
+        ? handleConvertSize(widget.storageItemModel?.size ?? 0)
+        : widget.storageItemModel?.hideDate == true || fileStat == null
+            ? ''
+            : DateFormat('yyyy-MM-dd').format(fileStat!.changed);
+    var directoryInfoSeparator =
+        widget.storageItemModel?.hideDate == true ? '' : ' | ';
+    var directoryPrimaryInfo =
+        childrenNumber == null ? '...' : '$childrenNumber Items';
+
     return !exists && widget.storageItemModel != null
         ? SizedBox()
         : Stack(
@@ -215,8 +231,13 @@ class _ChildDirectoryItemState extends State<ChildDirectoryItem> {
                           clipBehavior: Clip.none,
                           children: [
                             Image.asset(
-                              'assets/icons/folder_colorful.png',
+                              widget.storageItemModel?.customThumbnail ??
+                                  'assets/icons/folder_colorful.png',
                               width: largeIconSize,
+                              color: widget.storageItemModel?.customThumbnail !=
+                                      null
+                                  ? kMainIconColor
+                                  : null,
                             ),
                             if (isFavorite && widget.allowShowingFavIcon)
                               Positioned(
@@ -235,22 +256,24 @@ class _ChildDirectoryItemState extends State<ChildDirectoryItem> {
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               Text(
-                                widget.fileName,
-                                style: h4LightTextStyle.copyWith(height: 1),
-                                softWrap: true,
+                                mainDisksMapper[
+                                        widget.storageItemModel?.path] ??
+                                    widget.fileName,
+                                style: h4LightTextStyle.copyWith(
+                                  height: 1.2,
+                                  fontSize: 13,
+                                ),
                                 // maxLines: 1,
                                 // overflow: TextOverflow.ellipsis,
                               ),
-                              VSpace(factor: .2),
+                              VSpace(factor: .3),
                               widget.storageItemModel == null
                                   ? SizedBox()
                                   : Row(
                                       children: [
                                         error == null
                                             ? Text(
-                                                childrenNumber == null
-                                                    ? '...'
-                                                    : '$childrenNumber Items',
+                                                directoryPrimaryInfo,
                                                 style: h5InactiveTextStyle
                                                     .copyWith(
                                                   height: 1,
@@ -267,22 +290,15 @@ class _ChildDirectoryItemState extends State<ChildDirectoryItem> {
                                           Row(
                                             children: [
                                               Text(
-                                                ' | ',
+                                                directoryInfoSeparator,
                                                 style: h5InactiveTextStyle
                                                     .copyWith(height: 1),
                                               ),
                                               Text(
-                                                widget.sizesExplorer
-                                                    ? handleConvertSize(widget
-                                                            .storageItemModel!
-                                                            .size ??
-                                                        0)
-                                                    : DateFormat('yyyy-MM-dd')
-                                                        .format(
-                                                            fileStat!.changed),
+                                                directorySecondaryInfo,
                                                 style: h5InactiveTextStyle
                                                     .copyWith(height: 1),
-                                              )
+                                              ),
                                             ],
                                           ),
                                       ],
@@ -302,11 +318,24 @@ class _ChildDirectoryItemState extends State<ChildDirectoryItem> {
                               color: kInActiveTextColor.withOpacity(.7),
                             ),
                           ),
-                        foProvider.exploreMode == ExploreMode.selection &&
+                        (widget.exploreMode ?? foProvider.exploreMode) ==
+                                    ExploreMode.selection &&
                                 widget.allowSelect
                             ? EntityCheckBox(
                                 isSelected: widget.isSelected,
-                                storageItemModel: widget.storageItemModel!,
+                                onTap: widget.onSelectClicked ??
+                                    () {
+                                      var expProvider =
+                                          Provider.of<ExplorerProvider>(context,
+                                              listen: false);
+                                      Provider.of<FilesOperationsProvider>(
+                                              context,
+                                              listen: false)
+                                          .toggleFromSelectedItems(
+                                        widget.storageItemModel!,
+                                        expProvider,
+                                      );
+                                    },
                               )
                             : Image.asset(
                                 'assets/icons/right-arrow.png',

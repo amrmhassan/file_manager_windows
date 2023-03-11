@@ -5,7 +5,7 @@ import 'package:windows_app/models/types.dart';
 class CapturedEntityModel {
   final String path;
   final EntityType entityType;
-  final int? size;
+  final int size;
 
   const CapturedEntityModel(
     this.path,
@@ -25,7 +25,7 @@ class CapturedEntityModel {
         jsonOBJ[entityTypeString],
         EntityType.values,
       ),
-      int.tryParse(jsonOBJ[sizeString]),
+      int.tryParse(jsonOBJ[sizeString]) ?? 0,
     );
   }
 

@@ -4,6 +4,7 @@ import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/global_constants.dart';
 import 'package:windows_app/constants/sizes.dart';
 import 'package:windows_app/constants/styles.dart';
+import 'package:windows_app/global/modals/show_modal_funcs.dart';
 import 'package:windows_app/global/widgets/custom_app_bar/custom_app_bar.dart';
 import 'package:windows_app/global/widgets/modal_wrapper/modal_wrapper.dart';
 import 'package:windows_app/global/widgets/screens_wrapper.dart';
@@ -11,6 +12,7 @@ import 'package:windows_app/global/widgets/v_space.dart';
 import 'package:windows_app/models/peer_model.dart';
 import 'package:windows_app/models/share_space_item_model.dart';
 import 'package:windows_app/models/types.dart';
+import 'package:windows_app/providers/files_operations_provider.dart';
 import 'package:windows_app/screens/share_screen/widgets/not_sharing_view.dart';
 import 'package:windows_app/utils/client_utils.dart' as client_utils;
 import 'package:windows_app/providers/download_provider.dart';
@@ -171,63 +173,42 @@ class _ShareSpaceVScreenState extends State<ShareSpaceVScreen> {
                   )
                 : Expanded(
                     child: ListView.builder(
+                      physics: BouncingScrollPhysics(),
                       itemCount: shareExpProvider.viewedItems.length,
                       itemBuilder: (context, index) => StorageItem(
                         network: true,
                         onDirTapped: localGetFolderContent,
                         sizesExplorer: false,
                         parentSize: 0,
+                        exploreMode: ExploreMode.selection,
+                        isSelected: shareExpProvider.isSelected(
+                            shareExpProvider.viewedItems[index].path),
                         shareSpaceItemModel:
                             shareExpProvider.viewedItems[index],
-                        onFileTapped: (path) {
-                          showModalBottomSheet(
-                            backgroundColor: Colors.transparent,
-                            context: context,
-                            builder: (context) => ModalWrapper(
-                              padding: EdgeInsets.symmetric(
-                                vertical: kVPad / 2,
-                              ),
-                              bottomPaddingFactor: 0,
-                              afterLinePaddingFactor: 0,
-                              showTopLine: false,
-                              color: kBackgroundColor,
-                              child: Column(
-                                children: [
-                                  ModalButtonElement(
-                                    inactiveColor: Colors.transparent,
-                                    title: 'Download Now',
-                                    onTap: () async {
-                                      try {
-                                        await Provider.of<DownloadProvider>(
-                                          context,
-                                          listen: false,
-                                        ).addDownloadTaskFromPeer(
-                                          fileSize: shareExpProvider
-                                              .viewedItems[index].size,
-                                          remoteDeviceID: phoneID,
-                                          remoteFilePath: shareExpProvider
-                                              .viewedItems[index].path,
-                                          serverProvider: serverPF(context),
-                                          shareProvider: sharePF(context),
-                                          remoteDeviceName: phoneName,
-                                        );
-                                      } catch (e) {
-                                        logger.e(e);
-                                        showSnackBar(
-                                          context: context,
-                                          message: e.toString(),
-                                          snackBarType: SnackBarType.error,
-                                        );
-                                      }
-                                      Navigator.pop(context);
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
+                        onSelectClicked: () {
+                          shareExpPF(context).toggleSelectItem(
+                            shareExpProvider.viewedItems[index],
                           );
                         },
-                        allowSelect: false,
+                        // to prevent clicking on the disk storages
+                        onLongPressed: (path, entityType, network) {
+                          // showDownloadFromShareSpaceModal(
+                          //   context,
+                          //   data.peerModel,
+                          //   index,
+                          // );
+                          shareExpPF(context).toggleSelectItem(
+                            shareExpProvider.viewedItems[index],
+                          );
+                        },
+                        onFileTapped: (path) {
+                          showDownloadFromShareSpaceModal(
+                            context,
+                            remotePeerModel,
+                            index,
+                          );
+                        },
+                        allowSelect: shareExpProvider.allowSelect,
                       ),
                     ),
                   ),
