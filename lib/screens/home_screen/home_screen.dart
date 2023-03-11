@@ -24,6 +24,7 @@ import 'package:windows_app/providers/children_info_provider.dart';
 import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/screens/home_screen/widgets/home_app_bar.dart';
 import 'package:flutter/foundation.dart';
+import 'package:windows_app/utils/update_utils/run_updates.dart';
 
 //* this is the home page controller
 PageController pageController = PageController();
@@ -68,6 +69,8 @@ class _HomeScreenState extends State<HomeScreen> {
       await downPF(context).loadDownloadSettings();
       //?
       downPF(context).loadTasks();
+      //?
+      runUpdates(context);
 
       //* getting storage permission
       bool res = await showPermissionsModal(
