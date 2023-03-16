@@ -41,7 +41,6 @@ class VideoUpperControllers extends StatelessWidget {
               ),
             ),
 
-            Spacer(),
             FadeInRight(
               preferences: AnimationPreferences(
                 duration: Duration(milliseconds: 350),
