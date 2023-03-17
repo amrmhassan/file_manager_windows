@@ -433,7 +433,7 @@ class DownloadProvider extends ChangeNotifier {
       } else {
         if (downloadTaskModel.entityType == EntityType.folder) {
           laptopDownloadUrl = connectPPF(navigatorKey.currentContext!)
-              .getPhoneConnLink(getFolderContentRecrusiveEndPoint);
+              .getPhoneConnLink(getFolderContentRecursiveEndPoint);
         } else {
           laptopDownloadUrl = connectPPF(navigatorKey.currentContext!)
               .getPhoneConnLink(downloadFileEndPoint);
@@ -486,7 +486,7 @@ class DownloadProvider extends ChangeNotifier {
           remoteFilePath: downloadTaskModel.remoteFilePath,
           url: laptop
               ? laptopDownloadUrl
-              : remotePeer.getMyLink(getFolderContentRecrusiveEndPoint),
+              : remotePeer.getMyLink(getFolderContentRecursiveEndPoint),
           setProgress: (p) {
             _updateTaskPercent(downloadTaskModel.id, p);
           },

@@ -76,15 +76,3 @@ class _HiveBoxesNames {
   static const String thumbnailPathTableName = 'thumbnailPathTableName';
   static const String extensionInfoTableName = 'extensionInfoTableName';
 }
-
-// class HiveHelper {
-//   final Box box;
-
-//   const HiveHelper(this.box);
-
-//   Iterable<dynamic> getDataLimit(int limit) {
-//     List<dynamic> data = box.values.toList();
-//     data.sort();
-//     return data.take(limit);
-//   }
-// }

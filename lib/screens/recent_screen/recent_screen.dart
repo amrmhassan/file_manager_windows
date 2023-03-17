@@ -1,8 +1,16 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, sized_box_for_whitespace, use_build_context_synchronously
 
+import 'dart:math';
+
+import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:windows_app/constants/colors.dart';
+import 'package:windows_app/constants/global_constants.dart';
+import 'package:windows_app/global/widgets/button_wrapper.dart';
 import 'package:windows_app/global/widgets/h_line.dart';
 import 'package:windows_app/global/widgets/v_space.dart';
+import 'package:windows_app/helpers/mouse_data/mouse_controller.dart';
+import 'package:windows_app/helpers/mouse_data/other.dart';
 import 'package:windows_app/models/types.dart';
 import 'package:windows_app/screens/analyzer_screen/widgets/analyzer_options_item.dart';
 import 'package:windows_app/screens/connect_phone_screen/connect_phone_screen.dart';
@@ -129,6 +137,17 @@ class _RecentScreenState extends State<RecentScreen> {
                 color: kMainIconColor,
               ),
               VSpace(),
+              if (kDebugMode)
+                ButtonWrapper(
+                  onTap: () async {
+                    DateTime before = DateTime.now();
+                    await handleMoveMouseTest(Duration(milliseconds: 0));
+                    DateTime after = DateTime.now();
+                    logger.i(
+                        'time taken:${after.difference(before).inMilliseconds}ms');
+                  },
+                  child: Text('Mouse Move'),
+                ),
             ],
           ),
         ),

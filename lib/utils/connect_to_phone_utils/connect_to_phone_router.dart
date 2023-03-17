@@ -87,7 +87,7 @@ CustomRouterSystem addConnectToPhoneServerRouters(
       normal_handlers.downloadFileHandler,
     )
     ..addHandler(
-      getFolderContentRecrusiveEndPoint,
+      getFolderContentRecursiveEndPoint,
       HttpMethod.GET,
       laptop_handlers.getFolderChildrenRecrusive,
     );

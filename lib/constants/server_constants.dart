@@ -31,7 +31,8 @@ const String getClipboardEndPoint = '/getClipboardEndPoint';
 const String sendTextEndpoint = '/sendTextEndpoint';
 const String getListyEndPoint = '/getListyEndPoint';
 const String startDownloadFileEndPoint = '/startDownloadFileEndPoint';
-const String getFolderContentRecrusiveEndPoint = '/getFolderContentRecrusive';
+const String getFolderContentRecursiveEndPoint =
+    '/getFolderContentRecursiveEndPoint';
 
 //? headers keys
 const String folderPathHeaderKey = 'folderPathHeaderKey';
@@ -49,3 +50,10 @@ const String totalSpaceHeaderKey = 'totalSpaceHeaderKey';
 const String parentFolderPathHeaderKey = 'parentFolderPathHeaderKey';
 const String myServerPortHeaderKey = 'myServerPortHeaderKey';
 const String fileSizeHeaderKey = 'fileSizeHeaderKey';
+
+//? socket server paths
+const String moveCursorPath = 'moveCursorPath';
+const String mouseRightClickedPath = 'mouseRightClickedPath';
+const String mouseLeftClickedPath = 'mouseLeftClickedPath';
+const String mouseLeftDownPath = 'mouseLeftDownPath';
+const String mouseLeftUpPath = 'mouseLeftUpPath';

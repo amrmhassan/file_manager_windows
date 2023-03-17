@@ -61,9 +61,7 @@ import 'package:windows_app/utils/windows_utils/window_size.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-//  continue the downloading folder handler
-//  look at the connect phone handler
-
+//! make a function to check if 1.0.0 is later or 1.0.1, to know if the version or later or not compared to another version
 bool testing = false;
 
 bool firstTimeRunApp = false;

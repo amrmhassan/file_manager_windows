@@ -4,7 +4,9 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:windows_app/constants/global_constants.dart';
+import 'package:windows_app/constants/server_constants.dart';
 import 'package:windows_app/constants/widget_keys.dart';
+import 'package:windows_app/helpers/mouse_data/mouse_controller.dart';
 import 'package:windows_app/providers/connect_phone_provider.dart';
 import 'package:windows_app/providers/server_provider.dart';
 import 'package:windows_app/providers/share_provider.dart';
@@ -138,6 +140,13 @@ class ConnectPhoneServerSocket {
       socket.listen(
         (event) {
           // here the server(host) will receive joining requests
+          var data = event.toString().split('___');
+          String path = data.first;
+          String message = data.last;
+          if (path != moveCursorPath) {
+            print(path);
+          }
+          handleMouseReceiveEvents(path, message);
         },
         onDone: () async {
           logger.w('phone disconnected');
@@ -170,5 +179,27 @@ class ConnectPhoneServerSocket {
 
   void _sendToClient(String msg, String path, WebSocket socket) {
     socket.add('$path[||]$msg');
+  }
+}
+
+void handleMouseReceiveEvents(String path, String message) {
+  MouseController mouseController = MouseController();
+
+  if (path == moveCursorPath) {
+    // move the cursor
+    var positionData = message.split(',');
+    int dx = double.parse(positionData.first).round();
+    int dy = double.parse(positionData.last).round();
+    mouseController.setCursorPositionDelta(dx, dy);
+  } else if (path == mouseLeftClickedPath) {
+    mouseController.leftMouseButtonDown();
+    mouseController.leftMouseButtonUp();
+  } else if (path == mouseRightClickedPath) {
+    mouseController.rightMouseButtonDown();
+    mouseController.rightMouseButtonUp();
+  } else if (path == mouseLeftDownPath) {
+    mouseController.leftMouseButtonDown();
+  } else if (path == mouseLeftUpPath) {
+    mouseController.leftMouseButtonUp();
   }
 }
