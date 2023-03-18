@@ -6,6 +6,7 @@ import 'dart:io';
 import 'package:windows_app/constants/global_constants.dart';
 import 'package:windows_app/constants/server_constants.dart';
 import 'package:windows_app/constants/widget_keys.dart';
+import 'package:windows_app/helpers/windows_info_helper.dart';
 import 'package:windows_app/models/captures_entity_model.dart';
 import 'package:windows_app/models/share_space_item_model.dart';
 import 'package:windows_app/models/types.dart';
@@ -289,4 +290,58 @@ Future<void> getFolderChildrenRecrusive(
     true,
     true,
   );
+}
+
+Future<void> getLaptopDeviceIDHandler(
+  HttpRequest request,
+  HttpResponse response,
+) async {
+  BuildContext? context = navigatorKey.currentContext;
+  if (context == null) {
+    response
+      ..statusCode = HttpStatus.internalServerError
+      ..write('An error with context')
+      ..close();
+    return;
+  }
+
+  try {
+    String laptopID = sharePF(context).myDeviceId;
+
+    response
+      ..write(laptopID)
+      ..close();
+  } catch (e) {
+    response
+      ..statusCode = HttpStatus.internalServerError
+      ..write('error getting laptop id')
+      ..close();
+  }
+}
+
+Future<void> getLaptopDeviceNameIDHandler(
+  HttpRequest request,
+  HttpResponse response,
+) async {
+  BuildContext? context = navigatorKey.currentContext;
+  if (context == null) {
+    response
+      ..statusCode = HttpStatus.internalServerError
+      ..write('An error with context')
+      ..close();
+    return;
+  }
+
+  try {
+    String laptopName = await WindowsInfoHelper.getDeviceName();
+
+    response
+      ..write(laptopName)
+      ..close();
+  } catch (e) {
+    response
+      ..statusCode = HttpStatus.internalServerError
+      ..write('error getting laptop id')
+      ..close();
+  }
 }

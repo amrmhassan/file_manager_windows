@@ -90,6 +90,16 @@ CustomRouterSystem addConnectToPhoneServerRouters(
       getFolderContentRecursiveEndPoint,
       HttpMethod.GET,
       laptop_handlers.getFolderChildrenRecrusive,
+    )
+    ..addHandler(
+      getLaptopDeviceID,
+      HttpMethod.GET,
+      laptop_handlers.getLaptopDeviceIDHandler,
+    )
+    ..addHandler(
+      getLaptopDeviceName,
+      HttpMethod.GET,
+      (request, response) => null,
     );
   return customRouterSystem;
 }
