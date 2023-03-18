@@ -31,6 +31,7 @@ import 'package:windows_app/screens/analyzer_screen/analyzer_screen.dart';
 import 'package:windows_app/screens/connect_phone_screen/connect_phone_screen.dart';
 import 'package:windows_app/screens/download_manager_screen/download_manager_screen.dart';
 import 'package:windows_app/screens/error_viewing_screen/error_viewing_screen.dart';
+import 'package:windows_app/screens/full_text_screen/full_text_screen.dart';
 import 'package:windows_app/screens/intro_screen/intro_screen.dart';
 import 'package:windows_app/screens/items_viewer_screen/items_viewer_screen.dart';
 import 'package:windows_app/screens/ext_files_screen/ext_files_screen.dart';
@@ -172,6 +173,7 @@ class _MyAppState extends State<MyApp> {
           ConnectPhoneScreen.routeName: (context) => ConnectPhoneScreen(),
           LaptopMessagesScreen.routeName: (context) => LaptopMessagesScreen(),
           SendFilesScreen.routeName: (context) => SendFilesScreen(),
+          FullTextViewerScreen.routeName: (context) => FullTextViewerScreen(),
         },
       ),
     );

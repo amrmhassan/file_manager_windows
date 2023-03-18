@@ -209,7 +209,7 @@ class MouseEventsHandler {
     } else if (path == mouseLeftUpPath) {
       mouseController.leftMouseButtonUp();
     } else if (path == mouseEventClickDrag) {
-      Future.delayed(Duration(milliseconds: 300)).then((value) {
+      Future.delayed(Duration(milliseconds: 0)).then((value) {
         sleeping = false;
         for (var element in sleepingCommands) {
           handleMouseReceiveEvents(element);

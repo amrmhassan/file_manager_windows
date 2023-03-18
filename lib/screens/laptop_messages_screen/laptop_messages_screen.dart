@@ -7,6 +7,7 @@ import 'package:windows_app/global/widgets/button_wrapper.dart';
 import 'package:windows_app/global/widgets/custom_app_bar/custom_app_bar.dart';
 import 'package:windows_app/global/widgets/screens_wrapper.dart';
 import 'package:windows_app/global/widgets/v_space.dart';
+import 'package:windows_app/screens/full_text_screen/full_text_screen.dart';
 import 'package:windows_app/utils/general_utils.dart';
 import 'package:flutter/material.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
@@ -62,42 +63,35 @@ class _LaptopMessagesScreenState extends State<LaptopMessagesScreen> {
                   connectPPF(context).removeLaptopMessage(message.id);
                 },
                 key: UniqueKey(),
-                child: Container(
-                  constraints: BoxConstraints(maxHeight: 100),
-                  color: kCardBackgroundColor,
-                  margin: EdgeInsets.only(bottom: smallPadding),
-                  padding: EdgeInsets.symmetric(
-                    horizontal: kHPad,
-                    vertical: kVPad / 2,
-                  ),
-                  child: Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          message.msg,
-                          overflow: TextOverflow.fade,
-                          softWrap: true,
-                        ),
-                      ),
-                      Column(
-                        mainAxisSize: MainAxisSize.min,
-                        mainAxisAlignment: MainAxisAlignment.start,
-                        children: [
-                          ButtonWrapper(
-                            padding: EdgeInsets.all(largePadding),
-                            onTap: () {
-                              copyToClipboard(context, message.msg);
-                            },
-                            child: Image.asset(
-                              'assets/icons/paste.png',
-                              color: kMainIconColor,
-                              width: smallIconSize,
-                            ),
+                child: ButtonWrapper(
+                  onTap: () {
+                    Navigator.pushNamed(
+                      context,
+                      FullTextViewerScreen.routeName,
+                      arguments: message.msg,
+                    );
+                  },
+                  child: Container(
+                    constraints: BoxConstraints(maxHeight: 100),
+                    color: kCardBackgroundColor,
+                    margin: EdgeInsets.only(bottom: smallPadding),
+                    padding: EdgeInsets.symmetric(
+                      horizontal: kHPad,
+                      vertical: kVPad / 2,
+                    ),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: Text(
+                            message.msg,
+                            overflow: TextOverflow.fade,
+                            softWrap: true,
                           ),
-                        ],
-                      ),
-                    ],
+                        ),
+                        CopyButton(text: message.msg),
+                      ],
+                    ),
                   ),
                 ),
               );
@@ -106,6 +100,36 @@ class _LaptopMessagesScreenState extends State<LaptopMessagesScreen> {
           ))
         ],
       ),
+    );
+  }
+}
+
+class CopyButton extends StatelessWidget {
+  const CopyButton({
+    super.key,
+    required this.text,
+  });
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      mainAxisAlignment: MainAxisAlignment.start,
+      children: [
+        ButtonWrapper(
+          padding: EdgeInsets.all(largePadding),
+          onTap: () {
+            copyToClipboard(context, text);
+          },
+          child: Image.asset(
+            'assets/icons/paste.png',
+            color: kMainIconColor,
+            width: smallIconSize,
+          ),
+        ),
+      ],
     );
   }
 }

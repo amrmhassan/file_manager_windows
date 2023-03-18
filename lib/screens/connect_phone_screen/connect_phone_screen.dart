@@ -7,6 +7,7 @@ import 'package:windows_app/constants/styles.dart';
 import 'package:windows_app/global/modals/double_buttons_modal.dart';
 import 'package:windows_app/global/modals/send_txt_to_phone_modal.dart';
 import 'package:windows_app/global/widgets/custom_app_bar/custom_app_bar.dart';
+import 'package:windows_app/global/widgets/h_space.dart';
 import 'package:windows_app/global/widgets/modal_wrapper/modal_wrapper.dart';
 import 'package:windows_app/global/widgets/padding_wrapper.dart';
 import 'package:windows_app/global/widgets/screens_wrapper.dart';
@@ -15,6 +16,8 @@ import 'package:windows_app/models/peer_model.dart';
 import 'package:windows_app/providers/share_provider.dart';
 import 'package:windows_app/screens/analyzer_screen/widgets/analyzer_options_item.dart';
 import 'package:windows_app/screens/connect_phone_screen/widgets/phone_storage_card.dart';
+import 'package:windows_app/screens/full_text_screen/full_text_screen.dart';
+import 'package:windows_app/screens/laptop_messages_screen/laptop_messages_screen.dart';
 import 'package:windows_app/screens/send_files_screen/send_files_screen.dart';
 import 'package:windows_app/utils/connect_to_phone_utils/connect_to_phone_utils.dart';
 import 'package:windows_app/utils/general_utils.dart';
@@ -46,6 +49,24 @@ class ConnectPhoneScreen extends StatelessWidget {
               connectPhoneProvider.phoneName ?? 'Your Phone',
               style: h2TextStyle,
             ),
+            rightIcon: connectPhoneProvider.laptopMessages.isEmpty
+                ? null
+                : Row(
+                    children: [
+                      IconButton(
+                          onPressed: () {
+                            Navigator.pushNamed(
+                              context,
+                              LaptopMessagesScreen.routeName,
+                            );
+                          },
+                          icon: Icon(
+                            Icons.message,
+                            color: kMainIconColor,
+                          )),
+                      HSpace(factor: .3),
+                    ],
+                  ),
             leftIcon: IconButton(
               onPressed: () {
                 showModalBottomSheet(
@@ -149,10 +170,20 @@ class ConnectPhoneScreen extends StatelessWidget {
                           builder: (context) => DoubleButtonsModal(
                             onOk: () {
                               copyToClipboard(context, clipboard);
+                              Navigator.pop(context);
                             },
                             title: 'Phone Clipboard',
                             subTitle: clipboard,
-                            showCancelButton: false,
+                            showCancelButton: true,
+                            autoPop: false,
+                            cancelText: 'Expand',
+                            onCancel: () {
+                              Navigator.pushReplacementNamed(
+                                context,
+                                FullTextViewerScreen.routeName,
+                                arguments: clipboard,
+                              );
+                            },
                             okColor: kBlueColor,
                             okText: 'Copy',
                           ),
