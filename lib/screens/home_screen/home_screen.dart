@@ -77,9 +77,6 @@ class _HomeScreenState extends State<HomeScreen> {
       } catch (e) {
         logger.e(e);
       }
-      //!
-      await WindowsInfoHelper.getDeviceName();
-      logger.e(sharePF(context).myDeviceId);
 
       //* getting storage permission
       bool res = await showPermissionsModal(

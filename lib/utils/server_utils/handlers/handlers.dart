@@ -16,6 +16,7 @@ import 'package:windows_app/providers/share_provider.dart';
 import 'package:windows_app/providers/shared_items_explorer_provider.dart';
 import 'package:windows_app/screens/connect_phone_screen/connect_phone_screen.dart';
 import 'package:windows_app/screens/home_screen/home_screen.dart';
+import 'package:windows_app/utils/client_utils.dart';
 import 'package:windows_app/utils/errors_collection/custom_exception.dart';
 import 'package:windows_app/utils/server_utils/connection_utils.dart';
 import 'package:windows_app/utils/server_utils/encoding_utils.dart';
@@ -445,7 +446,12 @@ void serverCheckHandler(
   connectPPF.setMyServerSocket(customServerSocket);
   connectPPF.setMyWSConnLink(myWSConnLink);
   connectPPF.setMyWsServer(wsServer);
+
   //!
+  //? for getting android info
+  String androidName = await getAndroidName(connectPPF);
+  String androidId = await getAndroidID(connectPPF);
+  connectPPF.setAndroidInfo(androidId, androidName);
 // i know my port, but i don't know which of my ips will work
 // so client will provide my ip for me,
 // and i will get his port from his

@@ -43,7 +43,7 @@ class ConnectPhoneScreen extends StatelessWidget {
         children: [
           CustomAppBar(
             title: Text(
-              'Your Phone',
+              connectPhoneProvider.phoneName ?? 'Your Phone',
               style: h2TextStyle,
             ),
             leftIcon: IconButton(

@@ -33,8 +33,10 @@ const String getListyEndPoint = '/getListyEndPoint';
 const String startDownloadFileEndPoint = '/startDownloadFileEndPoint';
 const String getFolderContentRecursiveEndPoint =
     '/getFolderContentRecursiveEndPoint';
-const String getLaptopDeviceID = '/getLaptopDeviceID';
-const String getLaptopDeviceName = '/getLaptopDeviceName';
+const String getLaptopDeviceIDEndPoint = '/getLaptopDeviceIDEndPoint';
+const String getLaptopDeviceNameEndpoint = '/getLaptopDeviceNameEndpoint';
+const String getAndroidNameEndPoint = '/getAndroidNameEndPoint';
+const String getAndroidIDEndPoint = '/getAndroidIDEndPoint';
 
 //? headers keys
 const String folderPathHeaderKey = 'folderPathHeaderKey';

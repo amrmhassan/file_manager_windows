@@ -21,14 +21,25 @@ import 'package:flutter/cupertino.dart';
 class ConnectPhoneProvider extends ChangeNotifier {
   String? myConnLink;
   late String myWSConnLink;
+
   int myPort = 0;
   String? myIp;
+
   String? remoteIP;
   int? remotePort;
+  String? phoneName;
+  String? phoneID;
+
   HttpServer? httpServer;
   ConnectPhoneServerSocket? customServerSocket;
 
   HttpServer? wsServer;
+
+  void setAndroidInfo(String id, String name) {
+    phoneName = name;
+    phoneID = id;
+    notifyListeners();
+  }
 
   void setMyWSConnLink(String s) {
     myWSConnLink = s;

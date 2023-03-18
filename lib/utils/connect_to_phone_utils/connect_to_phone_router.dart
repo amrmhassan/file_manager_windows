@@ -92,14 +92,14 @@ CustomRouterSystem addConnectToPhoneServerRouters(
       laptop_handlers.getFolderChildrenRecrusive,
     )
     ..addHandler(
-      getLaptopDeviceID,
+      getLaptopDeviceIDEndPoint,
       HttpMethod.GET,
       laptop_handlers.getLaptopDeviceIDHandler,
     )
     ..addHandler(
-      getLaptopDeviceName,
+      getLaptopDeviceNameEndpoint,
       HttpMethod.GET,
-      (request, response) => null,
+      laptop_handlers.getLaptopDeviceNameHandler,
     );
   return customRouterSystem;
 }

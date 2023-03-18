@@ -319,7 +319,7 @@ Future<void> getLaptopDeviceIDHandler(
   }
 }
 
-Future<void> getLaptopDeviceNameIDHandler(
+Future<void> getLaptopDeviceNameHandler(
   HttpRequest request,
   HttpResponse response,
 ) async {

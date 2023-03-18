@@ -6,6 +6,7 @@ import 'package:windows_app/constants/models_constants.dart';
 import 'package:windows_app/constants/server_constants.dart';
 import 'package:windows_app/models/peer_model.dart';
 import 'package:windows_app/models/share_space_item_model.dart';
+import 'package:windows_app/providers/connect_phone_provider.dart';
 import 'package:windows_app/providers/server_provider.dart';
 import 'package:windows_app/providers/share_provider.dart';
 import 'package:windows_app/providers/shared_items_explorer_provider.dart';
@@ -333,4 +334,25 @@ Future<String?> connectToWsServer(
       rethrowError: true,
     );
   }
+}
+
+Future<String> getAndroidID(ConnectPhoneProvider connectPhoneProvider) async {
+  String connLink = connectPhoneProvider.getPhoneConnLink(getAndroidIDEndPoint);
+  var data = await Dio().get(connLink);
+  if (data.data.toString().isEmpty) {
+    throw Exception('cant get android id');
+  }
+  return data.data.toString();
+}
+
+Future<String> getAndroidName(
+  ConnectPhoneProvider connectPhoneProvider,
+) async {
+  String connLink =
+      connectPhoneProvider.getPhoneConnLink(getAndroidNameEndPoint);
+  var data = await Dio().get(connLink);
+  if (data.data.toString().isEmpty) {
+    throw Exception('cant get laptop name');
+  }
+  return data.data.toString();
 }
