@@ -183,7 +183,7 @@ Future<void> getFolderContentHandler(
   HttpResponse response,
   ServerProvider serverProvider,
   ShareProvider shareProvider, [
-  bool recrusive = false,
+  bool recursive = false,
   bool connectPhone = false,
 ]) async {
   Completer completer = Completer();
@@ -200,7 +200,7 @@ Future<void> getFolderContentHandler(
         me = serverProvider.me(shareProvider);
       }
       var folderChildren = await compute(
-          (message) => getFolderChildren(folderPath, recrusive), false);
+          (message) => getFolderChildren(folderPath, recursive), false);
       // hide marked 'hidden' elements
       List<Map<String, dynamic>> sharedItems = [];
       for (var entity in folderChildren) {

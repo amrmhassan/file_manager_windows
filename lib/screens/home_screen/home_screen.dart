@@ -7,7 +7,6 @@ import 'package:flutter/services.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter/material.dart';
 import 'package:windows_app/constants/global_constants.dart';
-import 'package:windows_app/helpers/windows_info_helper.dart';
 import 'package:windows_app/providers/share_provider.dart';
 import 'package:windows_app/providers/util/analyzer_provider.dart';
 import 'package:windows_app/providers/util/explorer_provider.dart';

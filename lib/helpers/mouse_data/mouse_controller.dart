@@ -1,6 +1,7 @@
 import 'package:ffi/ffi.dart';
 import 'dart:ffi';
-import 'package:win32/win32.dart' as win;
+
+import 'package:windows_app/utils/general_utils.dart';
 
 typedef SetCursorPosC = Void Function(Int32 x, Int32 y);
 typedef SetCursorPosDart = void Function(int x, int y);
@@ -23,7 +24,7 @@ class MouseController {
       _user32.lookupFunction<MouseEventC, MouseEventDart>('mouse_event');
 
   void setCursorPosition(int x, int y) {
-    print('setCursorPosition');
+    printOnDebug('setCursorPosition');
     final SetCursorPosDart setCursorPos = _user32
         .lookup<NativeFunction<SetCursorPosC>>('SetCursorPos')
         .asFunction();
@@ -54,7 +55,7 @@ class MouseController {
   }
 
   void leftMouseButtonDown() {
-    print('leftMouseButtonDown');
+    printOnDebug('leftMouseButtonDown');
     // Perform a left mouse button click at the current cursor position
     var currentPosition = mousePosition;
     _mouseEvent(
@@ -67,7 +68,7 @@ class MouseController {
   }
 
   void leftMouseButtonUp() {
-    print('leftMouseButtonUp');
+    printOnDebug('leftMouseButtonUp');
 
     var currentPosition = mousePosition;
     _mouseEvent(
@@ -80,7 +81,7 @@ class MouseController {
   }
 
   void rightMouseButtonDown() {
-    print('rightMouseButtonDown');
+    printOnDebug('rightMouseButtonDown');
 
     var currentPosition = mousePosition;
     _mouseEvent(
@@ -93,7 +94,7 @@ class MouseController {
   }
 
   void rightMouseButtonUp() {
-    print('rightMouseButtonUp');
+    printOnDebug('rightMouseButtonUp');
 
     var currentPosition = mousePosition;
     _mouseEvent(
@@ -117,4 +118,3 @@ class Position {
     return '$x,$y';
   }
 }
-

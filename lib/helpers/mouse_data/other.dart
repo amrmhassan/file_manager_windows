@@ -7,8 +7,6 @@ Future<void> handleMoveMouseTest() async {
   MouseController mouseController = MouseController();
   await Future.delayed(Duration(milliseconds: 2000));
 
-  print(mouseController.mousePosition);
-
   mouseController.setCursorPosition(p1.x, p1.y);
 
   mouseController.leftMouseButtonDown();

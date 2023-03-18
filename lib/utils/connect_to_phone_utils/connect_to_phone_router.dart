@@ -89,7 +89,7 @@ CustomRouterSystem addConnectToPhoneServerRouters(
     ..addHandler(
       getFolderContentRecursiveEndPoint,
       HttpMethod.GET,
-      laptop_handlers.getFolderChildrenRecrusive,
+      laptop_handlers.getFolderChildrenRecursive,
     )
     ..addHandler(
       getLaptopDeviceIDEndPoint,
