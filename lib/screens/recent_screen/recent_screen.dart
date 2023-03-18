@@ -141,7 +141,7 @@ class _RecentScreenState extends State<RecentScreen> {
                 ButtonWrapper(
                   onTap: () async {
                     DateTime before = DateTime.now();
-                    await handleMoveMouseTest(Duration(milliseconds: 0));
+                    await handleMoveMouseTest();
                     DateTime after = DateTime.now();
                     logger.i(
                         'time taken:${after.difference(before).inMilliseconds}ms');

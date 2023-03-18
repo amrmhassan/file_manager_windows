@@ -128,6 +128,7 @@ class ConnectPhoneServerSocket {
     logger.i('phone ws server listening at ${server.port}');
 
     await for (var socket in websocketServer) {
+      MouseEventsHandler mouseEventsHandler = MouseEventsHandler();
       String id = Uuid().v4();
       logger.i('New socket connected');
       sockets.add(
@@ -140,13 +141,8 @@ class ConnectPhoneServerSocket {
       socket.listen(
         (event) {
           // here the server(host) will receive joining requests
-          var data = event.toString().split('___');
-          String path = data.first;
-          String message = data.last;
-          if (path != moveCursorPath) {
-            print(path);
-          }
-          handleMouseReceiveEvents(path, message);
+
+          mouseEventsHandler.handleMouseReceiveEvents(event);
         },
         onDone: () async {
           logger.w('phone disconnected');
@@ -182,24 +178,52 @@ class ConnectPhoneServerSocket {
   }
 }
 
-void handleMouseReceiveEvents(String path, String message) {
-  MouseController mouseController = MouseController();
+class MouseEventsHandler {
+  bool sleeping = false;
+  List<String> sleepingCommands = [];
 
-  if (path == moveCursorPath) {
-    // move the cursor
-    var positionData = message.split(',');
-    int dx = double.parse(positionData.first).round();
-    int dy = double.parse(positionData.last).round();
-    mouseController.setCursorPositionDelta(dx, dy);
-  } else if (path == mouseLeftClickedPath) {
-    mouseController.leftMouseButtonDown();
-    mouseController.leftMouseButtonUp();
-  } else if (path == mouseRightClickedPath) {
-    mouseController.rightMouseButtonDown();
-    mouseController.rightMouseButtonUp();
-  } else if (path == mouseLeftDownPath) {
-    mouseController.leftMouseButtonDown();
-  } else if (path == mouseLeftUpPath) {
-    mouseController.leftMouseButtonUp();
+  void handleMouseReceiveEvents(dynamic event) async {
+    var data = event.toString().split('___');
+    String path = data.first;
+    String message = data.last;
+
+    MouseController mouseController = MouseController();
+    if (sleeping) {
+      sleepingCommands.add(event);
+      return;
+    }
+    if (path == moveCursorPath) {
+      // move the cursor
+      var positionData = message.split(',');
+      int dx = double.parse(positionData.first).round();
+      int dy = double.parse(positionData.last).round();
+      mouseController.setCursorPositionDelta(dx, dy);
+    } else if (path == mouseLeftClickedPath) {
+      mouseController.leftMouseButtonDown();
+      mouseController.leftMouseButtonUp();
+    } else if (path == mouseRightClickedPath) {
+      mouseController.rightMouseButtonDown();
+      mouseController.rightMouseButtonUp();
+    } else if (path == mouseLeftDownPath) {
+      mouseController.leftMouseButtonDown();
+    } else if (path == mouseLeftUpPath) {
+      mouseController.leftMouseButtonUp();
+    } else if (path == mouseEventClickDrag) {
+      Future.delayed(Duration(milliseconds: 300)).then((value) {
+        sleeping = false;
+        for (var element in sleepingCommands) {
+          handleMouseReceiveEvents(element);
+        }
+        sleepingCommands.clear();
+      });
+
+      logger.e('should wait here before any mouse events ');
+      // i might sleep here and add a list of events that need to be done,
+      // and after this sleep period i execute all events first
+      // so i will add a variable bool sleeping = false
+      // if android tells me to sleep i will sleep for about 200ms or less and will record all events
+      // after sleeping period is done i will execute all sleeping commands
+      sleeping = true;
+    }
   }
 }

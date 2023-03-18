@@ -75,6 +75,7 @@ dependencies:
   firedart: ^0.9.0+1
   desktop_drop: ^0.4.1
   ffi: ^1.2.1
+  win32: ^2.6.1
 
 
 dev_dependencies:

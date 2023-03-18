@@ -57,3 +57,4 @@ const String mouseRightClickedPath = 'mouseRightClickedPath';
 const String mouseLeftClickedPath = 'mouseLeftClickedPath';
 const String mouseLeftDownPath = 'mouseLeftDownPath';
 const String mouseLeftUpPath = 'mouseLeftUpPath';
+const String mouseEventClickDrag = 'mouseEventClickDrag';
