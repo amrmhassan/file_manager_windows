@@ -63,6 +63,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 //! make a function to check if 1.0.0 is later or 1.0.1, to know if the version or later or not compared to another version
+//! include the vcruntime140_1.dll file into your app, so that users can run your app without installing the vc c++  tools
+
 bool testing = false;
 
 bool firstTimeRunApp = false;
