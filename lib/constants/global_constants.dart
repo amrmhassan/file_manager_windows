@@ -1,13 +1,13 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:windows_app/providers/explorer_provider_abstract.dart';
+import 'package:windows_app/models/types.dart';
 import 'package:windows_app/utils/windows_utils/disks_capturer.dart';
 import 'package:flutter/material.dart';
 import 'package:logger/logger.dart';
 
-String phoneName = 'Phone';
-String phoneID = 'phone_id';
+String phoneName = 'Laptop';
+String phoneID = 'laptop_id';
 
 // const String initialPath = '/';
 final List<Directory> initialDirs = Platform.isWindows

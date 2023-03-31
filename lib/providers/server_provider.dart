@@ -9,10 +9,9 @@ import 'package:windows_app/helpers/hive/hive_helper.dart';
 import 'package:windows_app/models/white_block_list_model.dart';
 import 'package:windows_app/providers/share_provider.dart';
 import 'package:windows_app/providers/shared_items_explorer_provider.dart';
+import 'package:windows_app/utils/beacon_server_utils.dart/beacon_server.dart';
 import 'package:windows_app/utils/errors_collection/custom_exception.dart';
 import 'package:windows_app/utils/general_utils.dart';
-import 'package:windows_app/utils/server_utils/connection_utils.dart';
-import 'package:windows_app/utils/custom_router_system/custom_router_system.dart';
 import 'package:windows_app/utils/server_utils/ip_utils.dart';
 import 'package:windows_app/utils/server_utils/handlers/router.dart';
 import 'package:windows_app/utils/websocket_utils/custom_server_socket.dart';
@@ -28,6 +27,7 @@ import '../models/peer_model.dart';
 //? including the new device which will add the clients list to his state to be used later
 
 class ServerProvider extends ChangeNotifier {
+  // this is the encrypted link used by the server to allow clients to connect with him
   String? myConnLink;
   late String myWSConnLink;
   int myPort = 0;
@@ -35,14 +35,61 @@ class ServerProvider extends ChangeNotifier {
   HttpServer? httpServer;
   List<PeerModel> peers = [];
   late WebSocketSink myClientWsSink;
-  late CustomServerSocket customServerSocket;
-  bool hostWithWifi = false;
+  CustomServerSocket? customServerSocket;
+  BeaconServer? beaconServer;
+  bool beaconServerRunning = false;
 
   late MemberType myType;
-  late HttpServer wsServer;
+  HttpServer? wsServer;
 
   List<WhiteBlockListModel> allowedPeers = [];
   List<WhiteBlockListModel> blockedPeers = [];
+
+  bool ifPeerConnected(String ip, int? port) {
+    return (peers.any((element) =>
+        // element.port == port &&
+        element.ip == ip));
+  }
+
+  void setMyIpAsClient(String ip) {
+    myIp = ip;
+    notifyListeners();
+  }
+
+  void firstConnected(
+    String myIp,
+    ShareProvider shareProvider,
+    MemberType memberType,
+    DeviceType deviceType,
+  ) {
+    this.myIp = myIp;
+    // then add a client
+    addMyPeerModel(
+      myIp,
+      shareProvider,
+      memberType,
+      deviceType,
+    );
+  }
+
+  void addMyPeerModel(
+    String ip,
+    ShareProvider shareProvider,
+    MemberType memberType,
+    DeviceType deviceType,
+  ) {
+    PeerModel meHost = PeerModel(
+      deviceID: shareProvider.myDeviceId,
+      name: shareProvider.myName,
+      memberType: memberType,
+      ip: ip,
+      port: myPort,
+      sessionID: Uuid().v4(),
+      deviceType: deviceType,
+    );
+    peers.add(meHost);
+    notifyListeners();
+  }
 
   Future<void> removeFromAllowedDevices(String deviceID) async {
     allowedPeers.removeWhere((element) => element.deviceID == deviceID);
@@ -126,12 +173,20 @@ class ServerProvider extends ChangeNotifier {
   }
 
   void setMyWsChannel(WebSocketSink s) {
+    logger.i('setting ws sink (WebSocketSink) variable');
     myClientWsSink = s;
     notifyListeners();
   }
 
   void setMyServerSocket(CustomServerSocket s) {
+    logger.i('setting ws server (CustomServerSocket) variable');
     customServerSocket = s;
+    notifyListeners();
+  }
+
+  void setMyWSConnLink(String wsLink) {
+    logger.i('setting ws conn link');
+    myWSConnLink = wsLink;
     notifyListeners();
   }
 
@@ -172,67 +227,67 @@ class ServerProvider extends ChangeNotifier {
 
   //? remove peer
   void peerLeft(String sessionID) {
+    logger.i("peer $sessionID left");
     peers.removeWhere((element) => element.sessionID == sessionID);
     notifyListeners();
   }
 
   Future<void> closeWsServer() async {
     logger.i('Closing ws Server');
-    await customServerSocket.sendCloseMsg();
-    await wsServer.close();
+    await customServerSocket?.sendCloseMsg();
+    await wsServer?.close();
+  }
+
+  Future<void> kickOutPeer(String ip, BuildContext context) async {
+    showSnackBar(context: context, message: "soon");
   }
 
   //? send file
   Future<void> openServer(
     ShareProvider shareProvider,
     MemberType memberType,
-    ShareItemsExplorerProvider shareItemsExplorerProvider, [
-    bool wifi = true,
-  ]) async {
-    //! host device must always be hotspot or wifi
-    //! client device must always be wifi
-    hostWithWifi = wifi;
-    // notifyListeners();
+    ShareItemsExplorerProvider shareItemsExplorerProvider,
+  ) async {
     try {
-      String? myWifiIp = await getMyIpAddress(wifi);
-      if (myWifiIp == null) {
+      await closeServer();
+      var myPossibleIPs = await getPossibleIpAddress();
+      if (myPossibleIPs == null || myPossibleIPs.isEmpty) {
+        logger.e('You are not connected to any network!');
         throw CustomException(
-          e: wifi ? 'No Connected' : 'Open Your HotSpot please',
+          e: 'You are not connected to any network!',
           s: StackTrace.current,
           rethrowError: true,
         );
       }
       //? opening the server port and setting end points
-      httpServer = await HttpServer.bind(InternetAddress.anyIPv4, myPort);
-      if (memberType == MemberType.host) {
-        customServerSocket = CustomServerSocket(myWifiIp, this, shareProvider);
-        wsServer = await customServerSocket.getWsConnLink();
-        myWSConnLink = getConnLink(myWifiIp, wsServer.port, null, true);
-      }
+      // logger.i('Opening server');
+      // httpServer = await HttpServer.bind(InternetAddress.anyIPv4, myPort);
 
-      CustomRouterSystem customRouterSystem =
-          addServerRouters(this, shareProvider, shareItemsExplorerProvider);
-      httpServer!.listen(customRouterSystem.pipeline);
+      // CustomRouterSystem customRouterSystem =
+      //     addServerRouters(this, shareProvider, shareItemsExplorerProvider);
+      httpServer = await testingRunServerWithCustomServer(
+        this,
+        shareProvider,
+        shareItemsExplorerProvider,
+      );
+      logger.i('Http Server listening on ${httpServer?.port}');
+      // httpServer!.listen(customRouterSystem.pipeline);
       //? when above code is success then set the needed stuff like port, other things
       myPort = httpServer!.port;
       myType = memberType;
-      myIp = myWifiIp;
-      var myPossibleIPs = (await getPossibleIpAddress())!;
-
       myConnLink = connLinkQrFromIterable(myPossibleIPs, myPort);
+      try {
+        beaconServer = BeaconServer();
+        await beaconServer!.startBeaconServer(this, shareProvider);
+        beaconServerRunning = true;
+      } catch (e) {
+        logger.e(e);
+        //! show a snack bar that users can't scan remotely for you and they must scan with qr code
+      }
 
-      PeerModel meHost = PeerModel(
-        deviceID: shareProvider.myDeviceId,
-        joinedAt: DateTime.now(),
-        name: shareProvider.myName,
-        memberType: memberType,
-        ip: myIp!,
-        port: myPort,
-        sessionID: Uuid().v4(),
-      );
-      peers.add(meHost);
       notifyListeners();
     } catch (e) {
+      logger.e(e);
       await closeServer();
       rethrow;
     }
@@ -240,14 +295,20 @@ class ServerProvider extends ChangeNotifier {
 
   //? to close the server
   Future closeServer() async {
-    logger.i('Closing normal http server');
+    if (httpServer != null) {
+      logger.i('Closing normal http server');
+    }
     await httpServer?.close();
+    await beaconServer?.closeServer();
+    beaconServerRunning = false;
+
     httpServer = null;
     peers.clear();
     allowedPeers.clear();
     blockedPeers.clear();
     myConnLink = null;
     myIp = null;
+    myPort = 0;
     notifyListeners();
   }
 
@@ -262,19 +323,25 @@ class ServerProvider extends ChangeNotifier {
 
   //# server functions
   PeerModel addPeer(
-      String sessionID, String clientId, String name, String ip, int port) {
+    String sessionID,
+    String clientId,
+    String name,
+    String ip,
+    int port,
+    DeviceType deviceType,
+  ) {
     // if the peer is already registered
     // this might mean that he disconnected
     // so i will replace the current session with the new one
     bool exists = peers.any((element) => element.deviceID == clientId);
     PeerModel peerModel = PeerModel(
       deviceID: clientId,
-      joinedAt: DateTime.now(),
       name: name,
       memberType: MemberType.client,
       ip: ip,
       port: port,
       sessionID: sessionID,
+      deviceType: deviceType,
     );
     if (exists) {
       printOnDebug(

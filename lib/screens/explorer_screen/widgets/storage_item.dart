@@ -6,7 +6,7 @@ import 'package:windows_app/global/widgets/button_wrapper.dart';
 import 'package:windows_app/models/share_space_item_model.dart';
 import 'package:windows_app/models/storage_item_model.dart';
 import 'package:windows_app/models/types.dart';
-import 'package:windows_app/providers/util/explorer_provider.dart';
+import 'package:windows_app/providers/explorer_provider.dart';
 import 'package:windows_app/providers/files_operations_provider.dart';
 import 'package:windows_app/screens/explorer_screen/widgets/animation_wrapper.dart';
 import 'package:windows_app/screens/explorer_screen/widgets/child_file_item.dart';

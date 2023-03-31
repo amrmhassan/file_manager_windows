@@ -1,10 +1,14 @@
 // ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 
+import 'dart:async';
+
 import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/global_constants.dart';
 import 'package:windows_app/constants/sizes.dart';
 import 'package:windows_app/constants/widget_keys.dart';
 import 'package:windows_app/global/modals/ask_for_share_space_modal.dart';
+import 'package:windows_app/models/permission_result_model.dart';
+import 'package:windows_app/screens/connect_device_screen/modals/ask_permission_modal.dart';
 import 'package:windows_app/global/modals/entity_info_modal.dart';
 import 'package:windows_app/global/modals/current_active_dir_options_modal.dart';
 import 'package:windows_app/global/modals/double_buttons_modal.dart';
@@ -13,18 +17,82 @@ import 'package:windows_app/global/modals/entity_options_modal.dart';
 import 'package:windows_app/global/modals/sort_by_modal.dart';
 import 'package:windows_app/global/widgets/modal_wrapper/modal_wrapper.dart';
 import 'package:windows_app/models/peer_model.dart';
+import 'package:windows_app/models/peer_permissions_model.dart';
 import 'package:windows_app/models/share_space_item_model.dart';
 import 'package:windows_app/models/types.dart';
 import 'package:windows_app/providers/download_provider.dart';
-import 'package:windows_app/providers/util/explorer_provider.dart';
+import 'package:windows_app/providers/server_provider.dart';
+import 'package:windows_app/providers/explorer_provider.dart';
 import 'package:windows_app/providers/files_operations_provider.dart';
+import 'package:windows_app/screens/connect_device_screen/modals/wait_permission_modal.dart';
 import 'package:windows_app/screens/home_screen/widgets/modal_button_element.dart';
 import 'package:windows_app/utils/connect_to_phone_utils/connect_to_phone_utils.dart';
 import 'package:windows_app/utils/general_utils.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 import 'package:path/path.dart' as path_operations;
+import 'package:qr_flutter/qr_flutter.dart';
+
+Future<bool?> showAskForConnLinkModal(
+  BuildContext context,
+  String userName,
+) async {
+  bool? res = await showModalBottomSheet(
+    context: context,
+    backgroundColor: Colors.transparent,
+    builder: (con) => DoubleButtonsModal(
+      onOk: () {
+        Navigator.pop(con, true);
+      },
+      okText: 'Allow',
+      okColor: kBlueColor,
+      cancelColor: kDangerColor,
+      cancelText: 'Refuse',
+      autoPop: false,
+      onCancel: () {
+        Navigator.pop(con, false);
+      },
+      title: 'Connection Request',
+      subTitle: '$userName wants to connect',
+    ),
+  );
+  return res;
+}
+
+Future<PermissionResultModel> showWaitPermissionModal(
+  Future Function() callback,
+) async {
+  PermissionResultModel data = await showModalBottomSheet(
+    backgroundColor: Colors.transparent,
+    context: navigatorKey.currentContext!,
+    builder: (context) => WaitPermissionModal(
+      callback: callback,
+    ),
+  );
+  return data;
+}
+
+Future<bool> showAskForFeaturePermissionModal(
+  String userName,
+  String deviceID,
+  PermissionName permissionName,
+  BuildContext context,
+) async {
+  bool? res = await showModalBottomSheet(
+    backgroundColor: Colors.transparent,
+    context: context,
+    builder: (context) => AskPermissionModal(
+      userName: userName,
+      deviceID: deviceID,
+      permissionName: permissionName,
+    ),
+  );
+  //? this wont consider remember
+  //? so if it is null it will be blocked( no care if it is remembered or not)
+  return res == true;
+}
 
 //?
 Future<bool> showAskForShareSpaceModal(
@@ -95,12 +163,13 @@ Future<void> showFileExtChangeModal(BuildContext context,
     backgroundColor: Colors.transparent,
     context: expScreenKey.currentContext!,
     builder: (ctx) => DoubleButtonsModal(
+      autoPop: true,
       onOk: () {
         handleRenameFile(context, false);
       },
-      title: 'File Extension Change.',
-      subTitle: 'If you changed a file extension it might not work.',
-      okText: 'Rename',
+      title: 'file-ext-change'.i18n(),
+      subTitle: 'file-ext-change-note'.i18n(),
+      okText: 'rename'.i18n(),
       okColor: kBlueColor,
     ),
   );
@@ -120,11 +189,12 @@ void confirmDeleteEntityModal({
     backgroundColor: Colors.transparent,
     context: context,
     builder: (context) => DoubleButtonsModal(
+      autoPop: true,
       cancelText: cancelText,
       onCancel: onCancel,
       okText: okText,
-      title: title ?? 'Confirm Delete',
-      subTitle: subTitle ?? 'Do you want to delete selected items?',
+      title: title ?? 'confirm-delete'.i18n(),
+      subTitle: subTitle ?? 'confirm-delete-note'.i18n(),
       onOk: onOk ??
           () {
             var expProvider =
@@ -179,38 +249,38 @@ void sortByModal(BuildContext context) {
   );
 }
 
-// Future showQrCodeModal(BuildContext context) async {
-//   var serverProvider = Provider.of<ServerProvider>(context, listen: false);
+Future showQrCodeModal(BuildContext context) async {
+  var serverProvider = Provider.of<ServerProvider>(context, listen: false);
 
-//   String connLink = serverProvider.myConnLink!;
+  String connLink = serverProvider.myConnLink!;
 
-//   await showModalBottomSheet(
-//     backgroundColor: Colors.transparent,
-//     context: context,
-//     builder: (ctx) => ModalWrapper(
-//       color: kBackgroundColor,
-//       showTopLine: false,
-//       child: GestureDetector(
-//         onTap: () {
-//           Navigator.pop(context);
-//           copyToClipboard(context, connLink);
-//         },
-//         child: SizedBox(
-//           child: Column(
-//             children: [
-//               QrImage(
-//                 backgroundColor: Colors.white,
-//                 data: connLink,
-//                 size: 150,
-//               ),
-//               Text(connLink),
-//             ],
-//           ),
-//         ),
-//       ),
-//     ),
-//   );
-// }
+  await showModalBottomSheet(
+    backgroundColor: Colors.transparent,
+    context: context,
+    builder: (ctx) => ModalWrapper(
+      color: kBackgroundColor,
+      showTopLine: false,
+      child: GestureDetector(
+        onTap: () {
+          Navigator.pop(context);
+          copyToClipboard(context, connLink);
+        },
+        child: SizedBox(
+          child: Column(
+            children: [
+              QrImage(
+                backgroundColor: Colors.white,
+                data: connLink,
+                size: 150,
+              ),
+              Text(connLink),
+            ],
+          ),
+        ),
+      ),
+    ),
+  );
+}
 
 void showDownloadFromShareSpaceModal(
   BuildContext context,
@@ -234,7 +304,7 @@ void showDownloadFromShareSpaceModal(
         children: [
           ModalButtonElement(
             inactiveColor: Colors.transparent,
-            title: 'Download Now',
+            title: 'download-now'.i18n(),
             onTap: () async {
               if (shareSpaceItemModel.entityType == EntityType.folder) {
                 Navigator.pop(context);
@@ -264,7 +334,7 @@ void showDownloadFromShareSpaceModal(
                   logger.e(e);
                   showSnackBar(
                     context: context,
-                    message: 'An Error occurred',
+                    message: 'error-occurred'.i18n(),
                     snackBarType: SnackBarType.error,
                   );
                 }

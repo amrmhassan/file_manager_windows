@@ -7,7 +7,7 @@ import 'package:windows_app/isolates/folder_info_isolates.dart';
 import 'package:windows_app/models/recent_opened_file_model.dart';
 import 'package:windows_app/models/storage_item_model.dart';
 import 'package:windows_app/models/types.dart';
-import 'package:windows_app/providers/util/explorer_provider.dart';
+import 'package:windows_app/providers/explorer_provider.dart';
 import 'package:windows_app/utils/files_operations_utils/copy_utils.dart';
 import 'package:flutter/foundation.dart';
 import 'package:path/path.dart' as path_operations;

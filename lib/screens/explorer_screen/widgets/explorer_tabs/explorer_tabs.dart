@@ -3,7 +3,7 @@
 import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/sizes.dart';
 import 'package:windows_app/global/widgets/h_space.dart';
-import 'package:windows_app/providers/util/explorer_provider.dart';
+import 'package:windows_app/providers/explorer_provider.dart';
 import 'package:windows_app/screens/explorer_screen/widgets/explorer_tabs/widgets/single_tab.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

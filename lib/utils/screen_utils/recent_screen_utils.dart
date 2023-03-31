@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:windows_app/analyzing_code/storage_analyzer/models/extension_info.dart';
 import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/files_types_icons.dart';
-import 'package:windows_app/providers/util/analyzer_provider.dart';
+import 'package:windows_app/providers/analyzer_provider.dart';
 import 'package:windows_app/screens/recent_screen/widget/segment_section.dart';
 
 //? to get sections info

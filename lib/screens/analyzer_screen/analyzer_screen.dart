@@ -3,7 +3,7 @@
 import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/global/widgets/h_line.dart';
 import 'package:windows_app/global/widgets/screens_wrapper.dart';
-import 'package:windows_app/providers/util/analyzer_provider.dart';
+import 'package:windows_app/providers/analyzer_provider.dart';
 import 'package:windows_app/screens/analyzer_screen/widgets/analyzing_report.dart';
 import 'package:windows_app/screens/analyzer_screen/widgets/analyzing_starter.dart';
 import 'package:windows_app/screens/home_screen/widgets/home_app_bar.dart';

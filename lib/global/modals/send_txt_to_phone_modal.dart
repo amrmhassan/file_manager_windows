@@ -13,6 +13,7 @@ import 'package:windows_app/global/widgets/v_space.dart';
 import 'package:windows_app/models/types.dart';
 import 'package:windows_app/utils/general_utils.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
+import 'package:localization/localization.dart';
 
 class SendTextToPhoneModal extends StatefulWidget {
   const SendTextToPhoneModal({
@@ -28,31 +29,32 @@ class _SendTextToPhoneModalState extends State<SendTextToPhoneModal> {
   @override
   Widget build(BuildContext context) {
     return DoubleButtonsModal(
+      autoPop: true,
       onOk: () async {
-        try {
-          String connLink =
-              connectPPF(context).getPhoneConnLink(sendTextEndpoint);
+        // try {
+        //   String connLink =
+        //       connectLaptopPF(context).getPhoneConnLink(EndPoints.sendText);
 
-          await Dio().post(connLink,
-              data: data.text,
-              options: Options(
-                requestEncoder: (request, options) => utf8.encode(request),
-              ));
-          showSnackBar(context: context, message: 'Message Sent');
-        } catch (e) {
-          showSnackBar(
-            context: context,
-            message: e.toString(),
-            snackBarType: SnackBarType.error,
-          );
-        }
+        //   await Dio().post(connLink,
+        //       data: data.text,
+        //       options: Options(
+        //         requestEncoder: (request, options) => utf8.encode(request),
+        //       ));
+        //   showSnackBar(context: context, message: 'message-sent'.i18n());
+        // } catch (e) {
+        //   showSnackBar(
+        //     context: context,
+        //     message: e.toString(),
+        //     snackBarType: SnackBarType.error,
+        //   );
+        // }
       },
       showCancelButton: false,
       extra: Column(
         children: [
           CustomTextField(
             controller: data,
-            title: 'Enter some text to send',
+            title: 'enter-text-to-send'.i18n(),
             padding: EdgeInsets.zero,
             autoFocus: true,
             textInputType: TextInputType.multiline,
@@ -64,7 +66,7 @@ class _SendTextToPhoneModalState extends State<SendTextToPhoneModal> {
         ],
       ),
       okColor: kBlueColor,
-      okText: 'Send',
+      okText: 'send'.i18n(),
     );
   }
 }

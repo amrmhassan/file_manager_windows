@@ -12,6 +12,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:path/path.dart' as path_operations;
+import 'package:windows_app/providers/share_provider.dart';
 
 void printOnDebug(Object? object) {
   if (kDebugMode) {
@@ -203,4 +204,12 @@ String createNewPath(String path) {
   String parentName = path_operations.dirname(path);
   String newPath = '$parentName/$randomName.$fileExt';
   return newPath;
+}
+
+DeviceType getDeviceType() {
+  if (Platform.isAndroid) {
+    return DeviceType.android;
+  } else {
+    return DeviceType.windows;
+  }
 }

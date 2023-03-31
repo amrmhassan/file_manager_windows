@@ -5,7 +5,7 @@ import 'package:windows_app/constants/sizes.dart';
 import 'package:windows_app/constants/styles.dart';
 import 'package:windows_app/global/widgets/button_wrapper.dart';
 import 'package:windows_app/global/widgets/v_space.dart';
-import 'package:windows_app/providers/util/analyzer_provider.dart';
+import 'package:windows_app/providers/analyzer_provider.dart';
 import 'package:windows_app/providers/recent_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

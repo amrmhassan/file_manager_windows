@@ -3,9 +3,9 @@
 import 'package:draggable_scrollbar/draggable_scrollbar.dart';
 import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/models/storage_item_model.dart';
-import 'package:windows_app/providers/util/analyzer_provider.dart';
+import 'package:windows_app/providers/analyzer_provider.dart';
 import 'package:windows_app/providers/children_info_provider.dart';
-import 'package:windows_app/providers/util/explorer_provider.dart';
+import 'package:windows_app/providers/explorer_provider.dart';
 import 'package:windows_app/providers/files_operations_provider.dart';
 import 'package:flutter/material.dart';
 

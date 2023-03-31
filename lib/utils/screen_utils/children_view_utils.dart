@@ -1,7 +1,6 @@
 import 'package:windows_app/analyzing_code/globals/files_folders_operations.dart';
 import 'package:windows_app/models/storage_item_model.dart';
 import 'package:windows_app/models/types.dart';
-import 'package:windows_app/providers/explorer_provider_abstract.dart';
 import 'package:path/path.dart' as path;
 
 List<StorageItemModel> getFixedEntityList({

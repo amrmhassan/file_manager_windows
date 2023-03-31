@@ -1,7 +1,7 @@
 import 'package:windows_app/analyzing_code/storage_analyzer/models/local_file_info.dart';
 import 'package:windows_app/helpers/hive/hive_helper.dart';
 import 'package:windows_app/models/recent_opened_file_model.dart';
-import 'package:windows_app/providers/util/analyzer_provider.dart';
+import 'package:windows_app/providers/analyzer_provider.dart';
 import 'package:windows_app/screens/items_viewer_screen/items_viewer_screen.dart';
 import 'package:windows_app/utils/models_transformer_utils.dart';
 import 'package:flutter/cupertino.dart';

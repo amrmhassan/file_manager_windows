@@ -84,6 +84,38 @@ Future<String?> getPhoneClipboard(
   }
 }
 
+// Future<void> downloadFolderUtil({
+//   required String remoteDeviceID,
+//   required String remoteFilePath,
+//   required ServerProvider serverProvider,
+//   required ShareProvider shareProvider,
+//   required String remoteDeviceName,
+// }) async {
+//   downPF(navigatorKey.currentContext!).addDownloadTask(
+//     remoteEntityPath: remoteFilePath,
+//     size: null,
+//     remoteDeviceID: remoteDeviceID,
+//     remoteDeviceName: remoteDeviceName,
+//     serverProvider: serverProvider,
+//     shareProvider: shareProvider,
+//     entityType: EntityType.folder,
+//   );
+// }
+
+// Future<void> startSendEntities(
+//   List<CapturedEntityModel> entities,
+//   BuildContext context,
+// ) async {
+//   var data = entities.map((e) => e.toJSON()).toList();
+//   var encodedData = json.encode(data);
+//   String connLink =
+//       connectPPF(context).getPhoneConnLink(startDownloadFileEndPoint);
+//   await Dio().post(
+//     connLink,
+//     data: encodedData,
+//   );
+// }
+
 Future<void> downloadFolderUtil({
   required String remoteDeviceID,
   required String remoteFilePath,
@@ -106,12 +138,16 @@ Future<void> startSendEntities(
   List<CapturedEntityModel> entities,
   BuildContext context,
 ) async {
-  var data = entities.map((e) => e.toJSON()).toList();
-  var encodedData = json.encode(data);
-  String connLink =
-      connectPPF(context).getPhoneConnLink(startDownloadFileEndPoint);
-  await Dio().post(
-    connLink,
-    data: encodedData,
-  );
+  // try {
+  //   var data = entities.map((e) => e.toJSON()).toList();
+  //   var encodedData = json.encode(data);
+  //   String connLink =
+  //       connectLaptopPF(context).getPhoneConnLink(EndPoints.startDownloadFile);
+  //   await Dio().post(
+  //     connLink,
+  //     data: encodedData,
+  //   );
+  // } on DioError catch (e) {
+  //   logger.e(e.response?.data);
+  // }
 }

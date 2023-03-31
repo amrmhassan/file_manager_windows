@@ -9,6 +9,7 @@ import 'package:windows_app/global/widgets/padding_wrapper.dart';
 import 'package:windows_app/global/widgets/v_space.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:localization/localization.dart';
 
 class ChangeMyNameModal extends StatefulWidget {
   const ChangeMyNameModal({
@@ -42,7 +43,7 @@ class _ChangeMyNameModalState extends State<ChangeMyNameModal> {
         child: Column(
           children: [
             CustomTextField(
-              title: 'Your Name',
+              title: 'your-name'.i18n(),
               autoFocus: true,
               controller: nameController,
               maxLength: 10,
@@ -73,7 +74,7 @@ class _ChangeMyNameModalState extends State<ChangeMyNameModal> {
                 ),
                 borderRadius: smallBorderRadius,
                 backgroundColor: kBackgroundColor,
-                child: Text('Save'),
+                child: Text('save'.i18n()),
               ),
             ),
           ],

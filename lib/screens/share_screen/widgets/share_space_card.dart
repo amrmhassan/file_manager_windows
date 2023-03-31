@@ -8,8 +8,8 @@ import 'package:windows_app/global/widgets/button_wrapper.dart';
 import 'package:windows_app/global/widgets/h_space.dart';
 import 'package:windows_app/global/widgets/v_space.dart';
 import 'package:windows_app/models/peer_model.dart';
+import 'package:windows_app/screens/connect_device_screen/connect_device_screen.dart';
 import 'package:windows_app/screens/share_screen/widgets/peer_icon.dart';
-import 'package:windows_app/screens/share_space_viewer_screen/share_space_viewer_screen.dart';
 import 'package:flutter/material.dart';
 
 class ShareSpaceCard extends StatelessWidget {
@@ -27,9 +27,18 @@ class ShareSpaceCard extends StatelessWidget {
       children: [
         ButtonWrapper(
           onTap: () {
+            // Navigator.pushNamed(
+            //   context,
+            //   ShareSpaceVScreen.routeName,
+            //   arguments: ShareSpaceVScreenData(
+            //     peerModel: peerModel,
+            //     laptop: false,
+            //     dataType: ShareSpaceVScreenDataType.shareSpace,
+            //   ),
+            // );
             Navigator.pushNamed(
               context,
-              ShareSpaceVScreen.routeName,
+              ConnectDeviceScreen.routeName,
               arguments: peerModel,
             );
           },

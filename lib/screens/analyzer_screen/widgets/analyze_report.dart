@@ -7,7 +7,7 @@ import 'package:windows_app/constants/styles.dart';
 import 'package:windows_app/global/widgets/h_space.dart';
 import 'package:windows_app/global/widgets/padding_wrapper.dart';
 import 'package:windows_app/global/widgets/v_space.dart';
-import 'package:windows_app/providers/util/analyzer_provider.dart';
+import 'package:windows_app/providers/analyzer_provider.dart';
 import 'package:windows_app/screens/analyzer_screen/widgets/report_count_item.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';

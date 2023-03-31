@@ -1,6 +1,6 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, dead_code
 
-import 'package:windows_app/providers/util/explorer_provider.dart';
+import 'package:windows_app/providers/explorer_provider.dart';
 import 'package:windows_app/screens/explorer_screen/widgets/entities_list_view_builder.dart';
 import 'package:flutter/material.dart';
 

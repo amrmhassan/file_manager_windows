@@ -3,7 +3,7 @@
 import 'package:windows_app/analyzing_code/storage_analyzer/models/extension_info.dart';
 import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/global/widgets/screens_wrapper.dart';
-import 'package:windows_app/providers/util/analyzer_provider.dart';
+import 'package:windows_app/providers/analyzer_provider.dart';
 import 'package:windows_app/global/widgets/table/extensions_table.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

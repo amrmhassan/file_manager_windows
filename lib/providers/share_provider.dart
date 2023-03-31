@@ -22,6 +22,11 @@ enum MemberType {
   client, // who is connected to the host with wifi
 }
 
+enum DeviceType {
+  android,
+  windows,
+}
+
 class ShareProvider extends ChangeNotifier {
   //# shared space items properties
   late String myDeviceId;

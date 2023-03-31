@@ -1,4 +1,6 @@
-// ignore_for_file: prefer_const_constructors, use_build_context_synchronously, prefer_const_literals_to_create_immutables
+// ignore_for_file: prefer_const_constructors, use_build_context_synchronously, prefer_const_literals_to_create_immutables, library_private_types_in_public_api
+
+import 'dart:io';
 
 import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/global_constants.dart';
@@ -10,10 +12,11 @@ import 'package:windows_app/global/widgets/custom_app_bar/custom_app_bar.dart';
 import 'package:windows_app/global/widgets/h_space.dart';
 import 'package:windows_app/global/widgets/screens_wrapper.dart';
 import 'package:windows_app/global/widgets/v_space.dart';
-import 'package:windows_app/models/peer_model.dart';
 import 'package:windows_app/models/share_space_item_model.dart';
+import 'package:windows_app/models/share_space_v_screen_data.dart';
 import 'package:windows_app/models/types.dart';
 import 'package:windows_app/providers/files_operations_provider.dart';
+import 'package:windows_app/screens/share_screen/widgets/empty_share_items.dart';
 import 'package:windows_app/screens/share_screen/widgets/not_sharing_view.dart';
 import 'package:windows_app/utils/client_utils.dart' as client_utils;
 import 'package:windows_app/providers/server_provider.dart';
@@ -24,10 +27,9 @@ import 'package:windows_app/screens/explorer_screen/widgets/storage_item.dart';
 import 'package:windows_app/utils/general_utils.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 import 'package:path/path.dart' as path_operations;
-import 'package:windows_app/utils/connect_to_phone_utils/connect_to_phone_utils.dart'
-    as connect_phone_utils;
 
 class ShareSpaceVScreen extends StatefulWidget {
   static const String routeName = '/ShareSpaceViewerScreen';
@@ -37,15 +39,21 @@ class ShareSpaceVScreen extends StatefulWidget {
 
   @override
   State<ShareSpaceVScreen> createState() => _ShareSpaceVScreenState();
+  static _ShareSpaceVScreenState? of(BuildContext context) =>
+      context.findAncestorStateOfType<_ShareSpaceVScreenState>();
 }
 
 class _ShareSpaceVScreenState extends State<ShareSpaceVScreen> {
-  PeerModel? remotePeerModel;
   bool me = false;
-  bool phone = false;
+  late ShareSpaceVScreenData data;
+  bool loading = true;
+  bool allowBuild = false;
 
-//? to load shared items
-  Future loadSharedItems([String? path]) async {
+  //? to load shared items
+  Future loadSharedItems() async {
+    setState(() {
+      loading = true;
+    });
     var serverProviderFalse =
         Provider.of<ServerProvider>(context, listen: false);
     var shareProviderFalse = Provider.of<ShareProvider>(context, listen: false);
@@ -54,17 +62,20 @@ class _ShareSpaceVScreenState extends State<ShareSpaceVScreen> {
 
     try {
       List<ShareSpaceItemModel> shareItems = [];
-      if (remotePeerModel!.phone) {
-        await localGetFolderContent('/', true);
-      } else {
+      // this is for initial screen open and the mode is share space mode
+      if (data.dataType == ShareSpaceVScreenDataType.shareSpace) {
         shareItems = (await client_utils.getPeerShareSpace(
-              remotePeerModel!.sessionID,
+              data.peerModel.sessionID,
               serverProviderFalse,
               shareProviderFalse,
               shareItemsExplorerProvider,
-              remotePeerModel!.deviceID,
+              data.peerModel.deviceID,
             )) ??
             [];
+      } else if (data.dataType == ShareSpaceVScreenDataType.filesExploring) {
+        // this is for initial screen open and the mode is files explore mode
+
+        await localGetFolderContent('/');
       }
 
       shareItemsExplorerProvider.setCurrentSharedItems(shareItems);
@@ -77,42 +88,41 @@ class _ShareSpaceVScreenState extends State<ShareSpaceVScreen> {
         snackBarType: SnackBarType.error,
       );
     }
+    if (mounted) {
+      setState(() {
+        loading = false;
+      });
+    }
   }
 
   @override
   void initState() {
-    Future.delayed(Duration.zero).then((value) {
-      var argument = ModalRoute.of(context)!.settings.arguments;
-      // bool means that it is from files explorer from windows device
-      if (argument is bool) {
-        setState(() {
-          phone = true;
-        });
-        connect_phone_utils.getPhoneFolderContent(
-          folderPath: '/',
-          shareItemsExplorerProvider: shareExpPF(context),
-          connectPhoneProvider: connectPPF(context),
-        );
-      } else {
-        setState(() {
-          remotePeerModel =
-              ModalRoute.of(context)!.settings.arguments as PeerModel;
-          phone = remotePeerModel?.phone ?? false;
-        });
-        if (remotePeerModel?.deviceID == sharePF(context).myDeviceId) {
-          setState(() {
-            me = true;
-          });
-        } else {
-          loadSharedItems();
-        }
-      }
-    });
     super.initState();
+
+    Future.delayed(Duration.zero).then((value) async {
+      data =
+          ModalRoute.of(context)!.settings.arguments as ShareSpaceVScreenData;
+      setState(() {
+        allowBuild = true;
+      });
+
+      loadSharedItems();
+      shareExpPF(context).clearCurrentSharedFolderPath();
+    });
   }
+
+  String get title => shareExpP(context).loadingItems || loading
+      ? '...'
+      : me
+          ? 'your-share-space'.i18n()
+          : data.dataType == ShareSpaceVScreenDataType.filesExploring
+              ? '${data.peerModel.name} Files'
+              : '${data.peerModel.name} Share Space';
 
   @override
   Widget build(BuildContext context) {
+    if (!allowBuild) return SizedBox();
+
     var shareExpProvider = Provider.of<ShareItemsExplorerProvider>(context);
     String? parentPath = shareExpProvider.currentSharedFolderPath == null
         ? null
@@ -120,169 +130,173 @@ class _ShareSpaceVScreenState extends State<ShareSpaceVScreen> {
     String? viewPath =
         shareExpProvider.currentPath?.replaceFirst(parentPath ?? '', '');
 
-    return ScreensWrapper(
-      backgroundColor: kBackgroundColor,
-      child: Column(
-        children: [
-          CustomAppBar(
-            title: Text(
-              phone
-                  ? 'Phone'
-                  : shareExpProvider.loadingItems || (remotePeerModel == null)
-                      ? '...'
-                      : me
-                          ? 'Your Share Space'
-                          : '${remotePeerModel!.name} Share Space',
-              style: h2TextStyle.copyWith(
-                color: kActiveTextColor,
+    return WillPopScope(
+      onWillPop: () => handleScreenGoBack(context),
+      child: ScreensWrapper(
+        backgroundColor: kBackgroundColor,
+        child: Column(
+          children: [
+            // if (kDebugMode)
+            //   Text(
+            //     'parentPath ${parentPath.toString()}',
+            //     style: h4TextStyle,
+            //   ),
+            // if (kDebugMode)
+            //   Text(
+            //     'viewPath ${viewPath.toString()}',
+            //     style: h4TextStyle,
+            //   ),
+            // if (kDebugMode)
+            //   Text(
+            //     'mode ${data.dataType.name}',
+            //     style: h4TextStyle,
+            //   ),
+            CustomAppBar(
+              title: Text(
+                title,
+                style: h2TextStyle.copyWith(
+                  color: kActiveTextColor,
+                ),
+              ),
+              rightIcon: shareExpProvider.allowSelect
+                  ? Row(
+                      children: [
+                        Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            ButtonWrapper(
+                              padding: EdgeInsets.all(mediumPadding),
+                              onTap: () {
+                                var selectedItems =
+                                    shareExpPF(context).selectedItems;
+                                downPF(context).addMultipleDownloadTasks(
+                                  remoteEntitiesPaths:
+                                      selectedItems.map((e) => e.path),
+                                  sizes: selectedItems.map((e) => e.size),
+                                  remoteDeviceID: data.peerModel.deviceID,
+                                  remoteDeviceName: data.peerModel.name,
+                                  serverProvider: serverPF(context),
+                                  shareProvider: sharePF(context),
+                                  entitiesTypes: selectedItems.map(
+                                    (e) => e.entityType,
+                                  ),
+                                );
+                                shareExpPF(context).clearSelectedItems();
+                              },
+                              child: Image.asset(
+                                'assets/icons/download.png',
+                                width: mediumIconSize,
+                              ),
+                            ),
+                          ],
+                        ),
+                        HSpace(),
+                      ],
+                    )
+                  : null,
+              leftIcon: IconButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                icon: Icon(
+                  Icons.close,
+                  color: kDangerColor,
+                ),
               ),
             ),
-            rightIcon: shareExpProvider.allowSelect
-                ? Row(
-                    children: [
-                      Column(
+            if (me) NotSharingView(),
+            if (shareExpProvider.currentPath != null)
+              CurrentPathViewer(
+                sizesExplorer: false,
+                customPath: viewPath,
+                onCopy: () {
+                  copyToClipboard(context, viewPath!);
+                },
+                onHomeClicked: () {
+                  Navigator.pushReplacementNamed(
+                    context,
+                    ShareSpaceVScreen.routeName,
+                    arguments: data,
+                  );
+                },
+                onClickingSubPath: (path) => localGetFolderContent(path),
+              ),
+            if (!me)
+              shareExpProvider.loadingItems || loading || loading
+                  ? Expanded(
+                      child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          ButtonWrapper(
-                            padding: EdgeInsets.all(mediumPadding),
-                            onTap: () {
-                              var selectedItems =
-                                  shareExpPF(context).selectedItems;
-                              downPF(context).addMultipleDownloadTasks(
-                                remoteEntitiesPaths:
-                                    selectedItems.map((e) => e.path),
-                                sizes: selectedItems.map((e) => e.size),
-                                remoteDeviceID: remotePeerModel?.deviceID,
-                                remoteDeviceName: remotePeerModel?.name,
-                                serverProvider: serverPF(context),
-                                shareProvider: sharePF(context),
-                                entitiesTypes: selectedItems.map(
-                                  (e) => e.entityType,
-                                ),
-                              );
-                              shareExpPF(context).clearSelectedItems();
-                            },
-                            child: Image.asset(
-                              'assets/icons/download.png',
-                              width: mediumIconSize,
-                            ),
-                          ),
+                          CircularProgressIndicator(),
+                          VSpace(),
+                          Text(
+                            'Waiting ...',
+                            style: h4TextStyleInactive,
+                          )
                         ],
                       ),
-                      HSpace(),
-                    ],
-                  )
-                : null,
-          ),
-          if (me) NotSharingView(),
-          if (shareExpProvider.currentPath != null)
-            CurrentPathViewer(
-              sizesExplorer: false,
-              customPath: viewPath,
-              onCopy: () {
-                copyToClipboard(context, viewPath!);
-              },
-              onHomeClicked: () {
-                Navigator.pushReplacementNamed(
-                  context,
-                  ShareSpaceVScreen.routeName,
-                  arguments: remotePeerModel ?? phone,
-                );
-              },
-              onClickingSubPath: (path) => localGetFolderContent(path),
-            ),
-          if (!me)
-            shareExpProvider.loadingItems
-                ? Expanded(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        CircularProgressIndicator(),
-                        VSpace(),
-                        Text(
-                          'Waiting ...',
-                          style: h4TextStyleInactive,
-                        )
-                      ],
-                    ),
-                  )
-                : Expanded(
-                    child: ListView.builder(
-                      physics: BouncingScrollPhysics(),
-                      itemCount: shareExpProvider.viewedItems.length,
-                      itemBuilder: (context, index) => StorageItem(
-                        network: true,
-                        onDirTapped: localGetFolderContent,
-                        sizesExplorer: false,
-                        parentSize: 0,
-                        exploreMode: ExploreMode.selection,
-                        isSelected: shareExpProvider.isSelected(
-                            shareExpProvider.viewedItems[index].path),
-                        shareSpaceItemModel:
-                            shareExpProvider.viewedItems[index],
-                        onSelectClicked: () {
-                          shareExpPF(context).toggleSelectItem(
-                            shareExpProvider.viewedItems[index],
-                          );
-                        },
-                        // to prevent clicking on the disk storages
-                        onLongPressed: (path, entityType, network) {
-                          // showDownloadFromShareSpaceModal(
-                          //   context,
-                          //   data.peerModel,
-                          //   index,
-                          // );
-                          shareExpPF(context).toggleSelectItem(
-                            shareExpProvider.viewedItems[index],
-                          );
-                        },
-                        onFileTapped: (path) {
-                          showDownloadFromShareSpaceModal(
-                            context,
-                            remotePeerModel,
-                            index,
-                          );
-                        },
-                        allowSelect: shareExpProvider.allowSelect,
-                      ),
-                    ),
-                  ),
-          VSpace(),
-        ],
+                    )
+                  : shareExpProvider.viewedItems.isEmpty
+                      ? Expanded(
+                          child: EmptyShareItems(
+                          title: 'Other user share space is empty',
+                        ))
+                      : Expanded(
+                          child: ListView.builder(
+                            physics: BouncingScrollPhysics(),
+                            itemCount: shareExpProvider.viewedItems.length,
+                            itemBuilder: (context, index) => StorageItem(
+                              network: true,
+                              onDirTapped: localGetFolderContent,
+                              sizesExplorer: false,
+                              parentSize: 0,
+                              exploreMode: ExploreMode.selection,
+                              isSelected: shareExpProvider.isSelected(
+                                  shareExpProvider.viewedItems[index].path),
+                              shareSpaceItemModel:
+                                  shareExpProvider.viewedItems[index],
+                              onSelectClicked: () {
+                                shareExpPF(context).toggleSelectItem(
+                                  shareExpProvider.viewedItems[index],
+                                );
+                              },
+                              // to prevent clicking on the disk storages
+                              onLongPressed: (path, entityType, network) {
+                                shareExpPF(context).toggleSelectItem(
+                                  shareExpProvider.viewedItems[index],
+                                );
+                              },
+                              onFileTapped: (path) {
+                                showDownloadFromShareSpaceModal(
+                                  context,
+                                  data.peerModel,
+                                  index,
+                                );
+                              },
+                              allowSelect: shareExpProvider.allowSelect,
+                            ),
+                          ),
+                        ),
+            VSpace(),
+          ],
+        ),
       ),
     );
   }
 
-  Future<void> localGetFolderContent(
-    String path, [
-    bool shareSpace = false,
-  ]) async {
+// this is for clicking a folder item(in share space mode or file exploring mode)
+  Future<void> localGetFolderContent(String path) async {
     try {
-      if (phone) {
-        await connect_phone_utils.getPhoneFolderContent(
-          folderPath: path,
-          shareItemsExplorerProvider: shareExpPF(context),
-          connectPhoneProvider: connectPPF(context),
-          shareSpace: shareSpace,
-        );
-      } else {
-        var shareExpProvider =
-            Provider.of<ShareItemsExplorerProvider>(context, listen: false);
+      var shareExpProvider =
+          Provider.of<ShareItemsExplorerProvider>(context, listen: false);
 
-        var serverProvider =
-            Provider.of<ServerProvider>(context, listen: false);
-        String userSessionID = shareExpProvider.viewedUserSessionId!;
-        var shareProvider = Provider.of<ShareProvider>(context, listen: false);
-        var shareItemsExplorerProvider =
-            Provider.of<ShareItemsExplorerProvider>(context, listen: false);
-        await client_utils.getFolderContent(
-          serverProvider: serverProvider,
-          folderPath: path,
-          shareProvider: shareProvider,
-          userSessionID: userSessionID,
-          shareItemsExplorerProvider: shareItemsExplorerProvider,
-        );
-      }
+      await client_utils.getDeviceFolderContent(
+        folderPath: path,
+        shareItemsExplorerProvider: shareExpProvider,
+        peerModel: data.peerModel,
+        shareSpace: false,
+      );
+      // }
     } catch (e) {
       logger.e(e);
       showSnackBar(
@@ -290,6 +304,50 @@ class _ShareSpaceVScreenState extends State<ShareSpaceVScreen> {
         message: 'Can\'t get this folder content',
         snackBarType: SnackBarType.error,
       );
+    }
+    if (mounted) {
+      setState(() {
+        loading = false;
+      });
+    }
+  }
+
+  Future<bool> handleScreenGoBack(BuildContext context) {
+    var shareExpProvider = shareExpPF(context);
+    String? parentPath = shareExpProvider.currentSharedFolderPath == null
+        ? null
+        : path_operations.dirname(shareExpProvider.currentSharedFolderPath!);
+    String? viewPath =
+        shareExpProvider.currentPath?.replaceFirst(parentPath ?? '', '');
+    // this is for the first page of share space
+
+    if (viewPath == null) return Future.value(true);
+    if (data.dataType == ShareSpaceVScreenDataType.shareSpace) {
+      // here i want to check if parent path is null then return true to exit
+      if (parentPath == null) return Future.value(true);
+      //
+      // else i want to append parent to viewPath and go back
+      String newPath = parentPath + viewPath;
+      String previousPath = Directory(newPath).parent.path;
+      //! but, here check if the previous path is allowed to be viewed or not
+      if (previousPath == parentPath) {
+        loadSharedItems();
+        return Future.value(false);
+      }
+      //? here just go back
+      localGetFolderContent(previousPath);
+      return Future.value(false);
+    } else {
+      if (data.peerModel.deviceType == DeviceType.android &&
+          (viewPath.split('/').length <= 4)) {
+        return Future.value(true);
+      }
+      if (viewPath == '/') return Future.value(true);
+      // just go back until the view path is '/'
+      String newPath = Directory(viewPath).parent.path;
+      if (newPath == '.') newPath = '/';
+      localGetFolderContent(newPath);
+      return Future.value(false);
     }
   }
 }

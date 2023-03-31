@@ -1,140 +1,202 @@
+import 'dart:io';
+
 import 'package:windows_app/constants/server_constants.dart';
+import 'package:windows_app/helpers/router_system/router.dart';
+import 'package:windows_app/helpers/router_system/server.dart';
+import 'package:windows_app/models/peer_permissions_model.dart';
 import 'package:windows_app/providers/server_provider.dart';
 import 'package:windows_app/providers/share_provider.dart';
 import 'package:windows_app/providers/shared_items_explorer_provider.dart';
-import 'package:windows_app/utils/custom_router_system/custom_router_system.dart';
+import 'package:windows_app/utils/connect_to_phone_utils/handlers/handlers.dart';
 import 'package:windows_app/utils/server_utils/handlers/handlers.dart';
-import 'package:windows_app/utils/custom_router_system/helpers/server_requests_utils.dart';
+import 'package:windows_app/utils/server_utils/handlers/permissions_middleware.dart';
 import 'package:windows_app/utils/server_utils/middlewares.dart';
 
-//! i need to add the logic to authenticate users here
-//! i mean in the main router before entering any Handler
-//! the user will provide his deviceID and sessionID for each request and upon that i will authorize him or not
-
-//! i also need to add the logic to decode or encode headers for arabic letters with Uri.decodeComponent before sending or receiving any headers
-//! After adding video streaming i will implement this
-
-//! you will also need to find a way to know when a device lost connection without waiting for the device to send that he will leave
-
-//? this will add the server routers(end points), and it will refer to middle wares
-CustomRouterSystem addServerRouters(
+Future<HttpServer> testingRunServerWithCustomServer(
   ServerProvider serverProvider,
   ShareProvider shareProvider,
   ShareItemsExplorerProvider shareItemsExplorerProvider,
-) {
-  CustomRouterSystem customRouterSystem = CustomRouterSystem();
-  //? adding middlewares
-  customRouterSystem.addMiddleware(
-    [getShareSpaceEndPoint],
-    HttpMethod.GET,
-    (request, response) => getShareSpaceMiddleware(
-      request,
-      response,
-      serverProvider,
-      shareProvider,
-    ),
-  );
+) async {
+  var router = CustomRouter()
+      // this will print every request after it's done and it's response sent
+      .addTrailersMiddleWare(MiddleWares.requestLogger)
+      // this is a dummy endpoint for checking if the server is alive or not
+      .get(
+        EndPoints.areYouAlive,
+        [],
+        (request, response) => response
+          ..write('Yes i am a live')
+          ..close(),
+      )
+      // this is the server check handler that do all the logic of getting my ip
+      .post(
+        EndPoints.serverCheck,
+        [],
+        S1H.serverCheckHandler,
+      )
+      // to add a client
+      .post(
+        EndPoints.addClient,
+        [],
+        S1H.addClientHandler,
+      )
+      // to get my share space
+      .get(
+        EndPoints.getShareSpace,
+        [
+          MiddleWares.checkIfConnectedMiddleWare,
+          // MiddleWares.getShareSpaceMiddleware,
+          (request, response) => PermissionsMiddlewares.handlePermissions(
+                request,
+                response,
+                PermissionName.shareSpace,
+              ),
+        ],
+        S1H.getShareSpaceHandler,
+      )
+      // to listen for client adding(if i am not the host the host will call this for every client)
+      .post(
+        EndPoints.clientAdded,
+        [],
+        S1H.clientAddedHandler,
+      )
+      // to listen for client left(if i am not the host the host will call this for every client)
+      .post(
+        EndPoints.clientLeft,
+        [MiddleWares.checkIfConnectedMiddleWare],
+        S1H.clientLeftHandler,
+      )
+      // to notify about files adding to share space
+      .post(
+        EndPoints.fileAddedToShareSpace,
+        [MiddleWares.checkIfConnectedMiddleWare],
+        S1H.fileAddedHandler,
+      )
+      // to notify about files removed to share space
+      .post(
+        EndPoints.fileRemovedFromShareSpace,
+        [MiddleWares.checkIfConnectedMiddleWare],
+        S1H.fileRemovedHandler,
+      )
+      // to get a folder content
+      // .get(
+      //   EndPoints.phoneWsServerConnLink,
+      //   [MiddleWares.checkIfConnectedMiddleWare],
+      //   S2H.getPhoneFolderContentHandler,
+      // )
+      //
+      .get(
+        EndPoints.streamAudio,
+        [MiddleWares.checkIfConnectedMiddleWare],
+        S1H.streamAudioHandler,
+      )
+      //
+      .get(
+        EndPoints.streamVideo,
+        [MiddleWares.checkIfConnectedMiddleWare],
+        S1H.streamVideoHandler,
+      )
+      //
+      .get(
+        EndPoints.downloadFile,
+        [MiddleWares.checkIfConnectedMiddleWare],
+        S1H.downloadFileHandler,
+      )
+      // to get my websocket server link
+      .get(
+        EndPoints.wsServerConnLink,
+        [],
+        S1H.getWsServerConnLinkHandler,
+      )
+      .get(
+        EndPoints.getPeerImagePath,
+        // i removed this image to allow users see the beacon server image
+        [],
+        S1H.getUserImageHandler,
+      )
+      // to get my listy
+      .get(
+        EndPoints.getListy,
+        [MiddleWares.checkIfConnectedMiddleWare],
+        S1H.getUserListyHandler,
+      )
+      // to get full folder content(recursive)
+      .get(
+        EndPoints.getFullFolderContent,
+        [MiddleWares.checkIfConnectedMiddleWare],
+        S2H.getFolderChildrenRecursive,
+      )
+      //? new features endpoints
+      .get(
+        EndPoints.getDiskNames,
+        [
+          MiddleWares.checkIfConnectedMiddleWare,
+          (request, response) => PermissionsMiddlewares.handlePermissions(
+                request,
+                response,
+                PermissionName.fileExploring,
+              ),
+        ],
+        S2H.getDiskNamesHandler,
+      )
+      .get(
+        EndPoints.getPhoneFolderContent,
+        [
+          MiddleWares.checkIfConnectedMiddleWare,
+          (request, response) => PermissionsMiddlewares.handlePermissions(
+                request,
+                response,
+                PermissionName.fileExploring,
+              ),
+        ],
+        S2H.getPhoneFolderContentHandler,
+      )
+      .get(
+        EndPoints.getClipboard,
+        [
+          MiddleWares.checkIfConnectedMiddleWare,
+          (request, response) => PermissionsMiddlewares.handlePermissions(
+                request,
+                response,
+                PermissionName.copyClipboard,
+              ),
+        ],
+        S2H.getClipboardHandler,
+      )
+      .get(
+        EndPoints.getAndroidName,
+        [MiddleWares.checkIfConnectedMiddleWare],
+        S2H.getAndroidNameHandler,
+      )
+      .post(
+        EndPoints.sendText,
+        [
+          MiddleWares.checkIfConnectedMiddleWare,
+          (request, response) => PermissionsMiddlewares.handlePermissions(
+                request,
+                response,
+                PermissionName.sendText,
+              ),
+        ],
+        S2H.sendTextHandler,
+      )
+      .post(
+        EndPoints.startDownloadFile,
+        [
+          MiddleWares.checkIfConnectedMiddleWare,
+          (request, response) => PermissionsMiddlewares.handlePermissions(
+                request,
+                response,
+                PermissionName.sendFile,
+              ),
+        ],
+        S1H.startDownloadActionHandler,
+      );
 
-  //? adding handlers
-  customRouterSystem
-    ..addHandler(
-      addClientEndPoint,
-      HttpMethod.POST,
-      (request, response) => addClientHandler(
-        request,
-        response,
-        serverProvider,
-        shareProvider,
-      ),
-    )
-    ..addHandler(
-      getShareSpaceEndPoint,
-      HttpMethod.GET,
-      (request, response) => getShareSpaceHandler(
-        request,
-        response,
-        serverProvider,
-        shareProvider,
-      ),
-    )
-    ..addHandler(
-      clientAddedEndPoint,
-      HttpMethod.POST,
-      (request, response) => clientAddedHandler(
-        request,
-        response,
-        serverProvider,
-      ),
-    )
-    ..addHandler(
-      clientLeftEndPoint,
-      HttpMethod.POST,
-      (request, response) => clientLeftHandler(
-        request,
-        response,
-        serverProvider,
-      ),
-    )
-    ..addHandler(
-      fileAddedToShareSpaceEndPoint,
-      HttpMethod.POST,
-      (request, response) => fileAddedHandler(
-        request,
-        response,
-        shareItemsExplorerProvider,
-      ),
-    )
-    ..addHandler(
-      fileRemovedFromShareSpaceEndPoint,
-      HttpMethod.POST,
-      (request, response) => fileRemovedHandler(
-        request,
-        response,
-        shareItemsExplorerProvider,
-      ),
-    )
-    ..addHandler(
-      getFolderContentEndPointEndPoint,
-      HttpMethod.GET,
-      (request, response) => getFolderContentHandler(
-        request,
-        response,
-        serverProvider,
-        shareProvider,
-      ),
-    )
-    ..addHandler(
-      streamAudioEndPoint,
-      HttpMethod.GET,
-      streamAudioHandler,
-    )
-    ..addHandler(
-      streamVideoEndPoint,
-      HttpMethod.GET,
-      streamVideoHandler,
-    )
-    ..addHandler(
-      downloadFileEndPoint,
-      HttpMethod.GET,
-      downloadFileHandler,
-    )
-    ..addHandler(
-      wsServerConnLinkEndPoint,
-      HttpMethod.GET,
-      (request, response) => getWsServerConnLinkHandler(
-        request,
-        response,
-        serverProvider,
-      ),
-    )
-    ..addHandler(
-      getPeerImagePathEndPoint,
-      HttpMethod.GET,
-      (request, response) => getUserImageHandler(
-        request,
-        response,
-        shareProvider,
-      ),
-    );
-  return customRouterSystem;
+  CustomServer customServer = CustomServer(
+    router,
+    InternetAddress.anyIPv4,
+    0,
+  );
+  return await customServer.bind();
 }

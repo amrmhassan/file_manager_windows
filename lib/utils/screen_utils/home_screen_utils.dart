@@ -5,8 +5,8 @@ import 'dart:io';
 
 import 'package:windows_app/constants/global_constants.dart';
 import 'package:windows_app/providers/settings_provider.dart';
-import 'package:windows_app/providers/util/analyzer_provider.dart';
-import 'package:windows_app/providers/util/explorer_provider.dart';
+import 'package:windows_app/providers/analyzer_provider.dart';
+import 'package:windows_app/providers/explorer_provider.dart';
 import 'package:windows_app/providers/files_operations_provider.dart';
 import 'package:windows_app/providers/media_player_provider.dart';
 import 'package:windows_app/providers/recent_provider.dart';

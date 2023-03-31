@@ -13,7 +13,7 @@ import 'package:windows_app/helpers/hive/hive_helper.dart';
 import 'package:windows_app/helpers/responsive.dart';
 import 'package:windows_app/helpers/shared_pref_helper.dart';
 import 'package:windows_app/providers/download_provider.dart';
-import 'package:windows_app/providers/util/explorer_provider.dart';
+import 'package:windows_app/providers/explorer_provider.dart';
 import 'package:windows_app/providers/files_operations_provider.dart';
 import 'package:windows_app/screens/about_us_screen/about_us_screen.dart';
 import 'package:windows_app/screens/download_manager_screen/download_manager_screen.dart';

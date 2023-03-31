@@ -31,13 +31,15 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   cupertino_icons: ^1.0.2
   permission_handler: ^10.2.0
   path: ^1.8.2
   sqflite: ^2.2.0+3
   shared_preferences: ^2.0.15
   provider: ^6.0.4
-  intl: ^0.18.0
+  intl: ^0.17.0
   disk_space: ^0.2.1
   path_provider: ^2.0.11
   image: ^4.0.15
@@ -76,6 +78,8 @@ dependencies:
   desktop_drop: ^0.4.1
   ffi: ^1.2.1
   win32: ^2.6.1
+  localization: ^2.1.0
+
 
 
 dev_dependencies:

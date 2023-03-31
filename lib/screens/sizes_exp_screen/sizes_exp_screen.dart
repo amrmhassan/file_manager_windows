@@ -2,8 +2,8 @@
 
 import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/global/widgets/screens_wrapper.dart';
-import 'package:windows_app/providers/util/analyzer_provider.dart';
-import 'package:windows_app/providers/util/explorer_provider.dart';
+import 'package:windows_app/providers/analyzer_provider.dart';
+import 'package:windows_app/providers/explorer_provider.dart';
 import 'package:windows_app/screens/explorer_screen/explorer_screen.dart';
 import 'package:windows_app/screens/home_screen/widgets/home_app_bar.dart';
 import 'package:windows_app/utils/screen_utils/home_screen_utils.dart';

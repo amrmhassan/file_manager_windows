@@ -2,11 +2,16 @@
 
 import 'package:dart_vlc/dart_vlc.dart';
 import 'package:firedart/firestore/firestore.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:intl/intl.dart';
+import 'package:localization/localization.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:window_manager/window_manager.dart';
 import 'package:windows_app/constants/colors.dart';
+import 'package:windows_app/constants/languages_constants.dart';
 import 'package:windows_app/constants/widget_keys.dart';
 import 'package:windows_app/helpers/hive/hive_initiator.dart';
+import 'package:windows_app/helpers/initiators/global_runtime_variables.dart';
 import 'package:windows_app/helpers/shared_pref_helper.dart';
 import 'package:windows_app/providers/animation_provider.dart';
 import 'package:windows_app/providers/connect_phone_provider.dart';
@@ -15,9 +20,9 @@ import 'package:windows_app/providers/quick_send_provider.dart';
 import 'package:windows_app/providers/server_provider.dart';
 import 'package:windows_app/providers/share_provider.dart';
 import 'package:windows_app/providers/shared_items_explorer_provider.dart';
-import 'package:windows_app/providers/util/analyzer_provider.dart';
+import 'package:windows_app/providers/analyzer_provider.dart';
 import 'package:windows_app/providers/children_info_provider.dart';
-import 'package:windows_app/providers/util/explorer_provider.dart';
+import 'package:windows_app/providers/explorer_provider.dart';
 import 'package:windows_app/providers/files_operations_provider.dart';
 import 'package:windows_app/providers/listy_provider.dart';
 import 'package:windows_app/providers/media_player_provider.dart';
@@ -28,6 +33,7 @@ import 'package:windows_app/providers/settings_provider.dart';
 import 'package:windows_app/providers/window_provider.dart';
 import 'package:windows_app/screens/about_us_screen/about_us_screen.dart';
 import 'package:windows_app/screens/analyzer_screen/analyzer_screen.dart';
+import 'package:windows_app/screens/connect_device_screen/connect_device_screen.dart';
 import 'package:windows_app/screens/connect_phone_screen/connect_phone_screen.dart';
 import 'package:windows_app/screens/download_manager_screen/download_manager_screen.dart';
 import 'package:windows_app/screens/error_viewing_screen/error_viewing_screen.dart';
@@ -50,9 +56,11 @@ import 'package:windows_app/screens/settings_screen/settings_screen.dart';
 import 'package:windows_app/screens/share_screen/share_screen.dart';
 import 'package:windows_app/screens/share_settings_screen/share_settings_screen.dart';
 import 'package:windows_app/screens/share_space_viewer_screen/share_space_viewer_screen.dart';
+import 'package:windows_app/screens/single_user_permissions_screen/single_user_permissions_screen.dart';
 import 'package:windows_app/screens/sizes_exp_screen/sizes_exp_screen.dart';
 import 'package:windows_app/screens/storage_cleaner_screen/storage_cleaner_screen.dart';
 import 'package:windows_app/screens/test_screen/test_screen.dart';
+import 'package:windows_app/screens/touchpad_screen/touchpad_screen.dart';
 import 'package:windows_app/screens/whats_app_files_screen/whats_app_files_screen.dart';
 import 'package:windows_app/screens/whats_app_screen/whats_app_screen.dart';
 import 'package:windows_app/screens/white_block_list_screen/white_block_list_screen.dart';
@@ -94,9 +102,19 @@ class MyApp extends StatefulWidget {
 
   @override
   State<MyApp> createState() => _MyAppState();
+  static _MyAppState? of(BuildContext context) =>
+      context.findAncestorStateOfType<_MyAppState>();
 }
 
 class _MyAppState extends State<MyApp> {
+  Locale? _locale;
+  void setLocale(Locale l) {
+    setState(() {
+      _locale = l;
+    });
+  }
+
+  Locale? get locale => _locale;
   @override
   void initState() {
     super.initState();
@@ -121,11 +139,44 @@ class _MyAppState extends State<MyApp> {
         ChangeNotifierProvider(create: (ctx) => ShareItemsExplorerProvider()),
         ChangeNotifierProvider(create: (ctx) => DownloadProvider()),
         ChangeNotifierProvider(create: (ctx) => QuickSendProvider()),
-        ChangeNotifierProvider(create: (ctx) => ConnectPhoneProvider()),
         ChangeNotifierProvider(create: (ctx) => WindowProvider()),
         ChangeNotifierProvider(create: (ctx) => AnimationProvider()),
       ],
       child: MaterialApp(
+        locale: _locale,
+        localizationsDelegates: [
+          // delegate from flutter_localization
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+          // delegate from localization package.
+          LocalJsonLocalization.delegate,
+        ],
+        supportedLocales: supportedLocales,
+        localeResolutionCallback: (locale, supportedLocales) {
+          // to check for the saved locale key
+          if (loadedCurrentLocale != null) {
+            Locale localeHolder = Locale.fromSubtags(
+              languageCode: loadedCurrentLocale!.languageCode,
+            );
+            Intl.defaultLocale = localeHolder.languageCode;
+            loadedCurrentLocale = null;
+
+            return localeHolder;
+          }
+          Intl.defaultLocale = locale?.languageCode;
+          // if (kDebugMode) {
+          //   return arLocale;
+          // }
+          for (var l in supportedLocales) {
+            if (l.languageCode.toLowerCase() ==
+                locale?.languageCode.toLowerCase()) {
+              return l;
+            }
+          }
+
+          return enLocale;
+        },
         debugShowCheckedModeBanner: false,
         theme: ThemeData(
           // useMaterial3: true,
@@ -169,13 +220,27 @@ class _MyAppState extends State<MyApp> {
           DownloadManagerScreen.routeName: (context) => DownloadManagerScreen(),
           ErrorViewScreen.routeName: (context) => ErrorViewScreen(),
           ShareSettingsScreen.routeName: (context) => ShareSettingsScreen(),
-          WhiteBlockListScreen.routeName: (context) => WhiteBlockListScreen(),
           IntroScreen.routeName: (context) => IntroScreen(),
           AboutUsScreen.routeName: (context) => AboutUsScreen(),
           ConnectPhoneScreen.routeName: (context) => ConnectPhoneScreen(),
           LaptopMessagesScreen.routeName: (context) => LaptopMessagesScreen(),
           SendFilesScreen.routeName: (context) => SendFilesScreen(),
           FullTextViewerScreen.routeName: (context) => FullTextViewerScreen(),
+          UsersPermissionScreen.routeName: (context) =>
+              const UsersPermissionScreen(),
+          // ConnectLaptopScreen.routeName: (context) => const ConnectLaptopScreen(),
+          // DownloadSetScreen.routeName: (context) => const DownloadSetScreen(),
+          // ConnLaptopComingSoon.routeName: (context) => const ConnLaptopComingSoon(),
+          // WindowsUpdateNoteScreen.routeName: (context) =>
+          //     const WindowsUpdateNoteScreen(),
+          TouchPadScreen.routeName: (context) => const TouchPadScreen(),
+
+          // SearchScreen.routeName: (context) => const SearchScreen(),
+          // LanguageScreen.routeName: (context) => const LanguageScreen(),
+          ConnectDeviceScreen.routeName: (context) =>
+              const ConnectDeviceScreen(),
+          SingleUserPermissionsScreen.routeName: (context) =>
+              const SingleUserPermissionsScreen(),
         },
       ),
     );

@@ -6,7 +6,7 @@ import 'package:windows_app/utils/client_utils.dart' as client_utils;
 import 'package:windows_app/providers/files_operations_provider.dart';
 import 'package:windows_app/providers/server_provider.dart';
 import 'package:windows_app/providers/share_provider.dart';
-import 'package:windows_app/providers/util/explorer_provider.dart';
+import 'package:windows_app/providers/explorer_provider.dart';
 import 'package:windows_app/screens/home_screen/widgets/modal_button_element.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
 import 'package:flutter/material.dart';

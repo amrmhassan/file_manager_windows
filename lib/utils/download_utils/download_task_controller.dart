@@ -16,6 +16,7 @@ import 'package:windows_app/utils/errors_collection/custom_exception.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart' as path_operations;
 import 'package:uuid/uuid.dart';
+import 'package:localization/localization.dart';
 
 class ChunkProgressModel {
   final int size;
@@ -200,6 +201,7 @@ class DownloadTaskController {
         context: navigatorKey.currentContext!,
         backgroundColor: Colors.transparent,
         builder: (context) => DoubleButtonsModal(
+          autoPop: true,
           onOk: () {
             overwrite = true;
           },
@@ -207,16 +209,19 @@ class DownloadTaskController {
             rename = true;
           },
           okColor: kBlueColor,
-          okText: 'Overwrite',
-          cancelText: 'Rename ',
-          title: 'File already download',
-          subTitle: 'Overwrite the downloaded file Or rename the new one ?',
+          okText: 'overwrite'.i18n(),
+          cancelText: 'rename'.i18n(),
+          title: 'file-already-downloaded'.i18n(),
+          subTitle: 'file-already-downloaded-note'.i18n(),
         ),
       );
     }
 
     // if overwrite then return false to continue download and overwrite the existing file
-    if (overwrite) return false;
+    if (overwrite) {
+      await File(downloadPath).delete();
+      return false;
+    }
     // if rename, rename the downloaded file local path then continue download
     if (rename) {
       // here i will use the rename
@@ -239,8 +244,8 @@ class DownloadTaskController {
       url,
       options: Options(
         headers: {
-          reqIntentPathHeaderKey: 'length',
-          filePathHeaderKey: Uri.encodeComponent(remoteFilePath),
+          KHeaders.reqIntentPathHeaderKey: 'length',
+          KHeaders.filePathHeaderKey: Uri.encodeComponent(remoteFilePath),
         },
       ),
     ))
@@ -289,8 +294,8 @@ class DownloadTaskController {
       // to merge the headers, user headers and this function headers
       Map<String, dynamic> mergedHeaders = {
         HttpHeaders.rangeHeader: range,
-        filePathHeaderKey: Uri.encodeComponent(remoteFilePath),
-        sessionIDHeaderKey: mySessionID,
+        KHeaders.filePathHeaderKey: Uri.encodeComponent(remoteFilePath),
+        KHeaders.sessionIDHeaderKey: mySessionID,
         deviceIDString: myDeviceID,
         "Accept": "application/octet-stream",
       };

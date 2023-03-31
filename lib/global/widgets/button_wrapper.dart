@@ -5,7 +5,6 @@ class ButtonWrapper extends StatelessWidget {
   final double? height;
   final Widget? child;
   final VoidCallback? onTap;
-  final VoidCallback? onSecondaryTap;
   final VoidCallback? onLongPress;
   final Color? backgroundColor;
   final double borderRadius;
@@ -22,11 +21,11 @@ class ButtonWrapper extends StatelessWidget {
   final Color? hoverColor;
   final Color? focusedColor;
   final double? opacity;
+  final bool minimumSpace;
 
   const ButtonWrapper({
     Key? key,
     this.onTap,
-    this.onSecondaryTap,
     this.onLongPress,
     required this.child,
     this.width,
@@ -46,11 +45,12 @@ class ButtonWrapper extends StatelessWidget {
     this.hoverColor,
     this.focusedColor,
     this.opacity,
+    this.minimumSpace = false,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Opacity(
+    var buttonWidget = Opacity(
       opacity: opacity ?? 1,
       child: Container(
         clipBehavior: clipBehavior ?? Clip.hardEdge,
@@ -68,26 +68,36 @@ class ButtonWrapper extends StatelessWidget {
             ),
         child: Material(
           color: Colors.transparent,
-          child: GestureDetector(
-            onSecondaryTap: onSecondaryTap,
-            child: InkWell(
-              hoverColor: hoverColor,
-              focusColor: focusedColor,
-              onDoubleTap: onDoubleTapped,
-              onLongPress: onLongPress,
-              onTap: active ? onTap : null,
-              child: Container(
-                //! this caused a UI error, if something like that happened again just fix this line
-                alignment: alignment ?? Alignment.center,
-                padding: padding,
-                width: width,
-                height: height,
-                child: child,
-              ),
+          child: InkWell(
+            hoverColor: hoverColor,
+            focusColor: focusedColor,
+            onDoubleTap: onDoubleTapped,
+            onLongPress: onLongPress,
+            onTap: active ? onTap : null,
+            child: Container(
+              //! this caused a UI error, if something like that happened again just fix this line
+              alignment: alignment ?? Alignment.center,
+              padding: padding,
+              width: width,
+              height: height,
+              child: child,
             ),
           ),
         ),
       ),
     );
+    return minimumSpace
+        ? Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  buttonWidget,
+                ],
+              ),
+            ],
+          )
+        : buttonWidget;
   }
 }

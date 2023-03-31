@@ -1,19 +1,29 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:windows_app/constants/global_constants.dart';
 import 'package:windows_app/constants/models_constants.dart';
 import 'package:windows_app/constants/server_constants.dart';
+import 'package:windows_app/constants/widget_keys.dart';
+// import 'package:windows_app/initiators/global_runtime_variables.dart';
+import 'package:windows_app/models/captures_entity_model.dart';
 import 'package:windows_app/models/peer_model.dart';
 import 'package:windows_app/models/share_space_item_model.dart';
-import 'package:windows_app/providers/connect_phone_provider.dart';
+import 'package:windows_app/models/working_ip_model.dart';
+// import 'package:windows_app/providers/connect_laptop_provider.dart';
 import 'package:windows_app/providers/server_provider.dart';
 import 'package:windows_app/providers/share_provider.dart';
 import 'package:windows_app/providers/shared_items_explorer_provider.dart';
 import 'package:windows_app/utils/errors_collection/custom_exception.dart';
 import 'package:windows_app/utils/general_utils.dart';
+import 'package:windows_app/utils/providers_calls_utils.dart';
 import 'package:windows_app/utils/server_utils/connection_utils.dart';
+import 'package:windows_app/utils/simple_encryption_utils/simple_encryption_utils.dart';
 import 'package:windows_app/utils/websocket_utils/custom_client_socket.dart';
+import 'package:flutter/material.dart';
 
 //! make a function to send utf8 requests and handles them on the server side by reading the utf8
 //! and add the header
@@ -34,26 +44,29 @@ Future addClient(
         s: StackTrace.current,
       );
     }
-    await serverProviderFalse.openServer(
-      shareProvider,
-      MemberType.client,
-      shareItemsExplorerProvider,
-    );
+    // await serverProviderFalse.openServer(
+    //   shareProvider,
+    //   MemberType.client,
+    //   shareItemsExplorerProvider,
+    // );
     String deviceID = shareProvider.myDeviceId;
     String name = shareProvider.myName;
     String myIp = serverProviderFalse.myIp!;
     int myPort = serverProviderFalse.myPort;
+
     await Dio().post(
-      '$connLink$addClientEndPoint',
+      '$connLink${EndPoints.addClient}',
       data: {
         nameString: name,
         deviceIDString: deviceID,
         portString: myPort,
         ipString: myIp,
         sessionIDString: mySessionID,
+        deviceTypeString: getDeviceType().name,
       },
     );
-  } catch (e, s) {
+  } on DioError catch (e, s) {
+    logger.e(e.response?.data);
     throw CustomException(
       e: e,
       s: s,
@@ -69,9 +82,10 @@ Future addClient(
 //
 Future<Uint8List?> getPeerImage(String connLink) async {
   try {
-    String url = '$connLink$getPeerImagePathEndPoint';
+    String url = '$connLink${EndPoints.getPeerImagePath}';
     Uri uri = Uri.parse(url);
     HttpClient client = HttpClient();
+
     var request = await client.getUrl(uri);
     var res = await request.close();
     if (res.statusCode == 404) throw Exception('No image');
@@ -81,7 +95,9 @@ Future<Uint8List?> getPeerImage(String connLink) async {
     }
 
     return Uint8List.fromList(bytes);
-  } catch (e) {
+  } on DioError catch (e) {
+    logger.e(e.response?.data);
+
     return null;
   }
 }
@@ -93,8 +109,13 @@ Future unsubscribeMe(ServerProvider serverProviderFalse) async {
   //! if client just leave it as it is
   //! or close the server instead
   if (serverProviderFalse.myType == MemberType.client) {
-    serverProviderFalse.myClientWsSink
-        .close(null, 'user normally left the group');
+    try {
+      serverProviderFalse.myClientWsSink
+          .close(null, 'user normally left the group');
+    } catch (e) {
+      logger.e(e);
+    }
+    serverProviderFalse.closeServer();
   } else if (serverProviderFalse.myType == MemberType.host) {
     serverProviderFalse.closeWsServer();
   }
@@ -114,14 +135,21 @@ Future broadcastUnsubscribeClient(
     for (var peer in peersCopied) {
       if (peer.sessionID == me.sessionID) continue;
       await Dio().post(
-        '${getConnLink(peer.ip, peer.port)}$clientLeftEndPoint',
+        '${getConnLink(peer.ip, peer.port)}${EndPoints.clientLeft}',
         data: {
           sessionIDString: customSessionID,
+          KHeaders.myServerPortHeaderKey: serverProviderFalse.myPort,
         },
+        options: Options(
+          headers: {
+            KHeaders.myServerPortHeaderKey: serverProviderFalse.myPort,
+          },
+        ),
       );
     }
-  } catch (e, s) {
-    throw CustomException(
+  } on DioError catch (e, s) {
+    logger.e(e.response?.data);
+    CustomException(
       e: e,
       s: s,
       rethrowError: true,
@@ -140,13 +168,14 @@ Future<List<ShareSpaceItemModel>?> getPeerShareSpace(
   try {
     shareItemsExplorerProvider.setLoadingItems(true);
     PeerModel peerModel = serverProvider.peerModelWithSessionID(sessionID);
-    String connLink = peerModel.getMyLink(getShareSpaceEndPoint);
+    String connLink = peerModel.getMyLink(EndPoints.getShareSpace);
     var res = await Dio().get(
       connLink,
       options: Options(
         headers: {
-          deviceIDHeaderKey: shareProvider.myDeviceId,
-          userNameHeaderKey: shareProvider.myName,
+          KHeaders.deviceIDHeaderKey: shareProvider.myDeviceId,
+          KHeaders.userNameHeaderKey: shareProvider.myName,
+          KHeaders.myServerPortHeaderKey: serverProvider.myPort,
         },
         receiveDataWhenStatusError: false,
       ),
@@ -165,7 +194,8 @@ Future<List<ShareSpaceItemModel>?> getPeerShareSpace(
     return items;
   } on DioError catch (e) {
     shareItemsExplorerProvider.setLoadingItems(false);
-    String? reason = e.response?.headers.value(serverRefuseReasonHeaderKey);
+    String? reason =
+        e.response?.headers.value(KHeaders.serverRefuseReasonHeaderKey);
     throw CustomException(
       e: reason ?? 'Unknown Reason',
       s: StackTrace.current,
@@ -187,15 +217,19 @@ Future<void> broadCastFileRemovalFromShareSpace({
     await _broadcast(
       serverProvider: serverProvider,
       shareProvider: shareProvider,
-      endPoint: fileRemovedFromShareSpaceEndPoint,
+      endPoint: EndPoints.fileRemovedFromShareSpace,
       headers: {
         ownerSessionIDString: me.sessionID,
         ownerDeviceIDString: me.deviceID,
+        KHeaders.myServerPortHeaderKey: serverProvider.myPort,
+
         // 'Content-Type': 'application/json; charset=utf-8',
       },
       data: paths,
     );
-  } catch (e, s) {
+  } on DioError catch (e, s) {
+    logger.e(e.response?.data);
+
     throw CustomException(
       e: e,
       s: s,
@@ -218,10 +252,12 @@ Future<void> broadCastFileAddedToShareSpace({
     await _broadcast(
       serverProvider: serverProvider,
       shareProvider: shareProvider,
-      endPoint: fileAddedToShareSpaceEndPoint,
+      endPoint: EndPoints.fileAddedToShareSpace,
       headers: {
         ownerSessionIDString: me.sessionID,
         ownerDeviceIDString: me.deviceID,
+        KHeaders.myServerPortHeaderKey: serverProvider.myPort,
+
         // 'Content-Type': 'application/json; charset=utf-8',
       },
       data: addedItems.map((e) {
@@ -229,7 +265,9 @@ Future<void> broadCastFileAddedToShareSpace({
         return e.toJSON();
       }).toList(),
     );
-  } catch (e, s) {
+  } on DioError catch (e, s) {
+    logger.e(e.response?.data);
+
     throw CustomException(
       e: e,
       s: s,
@@ -238,41 +276,44 @@ Future<void> broadCastFileAddedToShareSpace({
   }
 }
 
-Future<void> getFolderContent({
-  required ServerProvider serverProvider,
-  required String folderPath,
-  required ShareProvider shareProvider,
-  required String userSessionID,
-  required ShareItemsExplorerProvider shareItemsExplorerProvider,
-}) async {
-  try {
-    shareItemsExplorerProvider.setLoadingItems(true);
-    PeerModel me = serverProvider.me(shareProvider);
-    PeerModel otherPeer = serverProvider.peerModelWithSessionID(userSessionID);
-    String connLink = getConnLink(otherPeer.ip, otherPeer.port);
-    var res = await Dio().get(
-      '$connLink$getFolderContentEndPointEndPoint',
-      options: Options(
-        headers: {
-          folderPathHeaderKey: Uri.encodeComponent(folderPath),
-          sessionIDHeaderKey: me.sessionID,
-        },
-      ),
-    );
-    var data = res.data as List;
-    var items = data.map((e) => ShareSpaceItemModel.fromJSON(e)).toList();
-    shareItemsExplorerProvider.updatePath(folderPath, items);
+// Future<void> getFolderContent({
+//   required ServerProvider serverProvider,
+//   required String folderPath,
+//   required ShareProvider shareProvider,
+//   required String userSessionID,
+//   required ShareItemsExplorerProvider shareItemsExplorerProvider,
+// }) async {
+//   try {
+//     shareItemsExplorerProvider.setLoadingItems(true);
+//     PeerModel me = serverProvider.me(shareProvider);
+//     PeerModel otherPeer = serverProvider.peerModelWithSessionID(userSessionID);
+//     String connLink = getConnLink(otherPeer.ip, otherPeer.port);
+//     var res = await Dio().get(
+//       '$connLink${EndPoints.getFolderContentEndPoint}',
+//       options: Options(
+//         headers: {
+//           KHeaders.folderPathHeaderKey: Uri.encodeComponent(folderPath),
+//           KHeaders.sessionIDHeaderKey: me.sessionID,
+//           KHeaders.myServerPortHeaderKey: serverProvider.myPort,
+//         },
+//       ),
+//     );
+//     var data = res.data as List;
+//     var items = data.map((e) => ShareSpaceItemModel.fromJSON(e)).toList();
+//     shareItemsExplorerProvider.updatePath(folderPath, items);
 
-    shareItemsExplorerProvider.setLoadingItems(false, false);
-  } catch (e, s) {
-    shareItemsExplorerProvider.setLoadingItems(false);
-    throw CustomException(
-      e: e,
-      s: s,
-      rethrowError: true,
-    );
-  }
-}
+//     shareItemsExplorerProvider.setLoadingItems(false, false);
+//   } on DioError catch (e, s) {
+//     logger.e(e.response?.data);
+
+//     shareItemsExplorerProvider.setLoadingItems(false);
+//     throw CustomException(
+//       e: e,
+//       s: s,
+//       rethrowError: true,
+//     );
+//   }
+// }
 
 //? to broadcast data to all servers except me
 Future<void> _broadcast({
@@ -301,7 +342,9 @@ Future<void> _broadcast({
         ),
       );
     }
-  } catch (e, s) {
+  } on DioError catch (e, s) {
+    logger.e(e.response?.data);
+
     throw CustomException(
       e: e,
       s: s,
@@ -319,7 +362,12 @@ Future<String?> connectToWsServer(
   try {
     CustomClientSocket clientSocket = CustomClientSocket();
     String wsConnLink = (await Dio().get(
-      '$connLink$wsServerConnLinkEndPoint',
+      '$connLink${EndPoints.wsServerConnLink}',
+      options: Options(
+        headers: {
+          KHeaders.myServerPortHeaderKey: serverProviderFalse.myPort,
+        },
+      ),
     ))
         .data;
 
@@ -327,7 +375,8 @@ Future<String?> connectToWsServer(
     String mySessionID = await clientSocket.getMySessionID();
     serverProviderFalse.setMyWsChannel(clientSocket.clientChannel.sink);
     return mySessionID;
-  } catch (e, s) {
+  } on DioError catch (e, s) {
+    logger.e(e.response?.data);
     throw CustomException(
       e: e,
       s: s,
@@ -336,23 +385,234 @@ Future<String?> connectToWsServer(
   }
 }
 
-Future<String> getAndroidID(ConnectPhoneProvider connectPhoneProvider) async {
-  String connLink = connectPhoneProvider.getPhoneConnLink(getAndroidIDEndPoint);
-  var data = await Dio().get(connLink);
-  if (data.data.toString().isEmpty) {
-    throw Exception('cant get android id');
-  }
-  return data.data.toString();
+//# new way of initiating connection
+
+Future<String?> shareSpaceGetWorkingLink(
+  String code,
+  ServerProvider serverProviderFalse,
+  ShareProvider shareProviderFalse,
+  ShareItemsExplorerProvider shareItemsExplorerProviderFalse,
+) async {
+  await serverProviderFalse.openServer(
+    shareProviderFalse,
+    MemberType.client,
+    shareItemsExplorerProviderFalse,
+  );
+  var res = await getWorkingIpFromCode(
+    code: code,
+    myPort: serverProviderFalse.myPort,
+  );
+  if (res == null) return null;
+  serverProviderFalse.setMyIpAsClient(res.myIp);
+
+  return '${res.serverIp}:${res.serverPort}';
 }
 
-Future<String> getAndroidName(
-  ConnectPhoneProvider connectPhoneProvider,
-) async {
-  String connLink =
-      connectPhoneProvider.getPhoneConnLink(getAndroidNameEndPoint);
-  var data = await Dio().get(connLink);
-  if (data.data.toString().isEmpty) {
-    throw Exception('cant get laptop name');
+Future<WorkingIpModel?> getWorkingIpFromCode({
+  required String code,
+  required int myPort,
+  int? timeout,
+}) async {
+  // this will return a working ip from the server with the port(connLink)
+  // and on done will return my working ip that the server replied with
+  List<dynamic> nulls = [];
+  String decrypted = SimpleEncryption(code).decrypt();
+  var data = decrypted.split('||');
+  int port = int.parse(data.last);
+  var ips = data.first.split('|');
+  Completer<WorkingIpModel?> completer = Completer<WorkingIpModel?>();
+
+  Dio dio = Dio();
+  dio.options.sendTimeout = Duration(milliseconds: timeout ?? 5000);
+  dio.options.connectTimeout = Duration(milliseconds: timeout ?? 5000);
+  dio.options.receiveTimeout = Duration(milliseconds: timeout ?? 5000);
+
+  for (var ip in ips) {
+    String connLink = getConnLink(ip, port, EndPoints.serverCheck);
+    dio
+        .post(
+      connLink,
+      data: myPort,
+    )
+        .then((data) async {
+      // here is teh right thing, the server response have the
+      logger.i('My ip is ${data.data}, got from server');
+
+      completer.complete(WorkingIpModel(
+          myIp: data.data, myPort: myPort, serverIp: ip, serverPort: port));
+    }).catchError((error) {
+      nulls.add(null);
+      if (nulls.length == ips.length) {
+        completer.complete(null);
+      }
+    });
   }
-  return data.data.toString();
+  return completer.future;
+}
+
+// Future<String> getLaptopID(ConnectLaptopProvider connectLaptopProvider) async {
+//   String connLink =
+//       connectLaptopProvider.getPhoneConnLink(EndPoints.getLaptopDeviceID);
+//   var data = await Dio().get(connLink);
+//   if (data.data.toString().isEmpty) {
+//     throw Exception('cant get laptop id');
+//   }
+//   return data.data.toString();
+// }
+
+// Future<String> getLaptopName(
+//   ConnectLaptopProvider connectLaptopProvider,
+// ) async {
+//   String connLink =
+//       connectLaptopProvider.getPhoneConnLink(EndPoints.getLaptopDeviceName);
+//   var data = await Dio().get(connLink);
+//   if (data.data.toString().isEmpty) {
+//     throw Exception('cant get laptop name');
+//   }
+//   return data.data.toString();
+// }
+
+//?
+//?
+//? new features
+//?
+//?
+
+Future<String?> getPeerClipboard(
+  PeerModel peerModel,
+) async {
+  try {
+    BuildContext? context = navigatorKey.currentContext;
+    if (context == null) {
+      throw Exception('Error occurred');
+    }
+    ShareProvider shareProvider = sharePF(context);
+    String myName = shareProvider.myName;
+    String deviceID = shareProvider.myDeviceId;
+
+    String connLink = peerModel.getMyLink(EndPoints.getClipboard);
+
+    var res = await Dio().get(connLink,
+        options: Options(headers: {
+          KHeaders.userNameHeaderKey: myName,
+          KHeaders.deviceIDHeaderKey: deviceID,
+        }));
+    String clipboard = (res.data);
+    if (clipboard.isEmpty) {
+      return null;
+    } else {
+      return clipboard;
+    }
+  } catch (e) {
+    rethrow;
+  }
+}
+
+Future<String?> sendTextToDevice(String text, PeerModel peerModel) async {
+  BuildContext context = navigatorKey.currentContext!;
+  try {
+    String connLink = peerModel.getMyLink(EndPoints.sendText);
+    String myName = sharePF(context).myName;
+    String deviceID = sharePF(context).myDeviceId;
+
+    await Dio().post(
+      connLink,
+      data: text,
+      options: Options(
+        requestEncoder: (request, options) => utf8.encode(request),
+        headers: {
+          KHeaders.deviceIDHeaderKey: deviceID,
+          KHeaders.userNameHeaderKey: myName,
+        },
+      ),
+    );
+    return 'message sent';
+  } catch (e) {
+    // showSnackBar(
+    //   context: context,
+    //   message: e.toString(),
+    //   snackBarType: SnackBarType.error,
+    // );
+    rethrow;
+  }
+}
+
+Future<void> startSendEntitiesToDevice(
+  List<CapturedEntityModel> entities,
+  BuildContext context,
+  PeerModel peerModel,
+) async {
+  try {
+    String userName = sharePF(context).myName;
+    String deviceID = sharePF(context).myDeviceId;
+    var data = entities.map((e) => e.toJSON()).toList();
+    var encodedData = json.encode(data);
+    String connLink = peerModel.getMyLink(EndPoints.startDownloadFile);
+    await Dio().post(
+      connLink,
+      data: encodedData,
+      options: Options(headers: {
+        KHeaders.userNameHeaderKey: userName,
+        KHeaders.deviceIDHeaderKey: deviceID,
+      }),
+    );
+  } on DioError catch (e) {
+    logger.e(e.response?.data);
+    rethrow;
+  }
+}
+
+Future<void> getDeviceFolderContent({
+  required String folderPath,
+  required ShareItemsExplorerProvider shareItemsExplorerProvider,
+  required PeerModel peerModel,
+  bool shareSpace = false,
+}) async {
+  BuildContext? context = navigatorKey.currentContext;
+  if (context == null) {
+    throw Exception('Error occurred');
+  }
+  ShareProvider shareProvider = sharePF(context);
+  try {
+    shareItemsExplorerProvider.setLoadingItems(true);
+    String connLink = peerModel.getMyLink(
+      shareSpace ? EndPoints.getShareSpace : EndPoints.getPhoneFolderContent,
+    );
+
+    var res = await Dio().get(
+      connLink,
+      options: shareSpace
+          ? Options(
+              headers: {
+                KHeaders.userNameHeaderKey: shareProvider.myName,
+                KHeaders.deviceIDHeaderKey: shareProvider.myDeviceId,
+              },
+            )
+          : Options(
+              headers: {
+                KHeaders.folderPathHeaderKey: Uri.encodeComponent(folderPath),
+                KHeaders.userNameHeaderKey: shareProvider.myName,
+                KHeaders.deviceIDHeaderKey: shareProvider.myDeviceId,
+              },
+            ),
+    );
+    var data = res.data as List;
+    String? folderPathRetrieved;
+    folderPathRetrieved = Uri.decodeComponent(
+        res.headers.value(KHeaders.parentFolderPathHeaderKey) ?? '');
+    var items = data.map((e) => ShareSpaceItemModel.fromJSON(e)).toList();
+    shareItemsExplorerProvider.updatePath(
+      folderPathRetrieved.isEmpty ? null : folderPathRetrieved,
+      items,
+    );
+
+    shareItemsExplorerProvider.setLoadingItems(false, true);
+  } catch (e, s) {
+    shareItemsExplorerProvider.setLoadingItems(false);
+    throw CustomException(
+      e: e,
+      s: s,
+      rethrowError: true,
+    );
+  }
 }

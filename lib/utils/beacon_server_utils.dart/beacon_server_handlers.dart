@@ -1,0 +1,76 @@
+import 'dart:io';
+
+import 'package:windows_app/constants/widget_keys.dart';
+import 'package:windows_app/providers/server_provider.dart';
+import 'package:windows_app/providers/share_provider.dart';
+import 'package:windows_app/utils/providers_calls_utils.dart';
+import 'package:flutter/material.dart';
+
+// beacon server handlers
+class BSH {
+  static void getServerName(
+    HttpRequest request,
+    HttpResponse response,
+  ) {
+    BuildContext? context = navigatorKey.currentContext;
+    if (context == null) {
+      response
+        ..statusCode = HttpStatus.internalServerError
+        ..write('An error with context')
+        ..close();
+      return;
+    }
+    ShareProvider shareProvider = sharePF(context);
+    String myName = shareProvider.myName;
+    response
+      ..write(myName)
+      ..close();
+  }
+
+  static void getServerID(
+    HttpRequest request,
+    HttpResponse response,
+  ) {
+    BuildContext? context = navigatorKey.currentContext;
+    if (context == null) {
+      response
+        ..statusCode = HttpStatus.internalServerError
+        ..write('An error with context')
+        ..close();
+      return;
+    }
+    var serverProvider = serverPF(context);
+    String beaconServerID = serverProvider.beaconServer!.serverID;
+
+    response
+      ..write(beaconServerID)
+      ..close();
+  }
+
+  static void getServerConnLink(
+    HttpRequest request,
+    HttpResponse response,
+  ) {
+    BuildContext? context = navigatorKey.currentContext;
+    if (context == null) {
+      response
+        ..statusCode = HttpStatus.internalServerError
+        ..write('An error with context')
+        ..close();
+      return;
+    }
+    try {
+      ServerProvider serverProvider = serverPF(context);
+      String connLink = serverProvider.myConnLink!;
+
+      response
+        ..write(connLink)
+        ..close();
+    } catch (e) {
+      response
+        ..statusCode = HttpStatus.internalServerError
+        ..write('error occurred ')
+        ..close();
+    }
+  }
+}

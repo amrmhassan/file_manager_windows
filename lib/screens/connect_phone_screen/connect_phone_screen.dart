@@ -73,6 +73,7 @@ class ConnectPhoneScreen extends StatelessWidget {
                   backgroundColor: Colors.transparent,
                   context: context,
                   builder: (context) => DoubleButtonsModal(
+                    autoPop: true,
                     onOk: () {
                       connectPPF(context).closeServer();
                     },
@@ -125,20 +126,20 @@ class ConnectPhoneScreen extends StatelessWidget {
                     onTap: () {
                       var phoneConnProvider = connectPPF(context);
 
-                      Navigator.pushNamed(
-                        context,
-                        ShareSpaceVScreen.routeName,
-                        arguments: PeerModel(
-                          deviceID: 'null',
-                          joinedAt: DateTime.now(),
-                          name: 'Phone',
-                          memberType: MemberType.client,
-                          ip: phoneConnProvider.remoteIP!,
-                          port: phoneConnProvider.remotePort!,
-                          sessionID: 'null',
-                          phone: true,
-                        ),
-                      );
+                      // Navigator.pushNamed(
+                      //   context,
+                      //   ShareSpaceVScreen.routeName,
+                      //   arguments: PeerModel(
+                      //     deviceID: 'null',
+                      //     joinedAt: DateTime.now(),
+                      //     name: 'Phone',
+                      //     memberType: MemberType.client,
+                      //     ip: phoneConnProvider.remoteIP!,
+                      //     port: phoneConnProvider.remotePort!,
+                      //     sessionID: 'null',
+                      //     phone: true,
+                      //   ),
+                      // );
                     },
                     title: 'Share Space',
                     logoName: 'management',

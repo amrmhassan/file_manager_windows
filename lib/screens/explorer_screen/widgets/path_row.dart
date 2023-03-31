@@ -2,8 +2,8 @@
 
 import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/sizes.dart';
-import 'package:windows_app/providers/util/analyzer_provider.dart';
-import 'package:windows_app/providers/util/explorer_provider.dart';
+import 'package:windows_app/providers/analyzer_provider.dart';
+import 'package:windows_app/providers/explorer_provider.dart';
 import 'package:windows_app/providers/files_operations_provider.dart';
 import 'package:windows_app/screens/home_screen/widgets/path_entity_text.dart';
 import 'package:windows_app/utils/general_utils.dart';

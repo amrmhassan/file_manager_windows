@@ -23,83 +23,83 @@ CustomRouterSystem addConnectToPhoneServerRouters(
   CustomRouterSystem customRouterSystem = CustomRouterSystem();
 
   //? adding handlers
-  customRouterSystem
-    ..addHandler(
-      serverCheckEndPoint,
-      HttpMethod.POST,
-      (request, response) => normal_handlers.serverCheckHandler(
-        request,
-        response,
-        connectPPF,
-      ),
-    )
-    ..addHandler(
-      phoneWsServerConnLinkEndPoint,
-      HttpMethod.GET,
-      (request, response) {
-        String wsConnLink = connectPPF.myWSConnLink;
-        response.write(wsConnLink);
-      },
-    )
-    ..addHandler(
-      getDiskNamesEndPoint,
-      HttpMethod.GET,
-      laptop_handlers.getDiskNamesHandler,
-    )
-    ..addHandler(
-      getPhoneFolderContentEndPoint,
-      HttpMethod.GET,
-      laptop_handlers.getPhoneFolderContentHandler,
-    )
-    ..addHandler(
-      streamAudioEndPoint,
-      HttpMethod.GET,
-      normal_handlers.streamAudioHandler,
-    )
-    ..addHandler(
-      streamVideoEndPoint,
-      HttpMethod.GET,
-      normal_handlers.streamVideoHandler,
-    )
-    ..addHandler(
-      getClipboardEndPoint,
-      HttpMethod.GET,
-      laptop_handlers.getClipboardHandler,
-    )
-    ..addHandler(
-      sendTextEndpoint,
-      HttpMethod.POST,
-      laptop_handlers.sendTextHandler,
-    )
-    ..addHandler(
-      getShareSpaceEndPoint,
-      HttpMethod.GET,
-      laptop_handlers.getPhoneShareSpaceHandler,
-    )
-    ..addHandler(
-      startDownloadFileEndPoint,
-      HttpMethod.POST,
-      laptop_handlers.startDownloadActionHandler,
-    )
-    ..addHandler(
-      downloadFileEndPoint,
-      HttpMethod.GET,
-      normal_handlers.downloadFileHandler,
-    )
-    ..addHandler(
-      getFolderContentRecursiveEndPoint,
-      HttpMethod.GET,
-      laptop_handlers.getFolderChildrenRecursive,
-    )
-    ..addHandler(
-      getLaptopDeviceIDEndPoint,
-      HttpMethod.GET,
-      laptop_handlers.getLaptopDeviceIDHandler,
-    )
-    ..addHandler(
-      getLaptopDeviceNameEndpoint,
-      HttpMethod.GET,
-      laptop_handlers.getLaptopDeviceNameHandler,
-    );
+  // customRouterSystem
+  //   ..addHandler(
+  //     serverCheckEndPoint,
+  //     HttpMethod.POST,
+  //     (request, response) => normal_handlers.serverCheckHandler(
+  //       request,
+  //       response,
+  //       connectPPF,
+  //     ),
+  //   )
+  //   ..addHandler(
+  //     phoneWsServerConnLinkEndPoint,
+  //     HttpMethod.GET,
+  //     (request, response) {
+  //       String wsConnLink = connectPPF.myWSConnLink;
+  //       response.write(wsConnLink);
+  //     },
+  //   )
+  //   ..addHandler(
+  //     getDiskNamesEndPoint,
+  //     HttpMethod.GET,
+  //     laptop_handlers.getDiskNamesHandler,
+  //   )
+  //   ..addHandler(
+  //     getPhoneFolderContentEndPoint,
+  //     HttpMethod.GET,
+  //     laptop_handlers.getPhoneFolderContentHandler,
+  //   )
+  //   ..addHandler(
+  //     streamAudioEndPoint,
+  //     HttpMethod.GET,
+  //     normal_handlers.streamAudioHandler,
+  //   )
+  //   ..addHandler(
+  //     streamVideoEndPoint,
+  //     HttpMethod.GET,
+  //     normal_handlers.streamVideoHandler,
+  //   )
+  //   ..addHandler(
+  //     getClipboardEndPoint,
+  //     HttpMethod.GET,
+  //     laptop_handlers.getClipboardHandler,
+  //   )
+  //   ..addHandler(
+  //     sendTextEndpoint,
+  //     HttpMethod.POST,
+  //     laptop_handlers.sendTextHandler,
+  //   )
+  //   ..addHandler(
+  //     getShareSpaceEndPoint,
+  //     HttpMethod.GET,
+  //     laptop_handlers.getPhoneShareSpaceHandler,
+  //   )
+  //   ..addHandler(
+  //     startDownloadFileEndPoint,
+  //     HttpMethod.POST,
+  //     laptop_handlers.startDownloadActionHandler,
+  //   )
+  //   ..addHandler(
+  //     downloadFileEndPoint,
+  //     HttpMethod.GET,
+  //     normal_handlers.downloadFileHandler,
+  //   )
+  //   ..addHandler(
+  //     getFolderContentRecursiveEndPoint,
+  //     HttpMethod.GET,
+  //     laptop_handlers.getFolderChildrenRecursive,
+  //   )
+  //   ..addHandler(
+  //     getLaptopDeviceIDEndPoint,
+  //     HttpMethod.GET,
+  //     laptop_handlers.getLaptopDeviceIDHandler,
+  //   )
+  //   ..addHandler(
+  //     getLaptopDeviceNameEndpoint,
+  //     HttpMethod.GET,
+  //     laptop_handlers.getLaptopDeviceNameHandler,
+  //   );
   return customRouterSystem;
 }

@@ -12,7 +12,9 @@ import 'package:windows_app/providers/server_provider.dart';
 import 'package:windows_app/providers/share_provider.dart';
 import 'package:windows_app/utils/general_utils.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:localization/localization.dart';
 
 class GroupInfoModal extends StatelessWidget {
   const GroupInfoModal({
@@ -36,7 +38,7 @@ class GroupInfoModal extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  'Your Name',
+                  'your-name'.i18n(),
                   style: h4TextStyle,
                 ),
                 HSpace(factor: .2),
@@ -52,7 +54,7 @@ class GroupInfoModal extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  'Connected Devices',
+                  'connected-devices'.i18n(),
                   style: h4TextStyle,
                 ),
                 HSpace(factor: .2),
@@ -68,7 +70,7 @@ class GroupInfoModal extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  'Member Type',
+                  'member-type'.i18n(),
                   style: h4TextStyle,
                 ),
                 HSpace(factor: .2),
@@ -84,35 +86,36 @@ class GroupInfoModal extends StatelessWidget {
             Row(
               children: [
                 Text(
-                  'Your session ID',
+                  'your-ip'.i18n(),
                   style: h4TextStyle,
                 ),
                 HSpace(factor: .2),
                 Expanded(
                   child: Text(
-                    serverProvider.me(shareProvider).sessionID,
+                    serverProvider.myIp!,
                     style: h5LiteTextStyle,
                     textAlign: TextAlign.end,
                   ),
                 ),
               ],
             ),
-            Row(
-              children: [
-                Text(
-                  'Your Device ID',
-                  style: h4TextStyle,
-                ),
-                HSpace(factor: .2),
-                Expanded(
-                  child: Text(
-                    shareProvider.myDeviceId,
-                    style: h5LiteTextStyle,
-                    textAlign: TextAlign.end,
+            if (kDebugMode)
+              Row(
+                children: [
+                  Text(
+                    'your-port'.i18n(),
+                    style: h4TextStyle,
                   ),
-                ),
-              ],
-            ),
+                  HSpace(factor: .2),
+                  Expanded(
+                    child: Text(
+                      serverProvider.myPort.toString(),
+                      style: h5LiteTextStyle,
+                      textAlign: TextAlign.end,
+                    ),
+                  ),
+                ],
+              ),
             VSpace(),
             ButtonWrapper(
               padding: EdgeInsets.symmetric(
@@ -125,23 +128,23 @@ class GroupInfoModal extends StatelessWidget {
                   backgroundColor: Colors.transparent,
                   context: context,
                   builder: (context) => DoubleButtonsModal(
+                    autoPop: true,
                     onOk: () {
                       onLeaveGroup();
                     },
                     okText: serverProvider.myType == MemberType.host
-                        ? 'Close'
-                        : 'Leave',
-                    title: 'Are you sure?',
-                    subTitle:
-                        'closing the group will cut any downloads or streams',
+                        ? 'close'.i18n()
+                        : 'leave'.i18n(),
+                    title: 'are-you-sure'.i18n(),
+                    subTitle: 'are-you-sure-note'.i18n(),
                   ),
                 );
               },
               backgroundColor: kDangerColor,
               child: Text(
                 serverProvider.myType == MemberType.host
-                    ? 'Close Group'
-                    : 'Leave Group',
+                    ? 'close-group'.i18n()
+                    : 'leave-group'.i18n(),
                 style: h4TextStyle,
               ),
             ),

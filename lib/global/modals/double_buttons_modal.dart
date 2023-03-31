@@ -8,6 +8,7 @@ import 'package:windows_app/global/widgets/h_space.dart';
 import 'package:windows_app/global/widgets/modal_wrapper/modal_wrapper.dart';
 import 'package:windows_app/global/widgets/v_space.dart';
 import 'package:flutter/material.dart';
+import 'package:localization/localization.dart';
 
 class DoubleButtonsModal extends StatelessWidget {
   final String? title;
@@ -21,7 +22,9 @@ class DoubleButtonsModal extends StatelessWidget {
   final bool autoPop;
   final bool reverseButtonsOrder;
   final Widget? extra;
+  final TextStyle? titleStyle;
   final bool showCancelButton;
+  final Widget? titleIcon;
 
   const DoubleButtonsModal({
     Key? key,
@@ -33,10 +36,12 @@ class DoubleButtonsModal extends StatelessWidget {
     this.cancelText,
     this.okColor,
     this.cancelColor,
-    this.autoPop = true,
+    required this.autoPop,
     this.reverseButtonsOrder = false,
     this.extra,
     this.showCancelButton = true,
+    this.titleStyle,
+    this.titleIcon,
   }) : super(key: key);
 
   @override
@@ -55,7 +60,7 @@ class DoubleButtonsModal extends StatelessWidget {
                 horizontal: kHPad / 2, vertical: kVPad / 2),
             backgroundColor: cancelColor ?? kBackgroundColor,
             child: Text(
-              cancelText ?? 'Cancel',
+              cancelText ?? 'cancel'.i18n(),
               style: h4TextStyle.copyWith(color: Colors.white),
             ),
           ),
@@ -73,7 +78,7 @@ class DoubleButtonsModal extends StatelessWidget {
               EdgeInsets.symmetric(horizontal: kHPad / 2, vertical: kVPad / 2),
           backgroundColor: okColor ?? kDangerColor,
           child: Text(
-            okText ?? 'Delete',
+            okText ?? 'delete'.i18n(),
             style: h4TextStyle.copyWith(color: Colors.white),
           ),
         ),
@@ -87,9 +92,10 @@ class DoubleButtonsModal extends StatelessWidget {
           if (title != null)
             Row(
               children: [
+                if (titleIcon != null) titleIcon!,
                 Text(
                   title!,
-                  style: h3TextStyle,
+                  style: titleStyle ?? h3TextStyle,
                 ),
               ],
             ),

@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors
 
+import 'package:windows_app/providers/server_provider.dart';
 import 'package:windows_app/providers/share_provider.dart';
 import 'package:windows_app/screens/share_screen/widgets/empty_share_items.dart';
+import 'package:windows_app/screens/share_screen/widgets/shading_background.dart';
 import 'package:windows_app/screens/share_screen/widgets/my_shared_items.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -14,6 +16,8 @@ class NotSharingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    var serverProvider = Provider.of<ServerProvider>(context);
+
     var shareProvider = Provider.of<ShareProvider>(context);
     return Expanded(
       child: Stack(
@@ -22,6 +26,7 @@ class NotSharingView extends StatelessWidget {
             MySharedItems()
           else
             EmptyShareItems(),
+          if (serverProvider.myIp == null) ShadingBackground(),
         ],
       ),
     );

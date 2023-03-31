@@ -5,7 +5,7 @@ import 'package:windows_app/constants/styles.dart';
 import 'package:windows_app/global/widgets/h_line.dart';
 import 'package:windows_app/global/widgets/screens_wrapper.dart';
 import 'package:windows_app/global/widgets/v_space.dart';
-import 'package:windows_app/providers/util/analyzer_provider.dart';
+import 'package:windows_app/providers/analyzer_provider.dart';
 import 'package:windows_app/screens/analyzer_screen/widgets/analyzer_options_item.dart';
 import 'package:windows_app/screens/items_viewer_screen/items_viewer_screen.dart';
 import 'package:windows_app/screens/home_screen/widgets/home_app_bar.dart';

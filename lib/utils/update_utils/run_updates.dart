@@ -53,6 +53,7 @@ void _showInstallUpdateModal(String filePath) async {
       context: navigatorKey.currentContext!,
       backgroundColor: Colors.transparent,
       builder: (context) => DoubleButtonsModal(
+        autoPop: true,
         title: 'Update Available!',
         subTitle: 'Install update now?',
         onOk: () {

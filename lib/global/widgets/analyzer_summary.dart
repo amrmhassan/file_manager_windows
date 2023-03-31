@@ -4,7 +4,7 @@ import 'package:windows_app/constants/global_constants.dart';
 import 'package:windows_app/constants/sizes.dart';
 import 'package:windows_app/constants/styles.dart';
 import 'package:windows_app/helpers/responsive.dart';
-import 'package:windows_app/providers/util/analyzer_provider.dart';
+import 'package:windows_app/providers/analyzer_provider.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';

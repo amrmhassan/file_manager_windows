@@ -17,7 +17,7 @@ import 'package:windows_app/models/storage_item_model.dart';
 import 'package:windows_app/providers/children_info_provider.dart';
 import 'package:windows_app/providers/files_operations_provider.dart';
 import 'package:windows_app/providers/listy_provider.dart';
-import 'package:windows_app/providers/util/explorer_provider.dart';
+import 'package:windows_app/providers/explorer_provider.dart';
 import 'package:windows_app/screens/explorer_screen/utils/sizes_utils.dart';
 import 'package:windows_app/screens/explorer_screen/widgets/entity_check_box.dart';
 import 'package:windows_app/screens/explorer_screen/widgets/home_item_h_line.dart';

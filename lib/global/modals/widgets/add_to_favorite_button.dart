@@ -1,7 +1,7 @@
 // ignore_for_file: prefer_const_constructors, use_build_context_synchronously
 
 import 'package:windows_app/constants/defaults_constants.dart';
-import 'package:windows_app/providers/util/explorer_provider.dart';
+import 'package:windows_app/providers/explorer_provider.dart';
 import 'package:windows_app/providers/files_operations_provider.dart';
 import 'package:windows_app/providers/listy_provider.dart';
 import 'package:windows_app/screens/home_screen/widgets/modal_button_element.dart';

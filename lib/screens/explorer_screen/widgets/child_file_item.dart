@@ -14,7 +14,7 @@ import 'package:windows_app/helpers/responsive.dart';
 import 'package:windows_app/models/share_space_item_model.dart';
 import 'package:windows_app/models/storage_item_model.dart';
 import 'package:windows_app/providers/files_operations_provider.dart';
-import 'package:windows_app/providers/util/explorer_provider.dart';
+import 'package:windows_app/providers/explorer_provider.dart';
 import 'package:windows_app/screens/explorer_screen/utils/sizes_utils.dart';
 import 'package:windows_app/screens/explorer_screen/widgets/file_size.dart';
 import 'package:windows_app/screens/explorer_screen/widgets/media_player_button.dart';

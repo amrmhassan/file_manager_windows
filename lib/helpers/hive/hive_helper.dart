@@ -46,6 +46,20 @@ class HiveBox {
 
   static Future<Box> get extensionInfoTableName =>
       Hive.openBox(_HiveBoxesNames.extensionInfoTableName);
+
+  // folders to watch for on startup
+  static Future<Box> get foldersToWatchForOnStartUpTableName =>
+      Hive.openBox(_HiveBoxesNames.foldersToWatchForOnStartUpTableName);
+
+  // all files info, used for search
+  static Future<Box> get allFilesInfoTableName =>
+      Hive.openBox(_HiveBoxesNames.allFilesInfoTableName);
+  static Future<Box> get allFoldersInfoTableName =>
+      Hive.openBox(_HiveBoxesNames.allFoldersInfoTableName);
+
+  // peers permissions box that save if the each user permission status
+  static Future<Box> get peerPermissionsBox =>
+      Hive.openBox(_HiveBoxesNames.peerPermissionsBox);
 }
 
 class _HiveBoxesNames {
@@ -59,6 +73,7 @@ class _HiveBoxesNames {
   static const String listy = 'listyBoxName';
   static const String recentOpenedFile = 'recentOpenedFileBoxName';
   static const String shareSpaceItem = 'shareSpaceItemBoxName';
+
   // recent boxes
   static const String imagesRecentFilesTableName = 'imagesRecentFilesTableName';
   static const String videosRecentFilesTableName = 'videosRecentFilesTableName';
@@ -75,4 +90,15 @@ class _HiveBoxesNames {
 
   static const String thumbnailPathTableName = 'thumbnailPathTableName';
   static const String extensionInfoTableName = 'extensionInfoTableName';
+
+  // folders to watch for on startup
+  static const String foldersToWatchForOnStartUpTableName =
+      'foldersToWatchForOnStartUpTableName';
+
+  // all files info, used for search
+  static const String allFilesInfoTableName = 'allFilesInfoTableName';
+  static const String allFoldersInfoTableName = 'allFoldersInfoTableName';
+
+  // peers permissions box that save if the each user permission status
+  static const String peerPermissionsBox = 'peerPermissionsBox';
 }

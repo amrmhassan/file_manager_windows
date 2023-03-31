@@ -10,6 +10,7 @@ import 'package:windows_app/providers/share_provider.dart';
 import 'package:windows_app/screens/explorer_screen/widgets/storage_item.dart';
 import 'package:windows_app/utils/general_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:localization/localization.dart';
 import 'package:provider/provider.dart';
 
 class MySharedItems extends StatelessWidget {
@@ -26,15 +27,20 @@ class MySharedItems extends StatelessWidget {
       children: [
         PaddingWrapper(
           child: Text(
-            'Shared Items',
+            'shared-items'.i18n(),
             style: h4TextStyleInactive,
           ),
         ),
         Expanded(
           child: ListView.builder(
             physics: BouncingScrollPhysics(),
-            itemCount: shareProvider.sharedItems.length,
+            itemCount: shareProvider.sharedItems.length + 1,
             itemBuilder: (context, index) {
+              if (index == shareProvider.sharedItems.length) {
+                return SizedBox(
+                  height: 50,
+                );
+              }
               ShareSpaceItemModel shareSpaceItemModel =
                   shareProvider.sharedItems[index];
 

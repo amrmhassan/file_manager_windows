@@ -4,23 +4,25 @@ import 'package:windows_app/constants/colors.dart';
 import 'package:windows_app/constants/sizes.dart';
 import 'package:windows_app/constants/styles.dart';
 import 'package:windows_app/global/modals/double_buttons_modal.dart';
+import 'package:windows_app/global/widgets/button_wrapper.dart';
 import 'package:windows_app/global/widgets/custom_app_bar/custom_app_bar.dart';
+import 'package:windows_app/global/widgets/h_space.dart';
 import 'package:windows_app/global/widgets/screens_wrapper.dart';
 import 'package:windows_app/global/widgets/v_space.dart';
-import 'package:windows_app/models/white_block_list_model.dart';
+import 'package:windows_app/models/peer_permissions_model.dart';
+import 'package:windows_app/screens/single_user_permissions_screen/single_user_permissions_screen.dart';
+import 'package:windows_app/utils/general_utils.dart';
 import 'package:windows_app/utils/providers_calls_utils.dart';
 import 'package:flutter/material.dart';
+import 'package:localization/localization.dart';
 
-class WhiteBlockListScreen extends StatelessWidget {
-  static const String routeName = '/WhiteBlockListScreen';
-  const WhiteBlockListScreen({super.key});
+class UsersPermissionScreen extends StatelessWidget {
+  static const String routeName = '/UsersPermissionScreen';
+  const UsersPermissionScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    bool allowed = ModalRoute.of(context)!.settings.arguments as bool;
-    var serverProvider = serverP(context);
-    List<WhiteBlockListModel> viewedDevices =
-        allowed ? serverProvider.allowedPeers : serverProvider.blockedPeers;
+    var permissionsProvider = permissionsP(context);
 
     return ScreensWrapper(
         backgroundColor: kBackgroundColor,
@@ -28,70 +30,103 @@ class WhiteBlockListScreen extends StatelessWidget {
           children: [
             CustomAppBar(
               title: Text(
-                allowed ? 'White List' : 'Block List',
+                'Known Users',
                 style: h2TextStyle,
               ),
             ),
             VSpace(),
-            viewedDevices.isEmpty
+            permissionsProvider.peersPermissions.isEmpty
                 ? Expanded(
                     child: Center(
                     child: Text(
-                      'No Devices',
+                      'no-devices'.i18n(),
                       style: h4TextStyle,
                     ),
                   ))
                 : Expanded(
                     child: ListView.builder(
                     physics: BouncingScrollPhysics(),
-                    itemCount: viewedDevices.length,
-                    itemBuilder: (context, index) => Dismissible(
-                      key: UniqueKey(),
-                      direction: DismissDirection.endToStart,
-                      confirmDismiss: (direction) async {
-                        bool? res = await showModalBottomSheet(
-                          backgroundColor: Colors.transparent,
-                          context: context,
-                          builder: (context) => DoubleButtonsModal(
-                            autoPop: false,
-                            onCancel: () {
-                              Navigator.pop(context);
-                            },
-                            onOk: () {
-                              Navigator.pop(context, true);
-                            },
-                            title:
-                                'Delete from ${allowed ? 'allowed' : 'blocked'} list',
-                          ),
-                        );
-                        if (res == true) {
-                          // here just delete
-                          if (allowed) {
-                            serverPF(context).removeFromAllowedDevices(
-                                viewedDevices[index].deviceID);
-                          } else {
-                            serverPF(context).removeFromBlockedDevices(
-                                viewedDevices[index].deviceID);
+                    itemCount: permissionsProvider.peersPermissions.length,
+                    itemBuilder: (context, index) {
+                      PeerPermissionsModel peerPermissionsModel =
+                          permissionsProvider.peersPermissions[index];
+                      return Dismissible(
+                        key: UniqueKey(),
+                        direction: DismissDirection.endToStart,
+                        confirmDismiss: (direction) async {
+                          bool? res = await showModalBottomSheet(
+                            backgroundColor: Colors.transparent,
+                            context: context,
+                            builder: (context) => DoubleButtonsModal(
+                              autoPop: false,
+                              onCancel: () {
+                                Navigator.pop(context);
+                              },
+                              onOk: () {
+                                Navigator.pop(context, true);
+                              },
+                              title: 'Remove known user?',
+                              subTitle:
+                                  'This will remove all saved permissions for this user',
+                            ),
+                          );
+                          if (res == true) {
+                            await permissionsPF(context)
+                                .deleteAllUserPermissions(
+                              peerPermissionsModel.peerDeviceID,
+                            );
+                            showSnackBar(
+                              context: context,
+                              message: 'All user permissions deleted',
+                            );
                           }
-                        }
-                        return res == true;
-                      },
-                      background: Container(
-                        padding: EdgeInsets.only(right: kHPad),
-                        alignment: Alignment.centerRight,
-                        color: Colors.red,
-                        child: Icon(
-                          Icons.delete,
-                          color: Colors.white,
+
+                          return res == true;
+                        },
+                        background: Container(
+                          padding: EdgeInsets.only(right: kHPad),
+                          alignment: Alignment.centerRight,
+                          color: Colors.red,
+                          child: Icon(
+                            Icons.delete,
+                            color: Colors.white,
+                          ),
                         ),
-                      ),
-                      child: ListTile(
-                        title: Text(
-                          viewedDevices[index].name,
-                          style: h4TextStyle,
+                        child: ButtonWrapper(
+                          onTap: () {
+                            Navigator.pushNamed(
+                              context,
+                              SingleUserPermissionsScreen.routeName,
+                              arguments: peerPermissionsModel.peerDeviceID,
+                            );
+                          },
+                          alignment: Alignment.centerLeft,
+                          borderRadius: 0,
+                          padding: EdgeInsets.symmetric(
+                            horizontal: kHPad * .8,
+                            vertical: kVPad / 2,
+                          ),
+                          child: Row(
+                            children: [
+                              Text(
+                                peerPermissionsModel.peerName,
+                                style: h4TextStyle,
+                              ),
+                              HSpace(),
+                              Expanded(
+                                child: Text(
+                                  peerPermissionsModel.peerDeviceID,
+                                  style: h5InactiveTextStyle,
+                                  textAlign: TextAlign.end,
+                                  softWrap: false,
+                                  overflow: TextOverflow.ellipsis,
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
-                      ),
-                    ),
+                      );
+                    },
                   ))
           ],
         ));

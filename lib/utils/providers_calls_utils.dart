@@ -1,14 +1,19 @@
 import 'package:windows_app/providers/animation_provider.dart';
+import 'package:windows_app/providers/beacon_provider.dart';
 import 'package:windows_app/providers/connect_phone_provider.dart';
 import 'package:windows_app/providers/download_provider.dart';
 import 'package:windows_app/providers/files_operations_provider.dart';
+import 'package:windows_app/providers/language_provider.dart';
+import 'package:windows_app/providers/listy_provider.dart';
 import 'package:windows_app/providers/media_player_provider.dart';
+import 'package:windows_app/providers/permissions_provider.dart';
 import 'package:windows_app/providers/quick_send_provider.dart';
+import 'package:windows_app/providers/recent_provider.dart';
 import 'package:windows_app/providers/server_provider.dart';
 import 'package:windows_app/providers/share_provider.dart';
 import 'package:windows_app/providers/shared_items_explorer_provider.dart';
-import 'package:windows_app/providers/util/analyzer_provider.dart';
-import 'package:windows_app/providers/util/explorer_provider.dart';
+import 'package:windows_app/providers/analyzer_provider.dart';
+import 'package:windows_app/providers/explorer_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:windows_app/providers/window_provider.dart';
@@ -102,6 +107,69 @@ ConnectPhoneProvider connectPPF(BuildContext context) {
 
 ConnectPhoneProvider connectPP(BuildContext context) {
   return Provider.of<ConnectPhoneProvider>(context);
+}
+
+//? listy provider
+ListyProvider listyPF(BuildContext context) {
+  return Provider.of<ListyProvider>(context, listen: false);
+}
+
+ListyProvider listyP(BuildContext context) {
+  return Provider.of<ListyProvider>(context);
+}
+
+//? listy provider
+MediaPlayerProvider mediaPF(BuildContext context) {
+  return Provider.of<MediaPlayerProvider>(context, listen: false);
+}
+
+MediaPlayerProvider mediaP(BuildContext context) {
+  return Provider.of<MediaPlayerProvider>(context);
+}
+
+//? recent provider
+RecentProvider recentPF(BuildContext context) {
+  return Provider.of<RecentProvider>(context, listen: false);
+}
+
+RecentProvider recentP(BuildContext context) {
+  return Provider.of<RecentProvider>(context);
+}
+
+//? recent provider
+// SearchProvider searchPF(BuildContext context) {
+//   return Provider.of<SearchProvider>(context, listen: false);
+// }
+
+// SearchProvider searchP(BuildContext context) {
+//   return Provider.of<SearchProvider>(context);
+// }
+
+//? language provider
+LanguageProvider langPF(BuildContext context) {
+  return Provider.of<LanguageProvider>(context, listen: false);
+}
+
+LanguageProvider langP(BuildContext context) {
+  return Provider.of<LanguageProvider>(context);
+}
+
+//? permissions provider
+PermissionProvider permissionsPF(BuildContext context) {
+  return Provider.of<PermissionProvider>(context, listen: false);
+}
+
+PermissionProvider permissionsP(BuildContext context) {
+  return Provider.of<PermissionProvider>(context);
+}
+
+//? beacon provider
+BeaconProvider beaconPF(BuildContext context) {
+  return Provider.of<BeaconProvider>(context, listen: false);
+}
+
+BeaconProvider beaconP(BuildContext context) {
+  return Provider.of<BeaconProvider>(context);
 }
 
 //? connect phone provider
